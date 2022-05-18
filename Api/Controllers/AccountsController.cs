@@ -92,10 +92,10 @@ public class AccountsController : ControllerBase
     [HttpGet("self"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
     public async Task<ActionResult<AccountResource>> ReadSelf()
     {
-        Guid id = Guid.Parse(this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+        string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
         Account account = await this.context.Accounts
-            .Where(a => a.Id.Equals(id))
+            .Where(a => a.MailAddress.Equals(mailAddress))
             .Include(a => a.Posts)
                 .ThenInclude(p => p.Commentaries)
             .Include(a => a.Commentaries)
@@ -140,7 +140,7 @@ public class AccountsController : ControllerBase
         return Ok(Mapper.AccountToResource(account));
     }
 
-    [HttpDelete , AuthorizeEnum(Role.Admin)]
+    [HttpDelete, AuthorizeEnum(Role.Admin)]
     public async Task<ActionResult> Delete(string mailAddress)
     {
         Account account = await this.context.Accounts

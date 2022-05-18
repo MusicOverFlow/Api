@@ -52,7 +52,6 @@ public class AuthenticationsController : ControllerBase
         return new JwtSecurityTokenHandler().WriteToken(new JwtSecurityToken(
             claims: new List<Claim>()
             {
-                new Claim(ClaimTypes.NameIdentifier, account.Id.ToString()),
                 new Claim(ClaimTypes.Email, account.MailAddress),
                 new Claim(ClaimTypes.Role, account.Role),
             },

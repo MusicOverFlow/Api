@@ -1,5 +1,6 @@
 ﻿using Api.Models;
 using Api.Models.Entities;
+using Api.Models.Enums;
 using Api.Utilitaries;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -22,11 +23,12 @@ public class PostsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<PostResource>> Create(CreatePost request)
     {
-        Guid id = Guid.Parse(this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+        string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
         Account account = await this.context.Accounts
-            .FindAsync(id);
-        
+            .Where(a => a.MailAddress.Equals(mailAddress))
+            .FirstOrDefaultAsync();
+
         if (account == null)
         {
             return NotFound(new { errorMessage = "Account not found" });

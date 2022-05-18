@@ -21,10 +21,11 @@ public class CommentariesController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<CommentaryResource>> Create(CreateCommentary request)
     {
-        Guid id = Guid.Parse(this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+        string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
         Account account = await this.context.Accounts
-            .FindAsync(id);
+            .Where(a => a.MailAddress.Equals(mailAddress))
+            .FirstOrDefaultAsync();
 
         if (account == null)
         {
