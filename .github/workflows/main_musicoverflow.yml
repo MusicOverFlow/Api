@@ -53,5 +53,5 @@ jobs:
         with:
           app-name: 'musicoverflow'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_99CDE701BF9442D5824A9D0C85B10EB0 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_9EE4944ACA5F4C25B2C272C9E1AA0015 }}
           package: .
