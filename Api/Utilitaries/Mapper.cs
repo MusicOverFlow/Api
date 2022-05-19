@@ -2,7 +2,7 @@
 
 namespace Api.Utilitaries;
 
-public abstract class Mapper
+public static class Mapper
 {
     public static AccountResource AccountToResource(Account account)
     {

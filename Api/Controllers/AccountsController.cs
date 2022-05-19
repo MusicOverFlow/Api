@@ -24,14 +24,14 @@ public class AccountsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<AccountResource>> Create(CreateAccount request)
     {
-        if (!DataValidator.IsPasswordValid(request.Password))
-        {
-            return BadRequest(new { message = "Invalid password" });
-        }
-
         if (!DataValidator.IsMailAddressValid(request.MailAddress))
         {
             return BadRequest(new { message = "Invalid mail address" });
+        }
+
+        if (!DataValidator.IsPasswordValid(request.Password))
+        {
+            return BadRequest(new { message = "Invalid password" });
         }
 
         bool isMailAlreadyInUse = await this.context.Accounts
