@@ -17,6 +17,8 @@ public class Post
 
     public Account Account { get; set; }
     public ICollection<Commentary> Commentaries { get; set; }
+    
+    public Group Group { get; set; }
 }
 
 public class PostResource
@@ -28,12 +30,14 @@ public class PostResource
 
     public AccountResource Account { get; set; }
     public ICollection<CommentaryResource> Commentaries { get; set; }
+    public GroupResource Group { get; set; }
 }
 
 public class CreatePost
 {
-    [Required] public string Title { get; set; }
-    [Required] public string Content { get; set; }
+    [Required, MaxLength(50)]  public string Title { get; set; }
+    [Required, MaxLength(250)] public string Content { get; set; }
+    public Guid? GroupId { get; set; }
 }
 
 // TODO: une route sur l'api pour savoir si un post est liké par un utilisateur ou pas

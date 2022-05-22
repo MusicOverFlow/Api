@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Api.Migrations
 {
     [DbContext(typeof(ModelsContext))]
-    [Migration("20220522100500_models")]
+    [Migration("20220522152450_models")]
     partial class models
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -23,6 +23,21 @@ namespace Api.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("AccountGroup", b =>
+                {
+                    b.Property<Guid>("GroupsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("MembersId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("GroupsId", "MembersId");
+
+                    b.HasIndex("MembersId");
+
+                    b.ToTable("AccountGroup");
+                });
 
             modelBuilder.Entity("Api.Models.Entities.Account", b =>
                 {
@@ -90,6 +105,35 @@ namespace Api.Migrations
                     b.ToTable("Commentaries");
                 });
 
+            modelBuilder.Entity("Api.Models.Entities.Group", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.Property<Guid?>("OwnerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OwnerId");
+
+                    b.ToTable("Groups");
+                });
+
             modelBuilder.Entity("Api.Models.Entities.Post", b =>
                 {
                     b.Property<Guid>("Id")
@@ -107,6 +151,9 @@ namespace Api.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("GroupId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -116,7 +163,24 @@ namespace Api.Migrations
 
                     b.HasIndex("AccountId");
 
+                    b.HasIndex("GroupId");
+
                     b.ToTable("Posts");
+                });
+
+            modelBuilder.Entity("AccountGroup", b =>
+                {
+                    b.HasOne("Api.Models.Entities.Group", null)
+                        .WithMany()
+                        .HasForeignKey("GroupsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Api.Models.Entities.Account", null)
+                        .WithMany()
+                        .HasForeignKey("MembersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Api.Models.Entities.Commentary", b =>
@@ -136,6 +200,15 @@ namespace Api.Migrations
                     b.Navigation("Post");
                 });
 
+            modelBuilder.Entity("Api.Models.Entities.Group", b =>
+                {
+                    b.HasOne("Api.Models.Entities.Account", "Owner")
+                        .WithMany()
+                        .HasForeignKey("OwnerId");
+
+                    b.Navigation("Owner");
+                });
+
             modelBuilder.Entity("Api.Models.Entities.Post", b =>
                 {
                     b.HasOne("Api.Models.Entities.Account", "Account")
@@ -143,13 +216,24 @@ namespace Api.Migrations
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.SetNull);
 
+                    b.HasOne("Api.Models.Entities.Group", "Group")
+                        .WithMany("Posts")
+                        .HasForeignKey("GroupId");
+
                     b.Navigation("Account");
+
+                    b.Navigation("Group");
                 });
 
             modelBuilder.Entity("Api.Models.Entities.Account", b =>
                 {
                     b.Navigation("Commentaries");
 
+                    b.Navigation("Posts");
+                });
+
+            modelBuilder.Entity("Api.Models.Entities.Group", b =>
+                {
                     b.Navigation("Posts");
                 });
 

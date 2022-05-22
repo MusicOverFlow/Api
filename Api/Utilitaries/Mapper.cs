@@ -74,6 +74,7 @@ public class Mapper
             Content = post.Content,
             CreatedAt = post.CreatedAt,
             Account = this.AccountToResource(post.Account),
+            Group = this.GroupToResource(post.Group),
         };
     }
 
@@ -138,6 +139,44 @@ public class Mapper
             CreatedAt = commentary.CreatedAt,
             Account = this.AccountToResource(commentary.Account),
             Post = this.PostToResource(commentary.Post),
+        };
+    }
+
+
+
+
+
+    public GroupResource GroupToResource(Group group)
+    {
+        if (group == null)
+        {
+            return null;
+        }
+
+        List<AccountResource> members = new List<AccountResource>();
+
+        group.Members.ToList().ForEach(member =>
+        {
+            members.Add(this.AccountToResource(member));
+        });
+
+        List<PostResource> posts = new List<PostResource>();
+
+        group.Posts.ToList().ForEach(post =>
+        {
+            posts.Add(this.PostToResourceWithCommentaries(post));
+        });
+
+        return new GroupResource()
+        {
+            Id = group.Id,
+            Name = group.Name,
+            Description = group.Description,
+            CreatedAt = group.CreatedAt,
+            
+            Owner = this.AccountToResource(group.Owner),
+            Members = members,
+            Posts = posts,
         };
     }
 }

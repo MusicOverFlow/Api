@@ -25,6 +25,8 @@ public class Account
 
     public ICollection<Post> Posts { get; set; }
     public ICollection<Commentary> Commentaries { get; set; }
+
+    public ICollection<Group> Groups { get; set; }
 }
 
 public class AccountResource

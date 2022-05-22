@@ -36,14 +36,29 @@ public class PostsController : ControllerBase
         {
             return NotFound(new { errorMessage = "Account not found" });
         }
-        
+
+        Group group = null;
+        if (request.GroupId != null)
+        {
+            group = this.context.Groups
+                .Where(g => g.Id.Equals(request.GroupId))
+                .FirstOrDefault();
+
+            if (group == null)
+            {
+                return NotFound(new { errorMessage = "Group not found" });
+            }
+        }
+
         Post post = new Post()
         {
             Title = request.Title,
             Content = request.Content,
             CreatedAt = DateTime.Now,
+            
             Account = account,
             Commentaries = new List<Commentary>(),
+            Group = group,
         };
 
         this.context.Posts.Add(post);

@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Api.Models;
 using Api.Models.Entities;
 using Api.Models.Enums;
@@ -7,6 +6,7 @@ using Api.Utilitaries;
 using System.Security.Cryptography;
 using static Api.Wrappers.AuthorizeRolesAttribute;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
 
@@ -65,8 +65,10 @@ public class AccountsController : ControllerBase
             Firstname = request.Firstname ?? "Unknown",
             Lastname = request.Lastname ?? "Unknown",
             CreatedAt = DateTime.Now,
+            
             Posts = new List<Post>(),
             Commentaries = new List<Commentary>(),
+            Groups = new List<Group>(),
         };
 
         this.context.Accounts.Add(account);
