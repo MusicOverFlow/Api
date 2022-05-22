@@ -12,7 +12,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 // Singletons
 builder.Services.AddSingleton<DataValidator>(new DataValidator());
 builder.Services.AddSingleton<Mapper>(new Mapper());
-builder.Services.AddSingleton<StringSimilarity>(new StringSimilarity());
+builder.Services.AddSingleton<global::Api.Utilitaries.StringComparer>((global::Api.Utilitaries.StringComparer)new global::Api.Utilitaries.StringComparer());
 
 builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 

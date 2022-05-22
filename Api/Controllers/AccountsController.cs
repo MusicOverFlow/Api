@@ -14,21 +14,23 @@ namespace Api.Controllers;
 [ApiController]
 public class AccountsController : ControllerBase
 {
+    private readonly int MAX_ACCOUNT_IN_SEARCHES = 20;
+
     private readonly ModelsContext context;
     private readonly DataValidator dataValidator;
     private readonly Mapper mapper;
-    private readonly StringSimilarity stringSimilarity;
+    private readonly Utilitaries.StringComparer stringComparer;
 
     public AccountsController(
         ModelsContext context,
         DataValidator dataValidator,
         Mapper mapper,
-        StringSimilarity stringSimilarity)
+        Utilitaries.StringComparer stringSimilarity)
     {
         this.context = context;
         this.dataValidator = dataValidator;
         this.mapper = mapper;
-        this.stringSimilarity = stringSimilarity;
+        this.stringComparer = stringSimilarity;
     }
 
     [HttpPost]
@@ -60,8 +62,8 @@ public class AccountsController : ControllerBase
             PasswordHash = hash,
             PasswordSalt = salt,
             Role = Role.Admin.ToString(),
-            Firstname = request.Firstname,
-            Lastname = request.Lastname,
+            Firstname = request.Firstname ?? "Unknown",
+            Lastname = request.Lastname ?? "Unknown",
             CreatedAt = DateTime.Now,
             Posts = new List<Post>(),
             Commentaries = new List<Commentary>(),
@@ -100,38 +102,40 @@ public class AccountsController : ControllerBase
     }
     
     [HttpGet("name"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
-    public async Task<ActionResult<List<AccountResource>>> ReadLastname(ReadByNames request)
+    public async Task<ActionResult<List<AccountResource>>> ReadNames(ReadByNames request)
     {
-        if (string.IsNullOrWhiteSpace(request.Lastname))
+        if (string.IsNullOrWhiteSpace(request.Firstname) && string.IsNullOrWhiteSpace(request.Lastname))
         {
-            return BadRequest(new { message = "Invalid lastname" });
+            return BadRequest(new { message = "Invalid firstname and lastname" });
         }
 
         List<AccountResource> accounts = new List<AccountResource>();
 
         await this.context.Accounts.ForEachAsync(a =>
         {
-            // If lastname score > 75%, add this account to the list
-            // Else add the firstname score, and if it is > 125, add this account to the list
+            if (accounts.Count >= this.MAX_ACCOUNT_IN_SEARCHES)
+            {
+                return;
+            }
 
-            double lastnameScore = this.stringSimilarity.CompareStrings(request.Lastname, a.Lastname);
-            
-            if (lastnameScore > 75)
-            {            
+            double lastnameScore = this.stringComparer.Compare(request.Lastname, a.Lastname);
+
+            if (lastnameScore >= 0.7)
+            {
                 accounts.Add(this.mapper.AccountToResource(a));
             }
-            else
+            else if (!string.IsNullOrWhiteSpace(request.Firstname))
             {
-                double firstnameScore = this.stringSimilarity.CompareStrings(request.Firstname, a.Firstname);
+                double firstnameScore = this.stringComparer.Compare(request.Firstname, a.Firstname);
 
-                if ((lastnameScore + firstnameScore) > 125)
+                if ((lastnameScore + firstnameScore) >= 1)
                 {
                     accounts.Add(this.mapper.AccountToResource(a));
                 }
             }
         });
 
-        return accounts.Count > 0 ? Ok(accounts.OrderBy(a => a.Lastname)) : NotFound();
+        return Ok(accounts);
     }
 
     [HttpGet("self"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]

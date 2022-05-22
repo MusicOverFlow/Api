@@ -16,9 +16,9 @@ public class Account
     public byte[] PasswordSalt { get; set; }
     [Required]
     public string Role { get; set; }
-    [Required, MaxLength(20)]
+    [Required]
     public string Firstname { get; set; }
-    [Required, MaxLength(20)]
+    [Required]
     public string Lastname { get; set; }
     [Required]
     public DateTime CreatedAt { get; set; }
@@ -42,8 +42,8 @@ public class CreateAccount
 {
     [Required] public string MailAddress { get; set; }
     [Required] public string Password { get; set; }
-    public string Firstname { get; set; } = "Unknown";
-    public string Lastname { get; set; } = "Unknown";
+    public string Firstname { get; set; }
+    public string Lastname { get; set; }
 }
 
 public class ReadByNames
