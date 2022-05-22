@@ -91,7 +91,64 @@ public class GroupsController : ControllerBase
             return NotFound(new { message = "Group not found" });
         }
 
+        if (group.Members.Any(m => m.Id.Equals(account.Id)))
+        {
+            return BadRequest(new { message = "Account already in group" });
+        }
+
         group.Members.Add(account);
+
+        await this.context.SaveChangesAsync();
+
+        return Ok(this.mapper.GroupToResource(group));
+    }
+
+    [HttpPost("kick")]
+    public async Task<ActionResult<GroupResource>> Kick(Guid groupId, string memberMailAddress)
+    {
+        string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
+        
+        Account callerAccount = await this.context.Accounts
+            .Where(a => a.MailAddress.Equals(mailAddress))
+            .FirstOrDefaultAsync();
+
+        if (callerAccount == null)
+        {
+            return NotFound(new { message = "Account not found" });
+        }
+        
+        Group group = this.context.Groups
+            .Include(g => g.Owner)
+            .Include(g => g.Members)
+            .Include(g => g.Posts)
+            .Where(p => p.Id.Equals(groupId))
+            .FirstOrDefault();
+
+        if (group == null)
+        {
+            return NotFound(new { message = "Group not found" });
+        }
+
+        if (!group.Owner.Id.Equals(callerAccount.Id))
+        {
+            return BadRequest(new { message = "You are not the owner of the group" });
+        }
+
+        Account memberAccount = this.context.Accounts
+            .Where(a => a.MailAddress.Equals(memberMailAddress))
+            .FirstOrDefault();
+
+        if (memberAccount == null)
+        {
+            return NotFound(new { message = "Member account not found" });
+        }
+
+        if (!group.Members.Any(m => m.MailAddress.Equals(memberMailAddress)))
+        {
+            return BadRequest(new { message = "This account is not part of the group" });
+        }
+
+        group.Members.Remove(memberAccount);
 
         await this.context.SaveChangesAsync();
 
