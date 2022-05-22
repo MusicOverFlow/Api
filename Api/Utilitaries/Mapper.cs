@@ -2,9 +2,9 @@
 
 namespace Api.Utilitaries;
 
-public static class Mapper
+public class Mapper
 {
-    public static AccountResource AccountToResource(Account account)
+    public AccountResource AccountToResource(Account account)
     {
         if (account == null)
         {
@@ -20,7 +20,7 @@ public static class Mapper
         };
     }
 
-    public static AccountResource AccountToResourceWithPostsAndCommentaries(Account account)
+    public AccountResource AccountToResourceWithPostsAndCommentaries(Account account)
     {
         if (account == null)
         {
@@ -31,14 +31,14 @@ public static class Mapper
 
         account.Posts.ToList().ForEach(post =>
         {
-            posts.Add(Mapper.PostToResourceWithCommentaries(post));
+            posts.Add(this.PostToResourceWithCommentaries(post));
         });
         
         List<PostResource> commentaries = new List<PostResource>();
 
         account.Commentaries.ToList().ForEach(commentary =>
         {
-            PostResource post = Mapper.PostToResourceWithCommentaries(commentary.Post);
+            PostResource post = this.PostToResourceWithCommentaries(commentary.Post);
             if (!posts.Contains(post))
             {
                 commentaries.Add(post);
@@ -60,7 +60,7 @@ public static class Mapper
 
     
 
-    public static PostResource PostToResource(Post post)
+    public PostResource PostToResource(Post post)
     {
         if (post == null)
         {
@@ -73,11 +73,11 @@ public static class Mapper
             Title = post.Title,
             Content = post.Content,
             CreatedAt = post.CreatedAt,
-            Account = Mapper.AccountToResource(post.Account),
+            Account = this.AccountToResource(post.Account),
         };
     }
 
-    public static PostResource PostToResourceWithCommentaries(Post post)
+    public PostResource PostToResourceWithCommentaries(Post post)
     {
         if (post == null)
         {
@@ -88,7 +88,7 @@ public static class Mapper
 
         post.Commentaries.ToList().ForEach(commentary =>
         {
-            commentaries.Add(Mapper.CommentaryToResource(commentary));
+            commentaries.Add(this.CommentaryToResource(commentary));
         });
 
         return new PostResource()
@@ -97,7 +97,7 @@ public static class Mapper
             Title = post.Title,
             Content = post.Content,
             CreatedAt = post.CreatedAt,
-            Account = Mapper.AccountToResource(post.Account),
+            Account = this.AccountToResource(post.Account),
             Commentaries = commentaries,
         };
     }
@@ -108,7 +108,7 @@ public static class Mapper
 
     
 
-    public static CommentaryResource CommentaryToResource(Commentary commentary)
+    public CommentaryResource CommentaryToResource(Commentary commentary)
     {
         if (commentary == null)
         {
@@ -120,11 +120,11 @@ public static class Mapper
             Id = commentary.Id,
             Content = commentary.Content,
             CreatedAt = commentary.CreatedAt,
-            Account = Mapper.AccountToResource(commentary.Account),
+            Account = this.AccountToResource(commentary.Account),
         };
     }
 
-    public static CommentaryResource CommentaryToResourceWithPost(Commentary commentary)
+    public CommentaryResource CommentaryToResourceWithPost(Commentary commentary)
     {
         if (commentary == null)
         {
@@ -136,8 +136,8 @@ public static class Mapper
             Id = commentary.Id,
             Content = commentary.Content,
             CreatedAt = commentary.CreatedAt,
-            Account = Mapper.AccountToResource(commentary.Account),
-            Post = Mapper.PostToResource(commentary.Post),
+            Account = this.AccountToResource(commentary.Account),
+            Post = this.PostToResource(commentary.Post),
         };
     }
 }

@@ -14,22 +14,34 @@ namespace Api.Controllers;
 [ApiController]
 public class AccountsController : ControllerBase
 {
-    private readonly ModelsContext context;
+    private readonly int MAX_ACCOUNT_IN_SEARCHES = 20;
 
-    public AccountsController(ModelsContext context)
+    private readonly ModelsContext context;
+    private readonly DataValidator dataValidator;
+    private readonly Mapper mapper;
+    private readonly Utilitaries.StringComparer stringComparer;
+
+    public AccountsController(
+        ModelsContext context,
+        DataValidator dataValidator,
+        Mapper mapper,
+        Utilitaries.StringComparer stringSimilarity)
     {
         this.context = context;
+        this.dataValidator = dataValidator;
+        this.mapper = mapper;
+        this.stringComparer = stringSimilarity;
     }
 
     [HttpPost]
     public async Task<ActionResult<AccountResource>> Create(CreateAccount request)
     {
-        if (!DataValidator.IsMailAddressValid(request.MailAddress))
+        if (!this.dataValidator.IsMailAddressValid(request.MailAddress))
         {
             return BadRequest(new { message = "Invalid mail address" });
         }
 
-        if (!DataValidator.IsPasswordValid(request.Password))
+        if (!this.dataValidator.IsPasswordValid(request.Password))
         {
             return BadRequest(new { message = "Invalid password" });
         }
@@ -50,8 +62,8 @@ public class AccountsController : ControllerBase
             PasswordHash = hash,
             PasswordSalt = salt,
             Role = Role.Admin.ToString(),
-            Firstname = request.Firstname,
-            Lastname = request.Lastname,
+            Firstname = request.Firstname ?? "Unknown",
+            Lastname = request.Lastname ?? "Unknown",
             CreatedAt = DateTime.Now,
             Posts = new List<Post>(),
             Commentaries = new List<Commentary>(),
@@ -61,7 +73,7 @@ public class AccountsController : ControllerBase
 
         await this.context.SaveChangesAsync();
         
-        return Created(nameof(Create), Mapper.AccountToResource(account));
+        return Created(nameof(Create), this.mapper.AccountToResource(account));
     }
 
     [HttpGet, AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
@@ -79,12 +91,49 @@ public class AccountsController : ControllerBase
 
         List<AccountResource> accounts = new List<AccountResource>();
 
-        await query.ForEachAsync(a => accounts.Add(Mapper.AccountToResourceWithPostsAndCommentaries(a)));
+        await query.ForEachAsync(a => accounts.Add(this.mapper.AccountToResourceWithPostsAndCommentaries(a)));
 
         if (!string.IsNullOrWhiteSpace(mailAddress) && accounts.Count == 0)
         {
             return NotFound(new { message = "Account not found" });
         }
+
+        return Ok(accounts);
+    }
+    
+    [HttpGet("name"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
+    public async Task<ActionResult<List<AccountResource>>> ReadNames(ReadByNames request)
+    {
+        if (string.IsNullOrWhiteSpace(request.Firstname) && string.IsNullOrWhiteSpace(request.Lastname))
+        {
+            return BadRequest(new { message = "Invalid firstname and lastname" });
+        }
+
+        List<AccountResource> accounts = new List<AccountResource>();
+
+        await this.context.Accounts.ForEachAsync(a =>
+        {
+            if (accounts.Count >= this.MAX_ACCOUNT_IN_SEARCHES)
+            {
+                return;
+            }
+
+            double lastnameScore = this.stringComparer.Compare(request.Lastname, a.Lastname);
+
+            if (lastnameScore >= 0.6)
+            {
+                accounts.Add(this.mapper.AccountToResource(a));
+            }
+            else if (!string.IsNullOrWhiteSpace(request.Firstname))
+            {
+                double firstnameScore = this.stringComparer.Compare(request.Firstname, a.Firstname);
+
+                if ((lastnameScore + firstnameScore) >= 1.1)
+                {
+                    accounts.Add(this.mapper.AccountToResource(a));
+                }
+            }
+        });
 
         return Ok(accounts);
     }
@@ -106,7 +155,7 @@ public class AccountsController : ControllerBase
             return NotFound(new { message = "Account not found" });
         }
 
-        return Ok(Mapper.AccountToResourceWithPostsAndCommentaries(account));
+        return Ok(this.mapper.AccountToResourceWithPostsAndCommentaries(account));
     }
 
     [HttpPut("role"), AuthorizeEnum(Role.Admin)]
@@ -137,7 +186,7 @@ public class AccountsController : ControllerBase
 
         await this.context.SaveChangesAsync();
         
-        return Ok(Mapper.AccountToResource(account));
+        return Ok(this.mapper.AccountToResource(account));
     }
 
     [HttpDelete, AuthorizeEnum(Role.Admin)]

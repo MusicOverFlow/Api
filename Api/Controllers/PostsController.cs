@@ -1,6 +1,5 @@
 ﻿using Api.Models;
 using Api.Models.Entities;
-using Api.Models.Enums;
 using Api.Utilitaries;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,10 +13,14 @@ namespace Api.Controllers;
 public class PostsController : ControllerBase
 {
     private readonly ModelsContext context;
+    private readonly Mapper mapper;
 
-    public PostsController(ModelsContext context)
+    public PostsController(
+        ModelsContext context,
+        Mapper mapper)
     {
         this.context = context;
+        this.mapper = mapper;
     }
     
     [HttpPost]
@@ -47,7 +50,7 @@ public class PostsController : ControllerBase
 
         await this.context.SaveChangesAsync();
 
-        return Created(nameof(Create), Mapper.PostToResource(post));
+        return Created(nameof(Create), this.mapper.PostToResource(post));
     }
 
     [HttpGet]
@@ -65,7 +68,7 @@ public class PostsController : ControllerBase
 
         List<PostResource> posts = new List<PostResource>();
         
-        await query.ForEachAsync(p => posts.Add(Mapper.PostToResourceWithCommentaries(p)));
+        await query.ForEachAsync(p => posts.Add(this.mapper.PostToResourceWithCommentaries(p)));
 
         if (id != null && posts.Count == 0)
         {
@@ -90,6 +93,6 @@ public class PostsController : ControllerBase
             return NotFound(new { errorMessage = "Account not found" });
         }
 
-        return Ok(Mapper.AccountToResourceWithPostsAndCommentaries(account));
+        return Ok(this.mapper.AccountToResourceWithPostsAndCommentaries(account));
     }
 }
