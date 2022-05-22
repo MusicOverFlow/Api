@@ -4,6 +4,9 @@ public class StringComparer
 {
     public double Compare(string source, string target)
     {
+        source = source.ToUpper();
+        target = target.ToUpper();
+
         if ((source == null) || (target == null)) return 0.0;
         if ((source.Length == 0) || (target.Length == 0)) return 0.0;
         if (source == target) return 1.0;

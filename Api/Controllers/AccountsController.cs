@@ -120,7 +120,7 @@ public class AccountsController : ControllerBase
 
             double lastnameScore = this.stringComparer.Compare(request.Lastname, a.Lastname);
 
-            if (lastnameScore >= 0.7)
+            if (lastnameScore >= 0.6)
             {
                 accounts.Add(this.mapper.AccountToResource(a));
             }
@@ -128,7 +128,7 @@ public class AccountsController : ControllerBase
             {
                 double firstnameScore = this.stringComparer.Compare(request.Firstname, a.Firstname);
 
-                if ((lastnameScore + firstnameScore) >= 1)
+                if ((lastnameScore + firstnameScore) >= 1.1)
                 {
                     accounts.Add(this.mapper.AccountToResource(a));
                 }
