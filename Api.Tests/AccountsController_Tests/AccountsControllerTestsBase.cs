@@ -3,9 +3,9 @@ using Api.Controllers;
 using Microsoft.EntityFrameworkCore;
 using System;
 using Api.Utilitaries;
-using Api.Models.Entities;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using Api.ExpositionModels;
 
 namespace Api.Tests.AccountsController_Tests;
 
