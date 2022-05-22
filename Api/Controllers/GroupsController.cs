@@ -65,8 +65,41 @@ public class GroupsController : ControllerBase
         return Created(nameof(Create), this.mapper.GroupToResource(group));
     }
 
+    [HttpPost("join")]
+    public async Task<ActionResult<GroupResource>> Join(Guid groupId)
+    {
+        string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
+
+        Account account = await this.context.Accounts
+            .Where(a => a.MailAddress.Equals(mailAddress))
+            .FirstOrDefaultAsync();
+
+        if (account == null)
+        {
+            return NotFound(new { message = "Account not found" });
+        }
+
+        Group group = this.context.Groups
+            .Include(g => g.Owner)
+            .Include(g => g.Members)
+            .Include(g => g.Posts)
+            .Where(p => p.Id.Equals(groupId))
+            .FirstOrDefault();
+
+        if (group == null)
+        {
+            return NotFound(new { message = "Group not found" });
+        }
+
+        group.Members.Add(account);
+
+        await this.context.SaveChangesAsync();
+
+        return Ok(this.mapper.GroupToResource(group));
+    }
+
     [HttpGet("name")]
-    public async Task<ActionResult<GroupResource>> ReadName(string name)
+    public async Task<ActionResult<List<GroupResource>>> ReadName(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
