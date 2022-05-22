@@ -46,6 +46,12 @@ public class CreateAccount
     public string Lastname { get; set; } = "Unknown";
 }
 
+public class ReadByNames
+{
+    public string Firstname { get; set; }
+    public string Lastname { get; set; }
+}
+
 public class Authentication
 {
     [Required] public string MailAddress { get; set; }

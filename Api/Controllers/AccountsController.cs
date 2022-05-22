@@ -15,21 +15,31 @@ namespace Api.Controllers;
 public class AccountsController : ControllerBase
 {
     private readonly ModelsContext context;
+    private readonly DataValidator dataValidator;
+    private readonly Mapper mapper;
+    private readonly StringSimilarity stringSimilarity;
 
-    public AccountsController(ModelsContext context)
+    public AccountsController(
+        ModelsContext context,
+        DataValidator dataValidator,
+        Mapper mapper,
+        StringSimilarity stringSimilarity)
     {
         this.context = context;
+        this.dataValidator = dataValidator;
+        this.mapper = mapper;
+        this.stringSimilarity = stringSimilarity;
     }
 
     [HttpPost]
     public async Task<ActionResult<AccountResource>> Create(CreateAccount request)
     {
-        if (!DataValidator.IsMailAddressValid(request.MailAddress))
+        if (!this.dataValidator.IsMailAddressValid(request.MailAddress))
         {
             return BadRequest(new { message = "Invalid mail address" });
         }
 
-        if (!DataValidator.IsPasswordValid(request.Password))
+        if (!this.dataValidator.IsPasswordValid(request.Password))
         {
             return BadRequest(new { message = "Invalid password" });
         }
@@ -61,7 +71,7 @@ public class AccountsController : ControllerBase
 
         await this.context.SaveChangesAsync();
         
-        return Created(nameof(Create), Mapper.AccountToResource(account));
+        return Created(nameof(Create), this.mapper.AccountToResource(account));
     }
 
     [HttpGet, AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
@@ -79,7 +89,7 @@ public class AccountsController : ControllerBase
 
         List<AccountResource> accounts = new List<AccountResource>();
 
-        await query.ForEachAsync(a => accounts.Add(Mapper.AccountToResourceWithPostsAndCommentaries(a)));
+        await query.ForEachAsync(a => accounts.Add(this.mapper.AccountToResourceWithPostsAndCommentaries(a)));
 
         if (!string.IsNullOrWhiteSpace(mailAddress) && accounts.Count == 0)
         {
@@ -87,6 +97,41 @@ public class AccountsController : ControllerBase
         }
 
         return Ok(accounts);
+    }
+    
+    [HttpGet("name"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
+    public async Task<ActionResult<List<AccountResource>>> ReadLastname(ReadByNames request)
+    {
+        if (string.IsNullOrWhiteSpace(request.Lastname))
+        {
+            return BadRequest(new { message = "Invalid lastname" });
+        }
+
+        List<AccountResource> accounts = new List<AccountResource>();
+
+        await this.context.Accounts.ForEachAsync(a =>
+        {
+            // If lastname score > 75%, add this account to the list
+            // Else add the firstname score, and if it is > 125, add this account to the list
+
+            double lastnameScore = this.stringSimilarity.CompareStrings(request.Lastname, a.Lastname);
+            
+            if (lastnameScore > 75)
+            {            
+                accounts.Add(this.mapper.AccountToResource(a));
+            }
+            else
+            {
+                double firstnameScore = this.stringSimilarity.CompareStrings(request.Firstname, a.Firstname);
+
+                if ((lastnameScore + firstnameScore) > 125)
+                {
+                    accounts.Add(this.mapper.AccountToResource(a));
+                }
+            }
+        });
+
+        return accounts.Count > 0 ? Ok(accounts.OrderBy(a => a.Lastname)) : NotFound();
     }
 
     [HttpGet("self"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
@@ -106,7 +151,7 @@ public class AccountsController : ControllerBase
             return NotFound(new { message = "Account not found" });
         }
 
-        return Ok(Mapper.AccountToResourceWithPostsAndCommentaries(account));
+        return Ok(this.mapper.AccountToResourceWithPostsAndCommentaries(account));
     }
 
     [HttpPut("role"), AuthorizeEnum(Role.Admin)]
@@ -137,7 +182,7 @@ public class AccountsController : ControllerBase
 
         await this.context.SaveChangesAsync();
         
-        return Ok(Mapper.AccountToResource(account));
+        return Ok(this.mapper.AccountToResource(account));
     }
 
     [HttpDelete, AuthorizeEnum(Role.Admin)]

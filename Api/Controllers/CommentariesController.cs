@@ -12,10 +12,14 @@ namespace Api.Controllers;
 public class CommentariesController : ControllerBase
 {
     private readonly ModelsContext context;
+    private readonly Mapper mapper;
 
-    public CommentariesController(ModelsContext context)
+    public CommentariesController(
+        ModelsContext context,
+        Mapper mapper)
     {
         this.context = context;
+        this.mapper = mapper;
     }
     
     [HttpPost]
@@ -53,6 +57,6 @@ public class CommentariesController : ControllerBase
 
         await this.context.SaveChangesAsync();
 
-        return Created(nameof(Create), Mapper.CommentaryToResourceWithPost(commentary));
+        return Created(nameof(Create), this.mapper.CommentaryToResourceWithPost(commentary));
     }
 }
