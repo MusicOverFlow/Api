@@ -1,4 +1,5 @@
-﻿using Api.Models.Entities;
+﻿using Api.ExpositionModels;
+using Api.Models.Entities;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;

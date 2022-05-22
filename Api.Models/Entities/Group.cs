@@ -19,22 +19,3 @@ public class Group
     public ICollection<Account> Members { get; set; }
     public ICollection<Post> Posts { get; set; }
 }
-
-public class GroupResource
-{
-    public Guid Id { get; set; }
-
-    public string Name { get; set; }
-    public string Description { get; set; }
-    public DateTime CreatedAt { get; set; }
-    
-    public AccountResource Owner { get; set; }
-    public ICollection<AccountResource> Members { get; set; }
-    public ICollection<PostResource> Posts { get; set; }
-}
-
-public class CreateGroup
-{
-    [Required, MaxLength(25)]  public string Name { get; set; }
-    [Required, MaxLength(100)] public string Description { get; set; }
-}

@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using static Api.Wrappers.AuthorizeRolesAttribute;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
+using Api.ExpositionModels;
 
 namespace Api.Controllers;
 
@@ -75,16 +76,13 @@ public class AccountsController : ControllerBase
 
         await this.context.SaveChangesAsync();
         
-        return Created(nameof(Create), this.mapper.AccountToResource(account));
+        return Created(nameof(Create), this.mapper.Account_ToResource(account));
     }
 
     [HttpGet, AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
     public async Task<ActionResult<List<AccountResource>>> Read(string mailAddress = null)
     {
-        IQueryable<Account> query = this.context.Accounts
-            .Include(a => a.Posts)
-                .ThenInclude(p => p.Commentaries)
-            .Include(a => a.Commentaries);
+        IQueryable<Account> query = this.context.Accounts;
 
         if (!string.IsNullOrWhiteSpace(mailAddress))
         {
@@ -93,7 +91,7 @@ public class AccountsController : ControllerBase
 
         List<AccountResource> accounts = new List<AccountResource>();
 
-        await query.ForEachAsync(a => accounts.Add(this.mapper.AccountToResourceWithPostsAndCommentaries(a)));
+        await query.ForEachAsync(a => accounts.Add(this.mapper.Account_ToResource_WithGroups_AndPosts(a)));
 
         if (!string.IsNullOrWhiteSpace(mailAddress) && accounts.Count == 0)
         {
@@ -124,7 +122,7 @@ public class AccountsController : ControllerBase
 
             if (lastnameScore >= 0.6)
             {
-                accounts.Add(this.mapper.AccountToResource(a));
+                accounts.Add(this.mapper.Account_ToResource(a));
             }
             else if (!string.IsNullOrWhiteSpace(request.Firstname))
             {
@@ -132,7 +130,7 @@ public class AccountsController : ControllerBase
 
                 if ((lastnameScore + firstnameScore) >= 1.1)
                 {
-                    accounts.Add(this.mapper.AccountToResource(a));
+                    accounts.Add(this.mapper.Account_ToResource(a));
                 }
             }
         });
@@ -147,9 +145,8 @@ public class AccountsController : ControllerBase
 
         Account account = await this.context.Accounts
             .Where(a => a.MailAddress.Equals(mailAddress))
+            .Include(a => a.Groups)
             .Include(a => a.Posts)
-                .ThenInclude(p => p.Commentaries)
-            .Include(a => a.Commentaries)
             .FirstOrDefaultAsync();
 
         if (account == null)
@@ -157,7 +154,7 @@ public class AccountsController : ControllerBase
             return NotFound(new { message = "Account not found" });
         }
 
-        return Ok(this.mapper.AccountToResourceWithPostsAndCommentaries(account));
+        return Ok(this.mapper.Account_ToResource_WithGroups_AndPosts(account));
     }
 
     [HttpPut("role"), AuthorizeEnum(Role.Admin)]
@@ -188,15 +185,13 @@ public class AccountsController : ControllerBase
 
         await this.context.SaveChangesAsync();
         
-        return Ok(this.mapper.AccountToResource(account));
+        return Ok(this.mapper.Account_ToResource(account));
     }
 
     [HttpDelete, AuthorizeEnum(Role.Admin)]
     public async Task<ActionResult> Delete(string mailAddress)
     {
         Account account = await this.context.Accounts
-            .Include(a => a.Posts)
-            .Include(a => a.Commentaries)
             .Where(a => a.MailAddress.Equals(mailAddress))
             .FirstOrDefaultAsync();
 

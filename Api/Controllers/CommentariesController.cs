@@ -1,4 +1,5 @@
-﻿using Api.Models;
+﻿using Api.ExpositionModels;
+using Api.Models;
 using Api.Models.Entities;
 using Api.Utilitaries;
 using Microsoft.AspNetCore.Mvc;
@@ -23,7 +24,7 @@ public class CommentariesController : ControllerBase
     }
     
     [HttpPost]
-    public async Task<ActionResult<CommentaryResource>> Create(CreateCommentary request)
+    public async Task<ActionResult<CommentaryResource>> Create(CreateCommentary request, Guid? postId)
     {
         string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
@@ -37,7 +38,7 @@ public class CommentariesController : ControllerBase
         }
 
         Post post = await this.context.Posts
-            .FirstOrDefaultAsync(p => p.Id.Equals(request.PostId));
+            .FirstOrDefaultAsync(p => p.Id.Equals(postId));
 
         if (post == null)
         {
@@ -57,6 +58,6 @@ public class CommentariesController : ControllerBase
 
         await this.context.SaveChangesAsync();
 
-        return Created(nameof(Create), this.mapper.CommentaryToResourceWithPost(commentary));
+        return Created(nameof(Create), this.mapper.Post_ToResource(post));
     }
 }

@@ -9,6 +9,20 @@ namespace Api.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "AccountGroup");
+
+            migrationBuilder.DropTable(
+                name: "Commentaries");
+
+            migrationBuilder.DropTable(
+                name: "Posts");
+
+            migrationBuilder.DropTable(
+                name: "Groups");
+
+            migrationBuilder.DropTable(
+                name: "Accounts");
 
             migrationBuilder.CreateTable(
                 name: "Accounts",
@@ -159,7 +173,7 @@ namespace Api.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-
+            
         }
     }
 }

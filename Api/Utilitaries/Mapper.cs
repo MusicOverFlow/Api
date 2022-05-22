@@ -1,182 +1,48 @@
-﻿using Api.Models.Entities;
+﻿using Api.ExpositionModels;
+using Api.Models.Entities;
+using AutoMapper;
 
 namespace Api.Utilitaries;
 
 public class Mapper
 {
-    public AccountResource AccountToResource(Account account)
+    private readonly IMapper mapper;
+
+    public Mapper()
     {
-        if (account == null)
+        var configuration = new MapperConfiguration(c =>
         {
-            return null;
-        }
+            c.CreateMap<Account, AccountResource>();
+            c.CreateMap<Account, AccountResource_WithGroups>();
+            c.CreateMap<Account, AccountResource_WithPosts>();
+            c.CreateMap<Account, AccountResource_WithPosts_AndGroups>();
 
-        return new AccountResource()
-        {
-            MailAddress = account.MailAddress,
-            Firstname = account.Firstname,
-            Lastname = account.Lastname,
-            CreatedAt = account.CreatedAt,
-        };
-    }
+            c.CreateMap<Post, PostResource>();
 
-    public AccountResource AccountToResourceWithPostsAndCommentaries(Account account)
-    {
-        if (account == null)
-        {
-            return null;
-        }
+            c.CreateMap<Commentary, CommentaryResource>();
+            c.CreateMap<Commentary, CommentaryResource_WithPost>();
 
-        List<PostResource> posts = new List<PostResource>();
-
-        account.Posts.ToList().ForEach(post =>
-        {
-            posts.Add(this.PostToResourceWithCommentaries(post));
-        });
-        
-        List<PostResource> commentaries = new List<PostResource>();
-
-        account.Commentaries.ToList().ForEach(commentary =>
-        {
-            PostResource post = this.PostToResourceWithCommentaries(commentary.Post);
-            if (!posts.Contains(post))
-            {
-                commentaries.Add(post);
-            }
+            c.CreateMap<Group, GroupResource>();
+            c.CreateMap<Group, GroupResource_WithMembers>();
+            c.CreateMap<Group, GroupResource_WithPosts>();
+            c.CreateMap<Group, GroupResource_WithMembers_AndPosts>();
         });
 
-        return new AccountResource()
-        {
-            MailAddress = account.MailAddress,
-            Firstname = account.Firstname,
-            Lastname = account.Lastname,
-            CreatedAt = account.CreatedAt,
-            Posts = posts,
-        };
+        this.mapper = configuration.CreateMapper();
     }
 
+    public AccountResource Account_ToResource(Account account) => this.mapper.Map<AccountResource>(account);
+    public AccountResource Account_ToResource_WithGroups(Account account) => this.mapper.Map<AccountResource_WithGroups>(account);
+    public AccountResource Account_ToResource_WithPosts(Account account) => this.mapper.Map<AccountResource_WithPosts>(account);
+    public AccountResource Account_ToResource_WithGroups_AndPosts(Account account) => this.mapper.Map<AccountResource_WithPosts_AndGroups>(account);
 
+    public PostResource Post_ToResource(Post post) => this.mapper.Map<PostResource>(post);
 
+    public CommentaryResource Commentary_ToResource(Commentary commentary) => this.mapper.Map<CommentaryResource>(commentary);
+    public CommentaryResource Commentary_ToResource_WithPost(Commentary commentary) => this.mapper.Map<CommentaryResource_WithPost>(commentary);
 
-    
-
-    public PostResource PostToResource(Post post)
-    {
-        if (post == null)
-        {
-            return null;
-        }
-
-        return new PostResource()
-        {
-            Id = post.Id,
-            Title = post.Title,
-            Content = post.Content,
-            CreatedAt = post.CreatedAt,
-            Account = this.AccountToResource(post.Account),
-            Group = this.GroupToResource(post.Group),
-        };
-    }
-
-    public PostResource PostToResourceWithCommentaries(Post post)
-    {
-        if (post == null)
-        {
-            return null;
-        }
-
-        List<CommentaryResource> commentaries = new List<CommentaryResource>();
-
-        post.Commentaries.ToList().ForEach(commentary =>
-        {
-            commentaries.Add(this.CommentaryToResource(commentary));
-        });
-
-        return new PostResource()
-        {
-            Id = post.Id,
-            Title = post.Title,
-            Content = post.Content,
-            CreatedAt = post.CreatedAt,
-            Account = this.AccountToResource(post.Account),
-            Commentaries = commentaries,
-        };
-    }
-
-
-
-
-
-    
-
-    public CommentaryResource CommentaryToResource(Commentary commentary)
-    {
-        if (commentary == null)
-        {
-            return null;
-        }
-
-        return new CommentaryResource()
-        {
-            Id = commentary.Id,
-            Content = commentary.Content,
-            CreatedAt = commentary.CreatedAt,
-            Account = this.AccountToResource(commentary.Account),
-        };
-    }
-
-    public CommentaryResource CommentaryToResourceWithPost(Commentary commentary)
-    {
-        if (commentary == null)
-        {
-            return null;
-        }
-
-        return new CommentaryResource()
-        {
-            Id = commentary.Id,
-            Content = commentary.Content,
-            CreatedAt = commentary.CreatedAt,
-            Account = this.AccountToResource(commentary.Account),
-            Post = this.PostToResource(commentary.Post),
-        };
-    }
-
-
-
-
-
-    public GroupResource GroupToResource(Group group)
-    {
-        if (group == null)
-        {
-            return null;
-        }
-
-        List<AccountResource> members = new List<AccountResource>();
-
-        group.Members.ToList().ForEach(member =>
-        {
-            members.Add(this.AccountToResource(member));
-        });
-
-        List<PostResource> posts = new List<PostResource>();
-
-        group.Posts.ToList().ForEach(post =>
-        {
-            posts.Add(this.PostToResourceWithCommentaries(post));
-        });
-
-        return new GroupResource()
-        {
-            Id = group.Id,
-            Name = group.Name,
-            Description = group.Description,
-            CreatedAt = group.CreatedAt,
-            
-            Owner = this.AccountToResource(group.Owner),
-            Members = members,
-            Posts = posts,
-        };
-    }
+    public GroupResource Group_ToResource(Group group) => this.mapper.Map<GroupResource>(group);
+    public GroupResource Group_ToResource_WithMembers(Group group) => this.mapper.Map<GroupResource_WithMembers>(group);
+    public GroupResource Group_ToResource_WithPosts(Group group) => this.mapper.Map<GroupResource_WithPosts>(group);
+    public GroupResource Group_ToResource_WithMembers_AndPosts(Group group) => this.mapper.Map<GroupResource_WithMembers_AndPosts>(group);
 }

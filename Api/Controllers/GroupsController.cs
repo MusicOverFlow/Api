@@ -1,4 +1,5 @@
-﻿using Api.Models;
+﻿using Api.ExpositionModels;
+using Api.Models;
 using Api.Models.Entities;
 using Api.Utilitaries;
 using Microsoft.AspNetCore.Mvc;
@@ -34,6 +35,7 @@ public class GroupsController : ControllerBase
 
         Account account = await this.context.Accounts
             .Where(a => a.MailAddress.Equals(mailAddress))
+            .Include(a => a.Groups)
             .FirstOrDefaultAsync();
 
         if (account == null)
@@ -59,10 +61,11 @@ public class GroupsController : ControllerBase
         };
 
         this.context.Groups.Add(group);
-        
+        account.Groups.Add(group);
+
         await this.context.SaveChangesAsync();
 
-        return Created(nameof(Create), this.mapper.GroupToResource(group));
+        return Created(nameof(Create), this.mapper.Group_ToResource(group));
     }
 
     [HttpPost("join")]
@@ -80,9 +83,6 @@ public class GroupsController : ControllerBase
         }
 
         Group group = this.context.Groups
-            .Include(g => g.Owner)
-            .Include(g => g.Members)
-            .Include(g => g.Posts)
             .Where(p => p.Id.Equals(groupId))
             .FirstOrDefault();
 
@@ -100,7 +100,7 @@ public class GroupsController : ControllerBase
 
         await this.context.SaveChangesAsync();
 
-        return Ok(this.mapper.GroupToResource(group));
+        return Ok(this.mapper.Group_ToResource_WithMembers(group));
     }
 
     [HttpPost("kick")]
@@ -118,9 +118,6 @@ public class GroupsController : ControllerBase
         }
         
         Group group = this.context.Groups
-            .Include(g => g.Owner)
-            .Include(g => g.Members)
-            .Include(g => g.Posts)
             .Where(p => p.Id.Equals(groupId))
             .FirstOrDefault();
 
@@ -152,7 +149,7 @@ public class GroupsController : ControllerBase
 
         await this.context.SaveChangesAsync();
 
-        return Ok(this.mapper.GroupToResource(group));
+        return Ok(this.mapper.Group_ToResource_WithMembers(group));
     }
 
     [HttpGet("name")]
@@ -167,8 +164,6 @@ public class GroupsController : ControllerBase
 
         await this.context.Groups
             .Include(g => g.Owner)
-            .Include(g => g.Members)
-            .Include(g => g.Posts)
             .ForEachAsync(g =>
             {
                 if (groupResources.Count >= this.MAX_ACCOUNT_IN_SEARCHES)
@@ -178,10 +173,25 @@ public class GroupsController : ControllerBase
 
                 if (this.stringComparer.Compare(name, g.Name) >= 0.5)
                 {
-                    groupResources.Add(this.mapper.GroupToResource(g));
+                    groupResources.Add(this.mapper.Group_ToResource(g));
                 }
             });
 
         return Ok(groupResources);
+    }
+
+    [HttpGet("posts")]
+    public async Task<ActionResult<List<PostResource>>> ReadGroupPosts(Guid? groupId)
+    {
+        Group group = await this.context.Groups
+            .Where(p => p.Id.Equals(groupId))
+            .FirstOrDefaultAsync();
+
+        if (group == null)
+        {
+            return NotFound(new { message = "Group not found" });
+        }
+
+        return Ok(this.mapper.Group_ToResource_WithPosts(group));
     }
 }

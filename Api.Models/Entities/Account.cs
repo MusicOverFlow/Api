@@ -28,34 +28,3 @@ public class Account
 
     public ICollection<Group> Groups { get; set; }
 }
-
-public class AccountResource
-{
-    public string MailAddress { get; set; }
-    public string Firstname { get; set; }
-    public string Lastname { get; set; }
-    public DateTime CreatedAt { get; set; }
-
-    public ICollection<PostResource> Posts { get; set; }
-    public ICollection<PostResource> Commentaries { get; set; }
-}
-
-public class CreateAccount
-{
-    [Required] public string MailAddress { get; set; }
-    [Required] public string Password { get; set; }
-    public string Firstname { get; set; }
-    public string Lastname { get; set; }
-}
-
-public class ReadByNames
-{
-    public string Firstname { get; set; }
-    public string Lastname { get; set; }
-}
-
-public class Authentication
-{
-    [Required] public string MailAddress { get; set; }
-    [Required] public string Password { get; set; }
-}
