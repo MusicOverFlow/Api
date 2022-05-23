@@ -9,103 +9,145 @@ public class DataValidatorTests
     DataValidator dataValidator = new DataValidator();
 
     /**
-     * Mail validator tests
+     * Mail validation tests
      */
-    [Fact]
-    public void Mail_Valid_ShouldBeValid()
+    [Fact(DisplayName = 
+        "Mail 'gtouchet@myges.fr'\n" +
+        "Should be valid")]
+    public void MailValidation_1()
     {
         this.dataValidator.IsMailAddressValid("gtouchet@myges.fr").Should().BeTrue();
     }
 
-    [Fact]
-    public void Mail_WithoutAt_ShouldBeInvalid()
+    [Fact(DisplayName =
+        "Mail 'gtouchetmyges.fr'\n" +
+        "Should not be valid\n" +
+        "Because it is missing the '@'")]
+    public void MailValidation_2()
     {
         this.dataValidator.IsPasswordValid("gtouchesmyges.fr").Should().BeFalse();
     }
 
-    [Fact]
-    public void Mail_WithoutDot_ShouldBeInvalid()
+    [Fact(DisplayName =
+        "Mail 'gtouches@mygesfr'\n" +
+        "Should not be valid\n" +
+        "Because it is missing the '.'")]
+    public void MailValidation_3()
     {
         this.dataValidator.IsPasswordValid("gtouches@mygesfr").Should().BeFalse();
     }
 
-    [Fact]
-    public void Mail_WithoutDomain_ShouldBeInvalid()
+    [Fact(DisplayName =
+        "Mail 'gtouches@'\n" +
+        "Should not be valid\n" +
+        "Because it is missing the domain")]
+    public void MailValidation_4()
     {
         this.dataValidator.IsPasswordValid("gtouches@").Should().BeFalse();
     }
 
-    [Fact]
-    public void Mail_WithoutIdentifier_ShoudBeInvalid()
+    [Fact(DisplayName =
+        "Mail '@myges.fr'\n" +
+        "Should not be valid\n" +
+        "Because it is missing the address's name")]
+    public void MailValidation_5()
     {
         this.dataValidator.IsPasswordValid("@myges.fr").Should().BeFalse();
     }
 
-    [Fact]
-    public void Mail_Empty_ShoudBeInvalid()
+    [Fact(DisplayName =
+        "Empty mail\n" +
+        "Should not be valid")]
+    public void MailValidation_6()
     {
         this.dataValidator.IsPasswordValid("").Should().BeFalse();
     }
 
-    [Fact]
-    public void Mail_Null_ShoudBeInvalid()
+    [Fact(DisplayName =
+        "Null parameter\n" +
+        "Should not be valid")]
+    public void MailValidation_7()
     {
         this.dataValidator.IsPasswordValid(null).Should().BeFalse();
     }
 
     /**
-     * Password validator tests
+     * Password validation tests
      */
-    [Fact]
-    public void Password_With_LowerCase_UpperCase_Digit_Symbol_ShouldBeValid()
+    [Fact(DisplayName =
+        "Password '123MyPass?'\n" +
+        "Should be valid")]
+    public void PasswordValidation_1()
     {
         this.dataValidator.IsPasswordValid("123MyPass?").Should().BeTrue();
     }
 
-    [Fact]
-    public void Password_Without_LowerCase_ShouldBeInvalid()
+    [Fact(DisplayName =
+        "Password '123MYPASS?'\n" +
+        "Should not be valid\n" +
+        "Because it is missing the lower case letter")]
+    public void PasswordValidation_2()
     {
         this.dataValidator.IsPasswordValid("123MYPASS?").Should().BeFalse();
     }
 
-    [Fact]
-    public void Password_Without_UpperCase_ShouldBeInvalid()
+    [Fact(DisplayName =
+        "Password '123mypass?'\n" +
+        "Should not be valid\n" +
+        "Because it is missing the upper case letter")]
+    public void PasswordValidation_3()
     {
         this.dataValidator.IsPasswordValid("123mypass?").Should().BeFalse();
     }
 
-    [Fact]
-    public void Password_Without_Digit_ShouldBeInvalid()
+    [Fact(DisplayName =
+        "Password 'MyPass?'\n" +
+        "Should not be valid\n" +
+        "Because it is missing the digit")]
+    public void PasswordValidation_4()
     {
         this.dataValidator.IsPasswordValid("MyPass?").Should().BeFalse();
     }
 
-    [Fact]
-    public void Password_Without_Symbol_ShouldBeInvalid()
+    [Fact(DisplayName =
+        "Password '123MyPass'\n" +
+        "Should not be valid\n" +
+        "Because it is missing the symbol")]
+    public void PasswordValidation_5()
     {
         this.dataValidator.IsPasswordValid("123MyPass").Should().BeFalse();
     }
 
-    [Fact]
-    public void Password_TooShort_ShoudBeInvalid()
+    [Fact(DisplayName =
+        "Password '1Mp?'\n" +
+        "Should not be valid\n" +
+        "Because it is too short")]
+    public void PasswordValidation_6()
     {
         this.dataValidator.IsPasswordValid("1Mp?").Should().BeFalse();
     }
 
-    [Fact]
-    public void Password_TooLong_ShoudBeInvalid()
+    [Fact(DisplayName =
+        "Password '123456MyLongPassword?;:!'\n" +
+        "Should not be valid\n" +
+        "Because it is too long")]
+    public void PasswordValidation_7()
     {
         this.dataValidator.IsPasswordValid("123456MyLongPassword?;:!").Should().BeFalse();
     }
 
-    [Fact]
-    public void Password_Empty_ShoudBeInvalid()
+    [Fact(DisplayName =
+        "Empty password\n" +
+        "Should not be valid")]
+    public void PasswordValidation_8()
     {
         this.dataValidator.IsPasswordValid("").Should().BeFalse();
     }
 
-    [Fact]
-    public void Password_Null_ShoudBeInvalid()
+    [Fact(DisplayName =
+        "Null password\n" +
+        "Should not be valid")]
+    public void PasswordValidation_9()
     {
         this.dataValidator.IsPasswordValid(null).Should().BeFalse();
     }

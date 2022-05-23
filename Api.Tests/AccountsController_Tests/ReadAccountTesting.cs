@@ -1,51 +1,64 @@
 ﻿using Api.ExpositionModels;
-using Api.Models.Entities;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Net;
 using Xunit;
 
 namespace Api.Tests.AccountsController_Tests;
 
 public class ReadAccountTesting : AccountsControllerTestsBase
 {
-    // TODO: rewrite tests
     public ReadAccountTesting()
     {
-        this.CreateTestAccount();
+        _ = base.CreateAccount("gtouchet@myges.fr", "123Pass!", "Guillaume", "Touchet");
     }
 
-    private async void CreateTestAccount()
+    [Fact(DisplayName =
+        "Read accounts without specifying mail address\n" +
+        "Should return OkObjectResult with status code 200")]
+    public async void AccountReading_1()
     {
-        await base.CreateAccount("gtouchet@myges.fr", "123Pass!", "Guillaume", "Touchet");
-    }
+        await base.CreateAccount("gtouchet2@myges.fr", "123Pass!", "Guillaume", "Touchet");
 
-    [Fact]
-    public async void ReadAllAccounts_Size_ShouldBe_1()
-    {
-        ActionResult<List<AccountResource>> request = await accountsController.Read();
+        ActionResult<List<AccountResource>> request = await base.accountsController.Read();
         OkObjectResult result = request.Result as OkObjectResult;
         List<AccountResource> accounts = result.Value as List<AccountResource>;
 
-        int size = 0;
-        accounts.ForEach(account => size += 1);
-
-        size.Should().Be(1);
+        request.Result.Should().BeOfType<OkObjectResult>().Which.StatusCode.Should().Be((int)HttpStatusCode.OK);
     }
 
-    [Fact]
-    public async void ReadAccount_ExistingAddress_ShouldReturn_Ok()
+    [Fact(DisplayName =
+        "Read accounts without specifying mail address\n" +
+        "Should return all accounts")]
+    public async void AccountReading_2()
     {
-        ActionResult<List<AccountResource>> request = await accountsController.Read("gtouchet@myges.fr");
+        await base.CreateAccount("gtouchet2@myges.fr", "123Pass!", "Guillaume", "Touchet");
 
-        request.Result.GetType().Should().Be(typeof(OkObjectResult));
+        ActionResult<List<AccountResource>> request = await base.accountsController.Read();
+        OkObjectResult result = request.Result as OkObjectResult;
+        List<AccountResource> accounts = result.Value as List<AccountResource>;
+
+        accounts.Count.Should().Be(2);
     }
 
-    [Fact]
-    public async void ReadAccount_RandomAddress_ShouldReturn_NotFound()
+    [Fact(DisplayName =
+        "Read accounts specifying a mail address\n" +
+        "Should return OkObjectResult with status code 200")]
+    public async void AccountReading_3()
     {
-        ActionResult<List<AccountResource>> request = await accountsController.Read("random@whatever.fr");
+        ActionResult<List<AccountResource>> request = await base.accountsController.Read("gtouchet@myges.fr");
 
-        request.Result.GetType().Should().Be(typeof(NotFoundObjectResult));
+        request.Result.Should().BeOfType<OkObjectResult>().Which.StatusCode.Should().Be((int)HttpStatusCode.OK);
+    }
+
+    [Fact(DisplayName =
+        "Read accounts specifying a random mail address\n" +
+        "Should return NotFoundObjectResult with status code 404")]
+    public async void AccountReading_4()
+    {
+        ActionResult<List<AccountResource>> request = await base.accountsController.Read("random@whatever.fr");
+
+        request.Result.Should().BeOfType<NotFoundObjectResult>().Which.StatusCode.Should().Be((int)HttpStatusCode.NotFound);
     }
 }

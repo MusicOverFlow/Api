@@ -11,21 +11,16 @@ public class ReadNameTesting : AccountsControllerTestsBase
 {
     public ReadNameTesting()
     {
-        this.CreateTestAccount();
-    }
-
-    private async void CreateTestAccount()
-    {
-        await base.CreateAccount("gtouchet@myges.fr", "123Pass!", "Guillaume", "Touchet");
+        _ = base.CreateAccount("gtouchet@myges.fr", "123Pass!", "Guillaume", "Touchet");
     }
     
     [Fact(DisplayName =
-        "Searching lastname 'Touch',\n" +
-        "Should return the account,\n" +
+        "Searching lastname 'Touch'\n" +
+        "Should return the account\n" +
         "Because similarity score is high enough")]
     public async void ReadAccountByName_1()
     {
-        ActionResult<List<AccountResource>> request = await accountsController.ReadNames(new ReadByNames()
+        ActionResult<List<AccountResource>> request = await base.accountsController.ReadNames(new ReadByNames()
         {
             Lastname = "Touch",
         });
@@ -36,12 +31,12 @@ public class ReadNameTesting : AccountsControllerTestsBase
     }
 
     [Fact(DisplayName =
-    "Searching lastname 'oucet',\n" +
-    "Should return the account,\n" +
-    "Because similarity score is high enough")]
+        "Searching lastname 'oucet'\n" +
+        "Should return the account\n" +
+        "Because similarity score is high enough")]
     public async void ReadAccountByName_2()
     {
-        ActionResult<List<AccountResource>> request = await accountsController.ReadNames(new ReadByNames()
+        ActionResult<List<AccountResource>> request = await base.accountsController.ReadNames(new ReadByNames()
         {
             Lastname = "oucet",
         });
@@ -53,12 +48,12 @@ public class ReadNameTesting : AccountsControllerTestsBase
     }
 
     [Fact(DisplayName =
-        "Searching lastname 'Tou',\n" +
-        "Should not return the account,\n" +
+        "Searching lastname 'Tou'\n" +
+        "Should not return the account\n" +
         "Because similarity score is too low")]
     public async void ReadAccountByName_3()
     {
-        ActionResult<List<AccountResource>> request = await accountsController.ReadNames(new ReadByNames()
+        ActionResult<List<AccountResource>> request = await base.accountsController.ReadNames(new ReadByNames()
         {
             Lastname = "Tou",
         });
@@ -69,12 +64,12 @@ public class ReadNameTesting : AccountsControllerTestsBase
     }
 
     [Fact(DisplayName =
-        "Searching lastname 'Tou' and firstname 'Guillau',\n" +
-        "Should return the account,\n" +
+        "Searching lastname 'Tou' and firstname 'Guillau'\n" +
+        "Should return the account\n" +
         "Because names added similarity score are high enough")]
     public async void ReadAccountByName_4()
     {
-        ActionResult<List<AccountResource>> request = await accountsController.ReadNames(new ReadByNames()
+        ActionResult<List<AccountResource>> request = await base.accountsController.ReadNames(new ReadByNames()
         {
             Firstname = "Guillau",
             Lastname = "Tou",
@@ -87,12 +82,12 @@ public class ReadNameTesting : AccountsControllerTestsBase
     }
 
     [Fact(DisplayName =
-        "Searching lastname 'Touchai' and firstname 'Gillome',\n" +
-        "Should return the account,\n" +
+        "Searching lastname 'Touchai' and firstname 'Gillome'\n" +
+        "Should return the account\n" +
         "Because names added similarity score are high enough")]
     public async void ReadAccountByName_5()
     {
-        ActionResult<List<AccountResource>> request = await accountsController.ReadNames(new ReadByNames()
+        ActionResult<List<AccountResource>> request = await base.accountsController.ReadNames(new ReadByNames()
         {
             Firstname = "Gillome",
             Lastname = "Touchai",

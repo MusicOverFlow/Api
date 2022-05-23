@@ -10,7 +10,7 @@ public class Mapper
 
     public Mapper()
     {
-        var configuration = new MapperConfiguration(c =>
+        MapperConfiguration configuration = new MapperConfiguration(c =>
         {
             c.CreateMap<Account, AccountResource>();
             c.CreateMap<Account, AccountResource_WithGroups>();
