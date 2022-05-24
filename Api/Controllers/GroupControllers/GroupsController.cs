@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace Api.Controllers;
+namespace Api.Controllers.GroupControllers;
 
 [Route("api/groups")]
 [ApiController]
@@ -26,11 +26,10 @@ public class GroupsController : ControllerBase
     public async Task<ActionResult<GroupResource>> Create(CreateGroup request)
     {
         string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
-
+        
         Account account = await this.context.Accounts
-            .Where(a => a.MailAddress.Equals(mailAddress))
             .Include(a => a.Groups)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(a => a.MailAddress.Equals(mailAddress));
 
         if (account == null)
         {
@@ -59,7 +58,7 @@ public class GroupsController : ControllerBase
 
         await this.context.SaveChangesAsync();
 
-        return Created(nameof(Create), this.mapper.Group_ToResource(group));
+        return Created(nameof(Create), mapper.Group_ToResource(group));
     }
 
     [HttpPost("join")]
@@ -68,17 +67,15 @@ public class GroupsController : ControllerBase
         string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
         Account account = await this.context.Accounts
-            .Where(a => a.MailAddress.Equals(mailAddress))
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(a => a.MailAddress.Equals(mailAddress));
 
         if (account == null)
         {
             return NotFound(new { message = "Account not found" });
         }
 
-        Group group = this.context.Groups
-            .Where(p => p.Id.Equals(groupId))
-            .FirstOrDefault();
+        Group group = await this.context.Groups
+            .FirstOrDefaultAsync(p => p.Id.Equals(groupId));
 
         if (group == null)
         {
@@ -103,17 +100,15 @@ public class GroupsController : ControllerBase
         string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
         Account callerAccount = await this.context.Accounts
-            .Where(a => a.MailAddress.Equals(mailAddress))
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(a => a.MailAddress.Equals(mailAddress));
 
         if (callerAccount == null)
         {
             return NotFound(new { message = "Account not found" });
         }
 
-        Group group = this.context.Groups
-            .Where(p => p.Id.Equals(groupId))
-            .FirstOrDefault();
+        Group group = await this.context.Groups
+            .FirstOrDefaultAsync(p => p.Id.Equals(groupId));
 
         if (group == null)
         {
@@ -125,9 +120,8 @@ public class GroupsController : ControllerBase
             return BadRequest(new { message = "You are not the owner of the group" });
         }
 
-        Account memberAccount = this.context.Accounts
-            .Where(a => a.MailAddress.Equals(memberMailAddress))
-            .FirstOrDefault();
+        Account memberAccount = await this.context.Accounts
+            .FirstOrDefaultAsync(a => a.MailAddress.Equals(memberMailAddress));
 
         if (memberAccount == null)
         {
@@ -143,7 +137,7 @@ public class GroupsController : ControllerBase
 
         await this.context.SaveChangesAsync();
 
-        return Ok(this.mapper.Group_ToResource_WithMembers(group));
+        return Ok(mapper.Group_ToResource_WithMembers(group));
     }
 
     [HttpGet("name")]
@@ -167,7 +161,7 @@ public class GroupsController : ControllerBase
 
                 if (this.stringComparer.Compare(name, g.Name) >= 0.5)
                 {
-                    groupResources.Add(this.mapper.Group_ToResource(g));
+                    groupResources.Add(mapper.Group_ToResource(g));
                 }
             });
 
@@ -178,8 +172,7 @@ public class GroupsController : ControllerBase
     public async Task<ActionResult<List<PostResource>>> ReadGroupPosts(Guid? groupId)
     {
         Group group = await this.context.Groups
-            .Where(p => p.Id.Equals(groupId))
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(p => p.Id.Equals(groupId));
 
         if (group == null)
         {

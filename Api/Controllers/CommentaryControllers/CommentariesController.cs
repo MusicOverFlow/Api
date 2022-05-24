@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace Api.Controllers;
+namespace Api.Controllers.CommentaryControllers;
 
 [Route("api/commentaries")]
 [ApiController]
@@ -23,8 +23,7 @@ public class CommentariesController : ControllerBase
         string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
         Account account = await this.context.Accounts
-            .Where(a => a.MailAddress.Equals(mailAddress))
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(a => a.MailAddress.Equals(mailAddress));
 
         if (account == null)
         {
@@ -46,12 +45,12 @@ public class CommentariesController : ControllerBase
             Owner = account,
             Post = post,
         };
-
+        
         this.context.Commentaries.Add(commentary);
         post.Commentaries.Add(commentary);
 
         await this.context.SaveChangesAsync();
 
-        return Created(nameof(Create), this.mapper.Post_ToResource(post));
+        return Created(nameof(Create), mapper.Post_ToResource(post));
     }
 }

@@ -6,8 +6,7 @@ public partial class AccountControllerBase
     public async Task<ActionResult> Delete(string mailAddress)
     {
         Account account = await this.context.Accounts
-            .Where(a => a.MailAddress.Equals(mailAddress))
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(a => a.MailAddress.Equals(mailAddress));
 
         if (account == null)
         {

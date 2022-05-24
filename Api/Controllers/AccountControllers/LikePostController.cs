@@ -10,10 +10,9 @@ public partial class AccountControllerBase
         string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
         Account account = await this.context.Accounts
-            .Where(a => a.MailAddress.Equals(mailAddress))
             .Include(a => a.LikedPosts)
             .Include(a => a.LikedCommentaries)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(a => a.MailAddress.Equals(mailAddress));
 
         if (account == null)
         {
@@ -21,9 +20,8 @@ public partial class AccountControllerBase
         }
 
         Post post = await this.context.Posts
-            .Where(p => p.Id.Equals(id))
             .Include(p => p.Likes)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(p => p.Id.Equals(id));
 
         if (post != null)
         {
@@ -42,9 +40,8 @@ public partial class AccountControllerBase
         else
         {
             Commentary commentary = await this.context.Commentaries
-                .Where(c => c.Id.Equals(id))
                 .Include(c => c.Likes)
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(c => c.Id.Equals(id));
 
             if (commentary == null)
             {

@@ -11,8 +11,7 @@ public partial class AccountControllerBase
         }
 
         Account account = await this.context.Accounts
-            .Where(a => a.MailAddress.Equals(mailAddress))
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(a => a.MailAddress.Equals(mailAddress));
 
         if (account == null)
         {

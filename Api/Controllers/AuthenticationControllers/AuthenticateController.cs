@@ -3,35 +3,35 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 
-namespace Api.Controllers;
+namespace Api.Controllers.AuthenticationControllers;
 
 [Route("api/authenticate")]
 [ApiController]
-public class AuthenticationsController : ControllerBase
+public class AuthenticateController : ControllerBase
 {
     private readonly ModelsContext context;
     private readonly IConfiguration configuration;
 
-    public AuthenticationsController(ModelsContext context, IConfiguration configuration)
+    public AuthenticateController(ModelsContext context, IConfiguration configuration)
     {
         this.context = context;
         this.configuration = configuration;
     }
 
     [HttpPost]
-    public async Task<ActionResult<string>> Authenticate(Authentication connection)
+    public async Task<ActionResult<string>> Authenticate(Authentication request)
     {
         Account account = await this.context.Accounts
-            .FirstOrDefaultAsync(a => a.MailAddress.Equals(connection.MailAddress));
+            .FirstOrDefaultAsync(a => a.MailAddress.Equals(request.MailAddress));
 
-        if (account == null || !this.IsPasswordCorrect(connection.Password, account.PasswordHash, account.PasswordSalt))
+        if (account == null || !IsPasswordCorrect(request.Password, account.PasswordHash, account.PasswordSalt))
         {
-            return BadRequest(new { errorMessage = "Wrong credentials" });
+            return BadRequest(new { message = "Wrong credentials" });
         }
 
-        string jwt = this.CreateJwt(account);
+        string jwt = CreateJwt(account);
 
-        return Ok(new { jwt = jwt });
+        return Ok(new { jwt });
     }
 
     private bool IsPasswordCorrect(string password, byte[] hash, byte[] salt)
@@ -43,7 +43,7 @@ public class AuthenticationsController : ControllerBase
 
     private string CreateJwt(Account account)
     {
-        DateTime expiration = DateTime.Now.AddMinutes(Convert.ToDouble(this.configuration.GetSection("AppSettings:Token:ExpirationTimeInMinutes").Value));
+        DateTime expiration = DateTime.Now.AddMinutes(Convert.ToDouble(configuration.GetSection("AppSettings:Token:ExpirationTimeInMinutes").Value));
 
         return new JwtSecurityTokenHandler().WriteToken(new JwtSecurityToken(
             claims: new List<Claim>()
@@ -53,7 +53,7 @@ public class AuthenticationsController : ControllerBase
             },
             expires: expiration,
             signingCredentials: new SigningCredentials(
-                new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(this.configuration.GetSection("AppSettings:Token:Key").Value)),
+                new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(configuration.GetSection("AppSettings:Token:Key").Value)),
                 SecurityAlgorithms.HmacSha256Signature
             )
         ));
