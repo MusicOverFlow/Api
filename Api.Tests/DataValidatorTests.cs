@@ -11,7 +11,7 @@ public class DataValidatorTests
     /**
      * Mail validation tests
      */
-    [Fact(DisplayName = 
+    [Fact(DisplayName =
         "Mail 'gtouchet@myges.fr'\n" +
         "Should be valid")]
     public void MailValidation_1()

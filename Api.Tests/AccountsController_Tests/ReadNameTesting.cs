@@ -13,7 +13,7 @@ public class ReadNameTesting : AccountsControllerTestsBase
     {
         _ = base.CreateAccount("gtouchet@myges.fr", "123Pass!", "Guillaume", "Touchet");
     }
-    
+
     [Fact(DisplayName =
         "Searching lastname 'Touch'\n" +
         "Should return the account\n" +

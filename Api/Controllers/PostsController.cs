@@ -1,11 +1,4 @@
-﻿using Api.ExpositionModels;
-using Api.Models;
-using Api.Models.Entities;
-using Api.Utilitaries;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
-using static Api.Wrappers.AuthorizeRolesAttribute;
+﻿using System.Security.Claims;
 
 namespace Api.Controllers;
 
@@ -23,7 +16,7 @@ public class PostsController : ControllerBase
         this.context = context;
         this.mapper = mapper;
     }
-    
+
     [HttpPost]
     public async Task<ActionResult<PostResource>> Create(CreatePost request, Guid? groupId)
     {
@@ -56,7 +49,7 @@ public class PostsController : ControllerBase
             Title = request.Title,
             Content = request.Content,
             CreatedAt = DateTime.Now,
-            
+
             Owner = account,
             Commentaries = new List<Commentary>(),
             Group = group,
@@ -83,7 +76,7 @@ public class PostsController : ControllerBase
         }
 
         List<PostResource> posts = new List<PostResource>();
-        
+
         await query.ForEachAsync(p => posts.Add(this.mapper.Post_ToResource(p)));
 
         if (id != null && posts.Count == 0)
@@ -104,7 +97,7 @@ public class PostsController : ControllerBase
             .Include(a => a.OwnedPosts)
                 .ThenInclude(p => p.Group)
             .FirstOrDefaultAsync();
-        
+
         if (account == null)
         {
             return NotFound(new { errorMessage = "Account not found" });

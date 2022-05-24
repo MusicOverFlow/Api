@@ -1,11 +1,17 @@
+global using Api.ExpositionModels;
+global using Api.Models;
+global using Api.Models.Entities;
+global using Api.Models.Enums;
+global using Api.Utilitaries;
+global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.EntityFrameworkCore;
+global using static Api.Wrappers.AuthorizeRolesAttribute;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Api.Models;
-using System.Text;
 using Microsoft.OpenApi.Models;
+using System.Text;
 using System.Text.Json.Serialization;
-using Api.Utilitaries;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 

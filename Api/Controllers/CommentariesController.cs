@@ -1,10 +1,4 @@
-﻿using Api.ExpositionModels;
-using Api.Models;
-using Api.Models.Entities;
-using Api.Utilitaries;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 
 namespace Api.Controllers;
 
@@ -22,7 +16,7 @@ public class CommentariesController : ControllerBase
         this.context = context;
         this.mapper = mapper;
     }
-    
+
     [HttpPost]
     public async Task<ActionResult<CommentaryResource>> Create(CreateCommentary request, Guid? postId)
     {

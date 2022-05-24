@@ -1,11 +1,11 @@
-using Api.Models;
 using Api.Controllers;
-using Microsoft.EntityFrameworkCore;
-using System;
+using Api.ExpositionModels;
+using Api.Models;
 using Api.Utilitaries;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Threading.Tasks;
-using Api.ExpositionModels;
 
 namespace Api.Tests.AccountsController_Tests;
 
@@ -19,7 +19,7 @@ public class AccountsControllerTestsBase
 
     protected async Task<ActionResult<AccountResource>> CreateAccount(string mailAddress, string password, string firstname, string lastname)
     {
-        return await this.accountsController.Create(new CreateAccount()
+        return await this.accountsController.Create(new CreateAccountRequest()
         {
             MailAddress = mailAddress,
             Password = password,

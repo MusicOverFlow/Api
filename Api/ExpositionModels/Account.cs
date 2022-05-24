@@ -30,14 +30,14 @@ public class AccountResource_WithPosts_AndGroups : AccountResource
     public IEnumerable<PostResource> OwnedPosts { get; set; }
     public IEnumerable<PostResource> LikedPosts { get; set; }
     public IEnumerable<CommentaryResource> LikedCommentaries { get; set; }
-    
+
     public IEnumerable<GroupResource> Groups { get; set; }
 }
 
 /**
  * Request classes
  */
-public class CreateAccount
+public class CreateAccountRequest
 {
     [Required] public string MailAddress { get; set; }
     [Required] public string Password { get; set; }

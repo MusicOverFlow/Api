@@ -1,10 +1,4 @@
-﻿using Api.ExpositionModels;
-using Api.Models;
-using Api.Models.Entities;
-using Api.Utilitaries;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 
 namespace Api.Controllers;
 
@@ -54,7 +48,7 @@ public class GroupsController : ControllerBase
             Name = request.Name,
             Description = request.Description,
             CreatedAt = DateTime.Now,
-            
+
             Owner = account,
             Members = new List<Account>(),
             Posts = new List<Post>(),
@@ -107,7 +101,7 @@ public class GroupsController : ControllerBase
     public async Task<ActionResult<GroupResource>> Kick(Guid groupId, string memberMailAddress)
     {
         string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
-        
+
         Account callerAccount = await this.context.Accounts
             .Where(a => a.MailAddress.Equals(mailAddress))
             .FirstOrDefaultAsync();
@@ -116,7 +110,7 @@ public class GroupsController : ControllerBase
         {
             return NotFound(new { message = "Account not found" });
         }
-        
+
         Group group = this.context.Groups
             .Where(p => p.Id.Equals(groupId))
             .FirstOrDefault();
