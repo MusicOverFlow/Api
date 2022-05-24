@@ -16,7 +16,7 @@ public class GroupResource
 
 public class GroupResource_WithMembers : GroupResource
 {
-    public IEnumerable<AccountResource> Members { get; set; }
+    public ICollection<AccountResource> Members { get; set; }
 }
 
 public class GroupResource_WithPosts : GroupResource
@@ -26,7 +26,7 @@ public class GroupResource_WithPosts : GroupResource
 
 public class GroupResource_WithMembers_AndPosts : GroupResource
 {
-    public IEnumerable<AccountResource> Members { get; set; }
+    public ICollection<AccountResource> Members { get; set; }
     public ICollection<PostResource> Posts { get; set; }
 }
 

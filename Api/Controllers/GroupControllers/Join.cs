@@ -18,6 +18,7 @@ public partial class GroupController
         }
 
         Group group = await this.context.Groups
+            .Include(g => g.Members)
             .FirstOrDefaultAsync(p => p.Id.Equals(groupId));
 
         if (group == null)
@@ -34,6 +35,6 @@ public partial class GroupController
 
         await this.context.SaveChangesAsync();
 
-        return Ok(this.mapper.Group_ToResource_WithMembers(group));
+        return Ok(this.mapper.Group_ToResource(group));
     }
 }

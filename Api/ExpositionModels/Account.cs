@@ -15,23 +15,23 @@ public class AccountResource
 
 public class AccountResource_WithPosts : AccountResource
 {
-    public IEnumerable<PostResource> OwnedPosts { get; set; }
-    public IEnumerable<PostResource> LikedPosts { get; set; }
-    public IEnumerable<CommentaryResource> LikedCommentaries { get; set; }
+    public ICollection<PostResource> OwnedPosts { get; set; }
+    public ICollection<PostResource> LikedPosts { get; set; }
+    public ICollection<CommentaryResource> LikedCommentaries { get; set; }
 }
 
 public class AccountResource_WithGroups : AccountResource
 {
-    public IEnumerable<GroupResource> Groups { get; set; }
+    public ICollection<GroupResource> Groups { get; set; }
 }
 
 public class AccountResource_WithPosts_AndGroups : AccountResource
 {
-    public IEnumerable<PostResource> OwnedPosts { get; set; }
-    public IEnumerable<PostResource> LikedPosts { get; set; }
-    public IEnumerable<CommentaryResource> LikedCommentaries { get; set; }
+    public ICollection<PostResource> OwnedPosts { get; set; }
+    public ICollection<PostResource> LikedPosts { get; set; }
+    public ICollection<CommentaryResource> LikedCommentaries { get; set; }
 
-    public IEnumerable<GroupResource> Groups { get; set; }
+    public ICollection<GroupResource> Groups { get; set; }
 }
 
 /**

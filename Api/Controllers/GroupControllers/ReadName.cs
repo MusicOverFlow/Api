@@ -10,23 +10,24 @@ public partial class GroupController
             return BadRequest(new { message = "Invalid name" });
         }
 
-        List<GroupResource> groupResources = new List<GroupResource>();
+        List<GroupResource_WithMembers> groups = new List<GroupResource_WithMembers>();
 
         await this.context.Groups
             .Include(g => g.Owner)
+            .Include(g => g.Members)
             .ForEachAsync(g =>
             {
-                if (groupResources.Count >= this.MAX_GROUPS_IN_SEARCHES)
+                if (groups.Count >= this.MAX_GROUPS_IN_SEARCHES)
                 {
                     return;
                 }
 
                 if (this.stringComparer.Compare(name, g.Name) >= 0.5)
                 {
-                    groupResources.Add(mapper.Group_ToResource(g));
+                    groups.Add(this.mapper.Group_ToResource_WithMembers(g));
                 }
             });
 
-        return Ok(groupResources);
+        return Ok(groups);
     }
 }
