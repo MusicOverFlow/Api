@@ -36,11 +36,6 @@ public partial class AccountControllerBase
             Firstname = request.Firstname ?? "Unknown",
             Lastname = request.Lastname ?? "Unknown",
             CreatedAt = DateTime.Now,
-
-            // TODO: vérifier si obligatoire
-            OwnedPosts = new List<Post>(),
-            OwnedCommentaries = new List<Commentary>(),
-            Groups = new List<Group>(),
         };
 
         this.context.Accounts.Add(account);

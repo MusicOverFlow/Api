@@ -51,7 +51,6 @@ public class PostsController : ControllerBase
             CreatedAt = DateTime.Now,
 
             Owner = account,
-            Commentaries = new List<Commentary>(),
             Group = group,
         };
 

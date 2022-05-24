@@ -49,8 +49,6 @@ public class GroupsController : ControllerBase
             CreatedAt = DateTime.Now,
 
             Owner = account,
-            Members = new List<Account>(),
-            Posts = new List<Post>(),
         };
 
         this.context.Groups.Add(group);

@@ -42,6 +42,7 @@ public class CommentariesController : ControllerBase
         {
             Content = request.Content,
             CreatedAt = DateTime.Now,
+            
             Owner = account,
             Post = post,
         };
