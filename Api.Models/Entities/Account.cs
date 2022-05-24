@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Api.Models.Entities;
+﻿namespace Api.Models.Entities;
 
 [Table("Accounts")]
 public class Account
