@@ -1,13 +1,6 @@
-﻿using Api.ExpositionModels;
-using Api.Models;
-using Api.Models.Entities;
-using Api.Utilitaries;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
-using static Api.Wrappers.AuthorizeRolesAttribute;
+﻿using System.Security.Claims;
 
-namespace Api.Controllers;
+namespace Api.Controllers.PostControllers;
 
 [Route("api/posts")]
 [ApiController]
@@ -23,13 +16,13 @@ public class PostsController : ControllerBase
         this.context = context;
         this.mapper = mapper;
     }
-    
+
     [HttpPost]
     public async Task<ActionResult<PostResource>> Create(CreatePost request, Guid? groupId)
     {
-        string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
+        string mailAddress = User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
-        Account account = await this.context.Accounts
+        Account account = await context.Accounts
             .Where(a => a.MailAddress.Equals(mailAddress))
             .FirstOrDefaultAsync();
 
@@ -41,7 +34,7 @@ public class PostsController : ControllerBase
         Group group = null;
         if (groupId != null)
         {
-            group = this.context.Groups
+            group = context.Groups
                 .Where(g => g.Id.Equals(groupId))
                 .FirstOrDefault();
 
@@ -56,23 +49,22 @@ public class PostsController : ControllerBase
             Title = request.Title,
             Content = request.Content,
             CreatedAt = DateTime.Now,
-            
+
             Owner = account,
-            Commentaries = new List<Commentary>(),
             Group = group,
         };
 
-        this.context.Posts.Add(post);
+        context.Posts.Add(post);
 
-        await this.context.SaveChangesAsync();
+        await context.SaveChangesAsync();
 
-        return Created(nameof(Create), this.mapper.Post_ToResource(post));
+        return Created(nameof(Create), mapper.Post_ToResource(post));
     }
 
     [HttpGet]
     public async Task<ActionResult<List<PostResource>>> Read(Guid? id = null)
     {
-        IQueryable<Post> query = this.context.Posts
+        IQueryable<Post> query = context.Posts
             .Include(p => p.Owner)
             .Include(p => p.Group)
             .Include(p => p.Likes);
@@ -83,8 +75,8 @@ public class PostsController : ControllerBase
         }
 
         List<PostResource> posts = new List<PostResource>();
-        
-        await query.ForEachAsync(p => posts.Add(this.mapper.Post_ToResource(p)));
+
+        await query.ForEachAsync(p => posts.Add(mapper.Post_ToResource(p)));
 
         if (id != null && posts.Count == 0)
         {
@@ -97,19 +89,19 @@ public class PostsController : ControllerBase
     [HttpGet("byAccount")]
     public async Task<ActionResult<List<PostResource>>> ReadAccountPosts()
     {
-        string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
+        string mailAddress = User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
-        Account account = await this.context.Accounts
+        Account account = await context.Accounts
             .Where(a => a.MailAddress.Equals(mailAddress))
             .Include(a => a.OwnedPosts)
                 .ThenInclude(p => p.Group)
             .FirstOrDefaultAsync();
-        
+
         if (account == null)
         {
             return NotFound(new { errorMessage = "Account not found" });
         }
 
-        return Ok(this.mapper.Account_ToResource_WithPosts(account));
+        return Ok(mapper.Account_ToResource_WithPosts(account));
     }
 }

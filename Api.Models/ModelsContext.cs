@@ -1,4 +1,7 @@
-﻿using Api.Models.Entities;
+﻿global using System.ComponentModel.DataAnnotations;
+global using System.ComponentModel.DataAnnotations.Schema;
+
+using Api.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Api.Models;

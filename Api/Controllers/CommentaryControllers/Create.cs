@@ -1,36 +1,16 @@
-﻿using Api.ExpositionModels;
-using Api.Models;
-using Api.Models.Entities;
-using Api.Utilitaries;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 
-namespace Api.Controllers;
+namespace Api.Controllers.CommentaryControllers;
 
-[Route("api/commentaries")]
-[ApiController]
-public class CommentariesController : ControllerBase
+public partial class CommentaryController
 {
-    private readonly ModelsContext context;
-    private readonly Mapper mapper;
-
-    public CommentariesController(
-        ModelsContext context,
-        Mapper mapper)
-    {
-        this.context = context;
-        this.mapper = mapper;
-    }
-    
     [HttpPost]
     public async Task<ActionResult<CommentaryResource>> Create(CreateCommentary request, Guid? postId)
     {
         string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
         Account account = await this.context.Accounts
-            .Where(a => a.MailAddress.Equals(mailAddress))
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(a => a.MailAddress.Equals(mailAddress));
 
         if (account == null)
         {
@@ -49,6 +29,7 @@ public class CommentariesController : ControllerBase
         {
             Content = request.Content,
             CreatedAt = DateTime.Now,
+
             Owner = account,
             Post = post,
         };
@@ -58,6 +39,6 @@ public class CommentariesController : ControllerBase
 
         await this.context.SaveChangesAsync();
 
-        return Created(nameof(Create), this.mapper.Post_ToResource(post));
+        return Created(nameof(Create), mapper.Post_ToResource(post));
     }
 }

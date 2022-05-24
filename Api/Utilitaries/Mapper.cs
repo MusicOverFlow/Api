@@ -1,6 +1,4 @@
-﻿using Api.ExpositionModels;
-using Api.Models.Entities;
-using AutoMapper;
+﻿using AutoMapper;
 
 namespace Api.Utilitaries;
 

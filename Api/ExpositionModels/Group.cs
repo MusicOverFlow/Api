@@ -35,6 +35,6 @@ public class GroupResource_WithMembers_AndPosts : GroupResource
  */
 public class CreateGroup
 {
-    [Required, MaxLength(25)]  public string Name { get; set; }
+    [Required, MaxLength(25)] public string Name { get; set; }
     [Required, MaxLength(100)] public string Description { get; set; }
 }

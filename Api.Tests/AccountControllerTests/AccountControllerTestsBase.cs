@@ -1,25 +1,23 @@
+using Api.Controllers.AccountControllers;
 using Api.Models;
-using Api.Controllers;
+using Api.Utilitaries;
 using Microsoft.EntityFrameworkCore;
 using System;
-using Api.Utilitaries;
-using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using Api.ExpositionModels;
 
-namespace Api.Tests.AccountsController_Tests;
+namespace Api.Tests.AccountControllerTests;
 
-public class AccountsControllerTestsBase
+public class AccountControllerTestsBase
 {
-    protected readonly AccountsController accountsController = new AccountsController(
+    protected readonly AccountController accountsController = new AccountController(
             new ModelsContext(new DbContextOptionsBuilder<ModelsContext>().UseInMemoryDatabase(Guid.NewGuid().ToString()).Options),
-            new DataValidator(),
             new Mapper(),
+            new DataValidator(),
             new Utilitaries.StringComparer());
 
     protected async Task<ActionResult<AccountResource>> CreateAccount(string mailAddress, string password, string firstname, string lastname)
     {
-        return await this.accountsController.Create(new CreateAccount()
+        return await accountsController.Create(new CreateAccountRequest()
         {
             MailAddress = mailAddress,
             Password = password,

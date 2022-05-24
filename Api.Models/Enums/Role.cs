@@ -1,5 +1,4 @@
-﻿
-namespace Api.Models.Enums;
+﻿namespace Api.Models.Enums;
 
 public enum Role
 {

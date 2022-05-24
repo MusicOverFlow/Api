@@ -1,79 +1,11 @@
 ﻿using Api.Utilitaries;
-using FluentAssertions;
-using Xunit;
 
-namespace Api.Tests;
+namespace Api.Tests.DataValidatorTests;
 
-public class DataValidatorTests
+public class PasswordValidationTests
 {
     private readonly DataValidator dataValidator = new DataValidator();
 
-    /**
-     * Mail validation tests
-     */
-    [Fact(DisplayName = 
-        "Mail 'gtouchet@myges.fr'\n" +
-        "Should be valid")]
-    public void MailValidation_1()
-    {
-        this.dataValidator.IsMailAddressValid("gtouchet@myges.fr").Should().BeTrue();
-    }
-
-    [Fact(DisplayName =
-        "Mail 'gtouchetmyges.fr'\n" +
-        "Should not be valid\n" +
-        "Because it is missing the '@'")]
-    public void MailValidation_2()
-    {
-        this.dataValidator.IsPasswordValid("gtouchesmyges.fr").Should().BeFalse();
-    }
-
-    [Fact(DisplayName =
-        "Mail 'gtouches@mygesfr'\n" +
-        "Should not be valid\n" +
-        "Because it is missing the '.'")]
-    public void MailValidation_3()
-    {
-        this.dataValidator.IsPasswordValid("gtouches@mygesfr").Should().BeFalse();
-    }
-
-    [Fact(DisplayName =
-        "Mail 'gtouches@'\n" +
-        "Should not be valid\n" +
-        "Because it is missing the domain")]
-    public void MailValidation_4()
-    {
-        this.dataValidator.IsPasswordValid("gtouches@").Should().BeFalse();
-    }
-
-    [Fact(DisplayName =
-        "Mail '@myges.fr'\n" +
-        "Should not be valid\n" +
-        "Because it is missing the address's name")]
-    public void MailValidation_5()
-    {
-        this.dataValidator.IsPasswordValid("@myges.fr").Should().BeFalse();
-    }
-
-    [Fact(DisplayName =
-        "Empty mail\n" +
-        "Should not be valid")]
-    public void MailValidation_6()
-    {
-        this.dataValidator.IsPasswordValid("").Should().BeFalse();
-    }
-
-    [Fact(DisplayName =
-        "Null parameter\n" +
-        "Should not be valid")]
-    public void MailValidation_7()
-    {
-        this.dataValidator.IsPasswordValid(null).Should().BeFalse();
-    }
-
-    /**
-     * Password validation tests
-     */
     [Fact(DisplayName =
         "Password '123MyPass?'\n" +
         "Should be valid")]

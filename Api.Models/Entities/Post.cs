@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Api.Models.Entities;
+﻿namespace Api.Models.Entities;
 
 [Table("Posts")]
 public class Post
@@ -16,9 +13,9 @@ public class Post
     public DateTime CreatedAt { get; set; }
 
     public Account Owner { get; set; }
-    
+
     public ICollection<Commentary> Commentaries { get; set; }
-    
+
     public Group Group { get; set; }
 
     public ICollection<Account> Likes { get; set; }
