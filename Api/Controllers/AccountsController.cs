@@ -145,8 +145,11 @@ public class AccountsController : ControllerBase
 
         Account account = await this.context.Accounts
             .Where(a => a.MailAddress.Equals(mailAddress))
-            .Include(a => a.Groups)
             .Include(a => a.OwnedPosts)
+            .Include(a => a.OwnedCommentaries)
+            .Include(a => a.Groups)
+            .Include(a => a.LikedPosts)
+            .Include(a => a.LikedCommentaries)
             .FirstOrDefaultAsync();
 
         if (account == null)
