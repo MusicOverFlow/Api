@@ -1,6 +1,6 @@
 ﻿namespace Api.Controllers.AccountControllers;
 
-public partial class AccountControllerBase
+public partial class AccountController
 {
     [HttpGet("name"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
     public async Task<ActionResult<List<AccountResource>>> ReadName(ReadByNames request)

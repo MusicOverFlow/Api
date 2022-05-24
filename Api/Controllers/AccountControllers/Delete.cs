@@ -1,6 +1,6 @@
 ﻿namespace Api.Controllers.AccountControllers;
 
-public partial class AccountControllerBase
+public partial class AccountController
 {
     [HttpDelete, AuthorizeEnum(Role.Admin)]
     public async Task<ActionResult> Delete(string mailAddress)

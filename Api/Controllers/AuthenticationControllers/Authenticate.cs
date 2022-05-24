@@ -5,19 +5,8 @@ using System.Security.Cryptography;
 
 namespace Api.Controllers.AuthenticationControllers;
 
-[Route("api/authenticate")]
-[ApiController]
-public class AuthenticateController : ControllerBase
+public partial class AuthenticationController
 {
-    private readonly ModelsContext context;
-    private readonly IConfiguration configuration;
-
-    public AuthenticateController(ModelsContext context, IConfiguration configuration)
-    {
-        this.context = context;
-        this.configuration = configuration;
-    }
-
     [HttpPost]
     public async Task<ActionResult<string>> Authenticate(Authentication request)
     {

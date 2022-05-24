@@ -2,16 +2,16 @@
 
 [ApiController]
 [Route("api/accounts")]
-public partial class AccountControllerBase : ControllerBase
+public partial class AccountController : ControllerBase
 {
-    protected readonly int MAX_ACCOUNTS_IN_SEARCHES = 20;
+    private readonly int MAX_ACCOUNTS_IN_SEARCHES = 20;
 
     private readonly ModelsContext context;
     private readonly Mapper mapper;
     private readonly DataValidator dataValidator;
     private readonly Utilitaries.StringComparer stringComparer;
 
-    public AccountControllerBase(
+    public AccountController(
         ModelsContext context,
         Mapper mapper,
         DataValidator dataValidator,

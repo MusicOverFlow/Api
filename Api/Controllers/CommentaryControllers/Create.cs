@@ -2,21 +2,8 @@
 
 namespace Api.Controllers.CommentaryControllers;
 
-[Route("api/commentaries")]
-[ApiController]
-public class CommentariesController : ControllerBase
+public partial class CommentaryController
 {
-    private readonly ModelsContext context;
-    private readonly Mapper mapper;
-
-    public CommentariesController(
-        ModelsContext context,
-        Mapper mapper)
-    {
-        this.context = context;
-        this.mapper = mapper;
-    }
-
     [HttpPost]
     public async Task<ActionResult<CommentaryResource>> Create(CreateCommentary request, Guid? postId)
     {
@@ -42,11 +29,11 @@ public class CommentariesController : ControllerBase
         {
             Content = request.Content,
             CreatedAt = DateTime.Now,
-            
+
             Owner = account,
             Post = post,
         };
-        
+
         this.context.Commentaries.Add(commentary);
         post.Commentaries.Add(commentary);
 

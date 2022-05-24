@@ -2,7 +2,7 @@
 
 namespace Api.Controllers.AccountControllers;
 
-public partial class AccountControllerBase
+public partial class AccountController
 {
     [HttpGet("self"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
     public async Task<ActionResult<AccountResource>> ReadSelf()

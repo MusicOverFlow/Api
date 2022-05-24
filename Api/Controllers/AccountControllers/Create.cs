@@ -2,7 +2,7 @@
 
 namespace Api.Controllers.AccountControllers;
 
-public partial class AccountControllerBase
+public partial class AccountController
 {
     [HttpPost]
     public async Task<ActionResult<AccountResource>> Create(CreateAccountRequest request)
@@ -25,8 +25,8 @@ public partial class AccountControllerBase
             return BadRequest(new { message = "Mail already in use" });
         }
 
-        EncryptPassword(request.Password, out byte[] hash, out byte[] salt);
-
+        this.EncryptPassword(request.Password, out byte[] hash, out byte[] salt);
+        
         Account account = new Account()
         {
             MailAddress = request.MailAddress.Trim(),

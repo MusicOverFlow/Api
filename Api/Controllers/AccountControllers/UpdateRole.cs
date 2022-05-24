@@ -1,6 +1,6 @@
 ﻿namespace Api.Controllers.AccountControllers;
 
-public partial class AccountControllerBase
+public partial class AccountController
 {
     [HttpPut("role"), AuthorizeEnum(Role.Admin)]
     public async Task<ActionResult<AccountResource>> UpdateRole(string mailAddress, string role)

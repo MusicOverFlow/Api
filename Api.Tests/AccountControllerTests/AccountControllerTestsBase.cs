@@ -9,7 +9,7 @@ namespace Api.Tests.AccountControllerTests;
 
 public class AccountControllerTestsBase
 {
-    protected readonly AccountControllerBase accountsController = new AccountControllerBase(
+    protected readonly AccountController accountsController = new AccountController(
             new ModelsContext(new DbContextOptionsBuilder<ModelsContext>().UseInMemoryDatabase(Guid.NewGuid().ToString()).Options),
             new Mapper(),
             new DataValidator(),
