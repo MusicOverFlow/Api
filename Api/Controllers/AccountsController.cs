@@ -67,8 +67,8 @@ public class AccountsController : ControllerBase
             Lastname = request.Lastname ?? "Unknown",
             CreatedAt = DateTime.Now,
             
-            Posts = new List<Post>(),
-            Commentaries = new List<Commentary>(),
+            OwnedPosts = new List<Post>(),
+            OwnedCommentaries = new List<Commentary>(),
             Groups = new List<Group>(),
         };
 
@@ -146,7 +146,7 @@ public class AccountsController : ControllerBase
         Account account = await this.context.Accounts
             .Where(a => a.MailAddress.Equals(mailAddress))
             .Include(a => a.Groups)
-            .Include(a => a.Posts)
+            .Include(a => a.OwnedPosts)
             .FirstOrDefaultAsync();
 
         if (account == null)

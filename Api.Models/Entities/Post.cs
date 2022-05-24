@@ -15,7 +15,7 @@ public class Post
     [Required]
     public DateTime CreatedAt { get; set; }
 
-    public Account Account { get; set; }
+    public Account Owner { get; set; }
     
     public ICollection<Commentary> Commentaries { get; set; }
     

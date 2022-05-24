@@ -23,8 +23,8 @@ public class Account
     [Required]
     public DateTime CreatedAt { get; set; }
 
-    public ICollection<Post> Posts { get; set; }
-    public ICollection<Commentary> Commentaries { get; set; }
+    public ICollection<Post> OwnedPosts { get; set; }
+    public ICollection<Commentary> OwnedCommentaries { get; set; }
 
     public ICollection<Group> Groups { get; set; }
 

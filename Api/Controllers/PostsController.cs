@@ -57,7 +57,7 @@ public class PostsController : ControllerBase
             Content = request.Content,
             CreatedAt = DateTime.Now,
             
-            Account = account,
+            Owner = account,
             Commentaries = new List<Commentary>(),
             Group = group,
         };
@@ -73,7 +73,7 @@ public class PostsController : ControllerBase
     public async Task<ActionResult<List<PostResource>>> Read(Guid? id = null)
     {
         IQueryable<Post> query = this.context.Posts
-            .Include(p => p.Account)
+            .Include(p => p.Owner)
             .Include(p => p.Group)
             .Include(p => p.Likes);
 
@@ -101,7 +101,7 @@ public class PostsController : ControllerBase
 
         Account account = await this.context.Accounts
             .Where(a => a.MailAddress.Equals(mailAddress))
-            .Include(a => a.Posts)
+            .Include(a => a.OwnedPosts)
                 .ThenInclude(p => p.Group)
             .FirstOrDefaultAsync();
         

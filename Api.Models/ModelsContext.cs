@@ -15,11 +15,11 @@ public class ModelsContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Account>()
-            .HasMany(a => a.Posts).WithOne(p => p.Account)
+            .HasMany(a => a.OwnedPosts).WithOne(p => p.Owner)
             .OnDelete(DeleteBehavior.SetNull);
 
         modelBuilder.Entity<Account>()
-            .HasMany(a => a.Commentaries).WithOne(p => p.Account)
+            .HasMany(a => a.OwnedCommentaries).WithOne(p => p.Owner)
             .OnDelete(DeleteBehavior.SetNull);
 
         modelBuilder.Entity<Account>()

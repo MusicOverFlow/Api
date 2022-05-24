@@ -13,7 +13,7 @@ public class Commentary
     [Required]
     public DateTime CreatedAt { get; set; }
 
-    public Account Account { get; set; }
+    public Account Owner { get; set; }
     
     public Post Post { get; set; }
 

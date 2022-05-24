@@ -15,7 +15,7 @@ public class AccountResource
 
 public class AccountResource_WithPosts : AccountResource
 {
-    public IEnumerable<PostResource> Posts { get; set; }
+    public IEnumerable<PostResource> OwnedPosts { get; set; }
 }
 
 public class AccountResource_WithGroups : AccountResource
@@ -25,7 +25,7 @@ public class AccountResource_WithGroups : AccountResource
 
 public class AccountResource_WithPosts_AndGroups : AccountResource
 {
-    public IEnumerable<PostResource> Posts { get; set; }
+    public IEnumerable<PostResource> OwnedPosts { get; set; }
     public IEnumerable<GroupResource> Groups { get; set; }
 }
 

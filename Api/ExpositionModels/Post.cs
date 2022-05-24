@@ -11,9 +11,13 @@ public class PostResource
     public string Title { get; set; }
     public string Content { get; set; }
     public DateTime CreatedAt { get; set; }
-    public AccountResource Account { get; set; }
+    
+    public AccountResource Owner { get; set; }
+    
     public ICollection<CommentaryResource> Commentaries { get; set; }
+    
     public GroupResource Group { get; set; }
+    
     public ICollection<AccountResource> Likes { get; set; }
     public int LikesCount { get; set; }
 }
