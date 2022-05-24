@@ -32,6 +32,12 @@ public class ModelsContext : DbContext
             .HasMany(p => p.Commentaries).WithOne(c => c.Post)
             .OnDelete(DeleteBehavior.SetNull);
 
+        modelBuilder.Entity<Post>()
+            .HasMany(p => p.Likes).WithMany(a => a.LikedPosts);
+
+        modelBuilder.Entity<Commentary>()
+            .HasMany(p => p.Likes).WithMany(a => a.LikedCommentaries);
+
         modelBuilder.Entity<Group>()
             .HasOne(g => g.Owner);
     }

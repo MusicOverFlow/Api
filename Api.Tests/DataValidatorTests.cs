@@ -6,7 +6,7 @@ namespace Api.Tests;
 
 public class DataValidatorTests
 {
-    DataValidator dataValidator = new DataValidator();
+    private readonly DataValidator dataValidator = new DataValidator();
 
     /**
      * Mail validation tests

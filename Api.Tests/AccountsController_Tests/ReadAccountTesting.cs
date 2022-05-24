@@ -22,8 +22,6 @@ public class ReadAccountTesting : AccountsControllerTestsBase
         await base.CreateAccount("gtouchet2@myges.fr", "123Pass!", "Guillaume", "Touchet");
 
         ActionResult<List<AccountResource>> request = await base.accountsController.Read();
-        OkObjectResult result = request.Result as OkObjectResult;
-        List<AccountResource> accounts = result.Value as List<AccountResource>;
 
         request.Result.Should().BeOfType<OkObjectResult>().Which.StatusCode.Should().Be((int)HttpStatusCode.OK);
     }

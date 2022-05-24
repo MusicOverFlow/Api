@@ -14,6 +14,8 @@ public class PostResource
     public AccountResource Account { get; set; }
     public ICollection<CommentaryResource> Commentaries { get; set; }
     public GroupResource Group { get; set; }
+    public ICollection<AccountResource> Likes { get; set; }
+    public int LikesCount { get; set; }
 }
 
 /**

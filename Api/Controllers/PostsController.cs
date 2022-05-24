@@ -74,7 +74,8 @@ public class PostsController : ControllerBase
     {
         IQueryable<Post> query = this.context.Posts
             .Include(p => p.Account)
-            .Include(p => p.Group);
+            .Include(p => p.Group)
+            .Include(p => p.Likes);
 
         if (id != null)
         {

@@ -27,4 +27,7 @@ public class Account
     public ICollection<Commentary> Commentaries { get; set; }
 
     public ICollection<Group> Groups { get; set; }
+
+    public ICollection<Post> LikedPosts { get; set; }
+    public ICollection<Commentary> LikedCommentaries { get; set; }
 }

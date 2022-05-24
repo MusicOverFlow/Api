@@ -16,6 +16,8 @@ public class CommentaryResource
 public class CommentaryResource_WithPost : CommentaryResource
 {
     public PostResource Post { get; set; }
+    public ICollection<AccountResource> Likes { get; set; }
+    public int LikesCount { get; set; }
 }
 
 /**

@@ -16,7 +16,11 @@ public class Post
     public DateTime CreatedAt { get; set; }
 
     public Account Account { get; set; }
+    
     public ICollection<Commentary> Commentaries { get; set; }
     
     public Group Group { get; set; }
+
+    public ICollection<Account> Likes { get; set; }
+    public int LikesCount { get; set; }
 }

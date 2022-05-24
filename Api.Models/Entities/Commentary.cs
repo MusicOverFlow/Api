@@ -14,5 +14,9 @@ public class Commentary
     public DateTime CreatedAt { get; set; }
 
     public Account Account { get; set; }
+    
     public Post Post { get; set; }
+
+    public ICollection<Account> Likes { get; set; }
+    public int LikesCount { get; set; }
 }
