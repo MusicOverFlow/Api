@@ -2,11 +2,11 @@
 
 namespace Api.Tests.AccountControllerTests;
 
-public class ReadNameControllerTests : AccountControllerTestsBase
+public class ReadNameControllerTests : TestBase
 {
     public ReadNameControllerTests()
     {
-        _ = CreateAccount("gtouchet@myges.fr", "123Pass!", "Guillaume", "Touchet");
+        _ = base.CreateAccount("gtouchet@myges.fr", "123Pass!", "Guillaume", "Touchet");
     }
 
     [Fact(DisplayName =
@@ -15,7 +15,7 @@ public class ReadNameControllerTests : AccountControllerTestsBase
         "Because similarity score is high enough")]
     public async void ReadAccountByName_1()
     {
-        ActionResult<List<AccountResource>> request = await accountsController.ReadName(new ReadByNames()
+        ActionResult<List<AccountResource>> request = await base.accountsController.ReadName(new ReadByNames()
         {
             Lastname = "Touch",
         });
@@ -31,7 +31,7 @@ public class ReadNameControllerTests : AccountControllerTestsBase
         "Because similarity score is high enough")]
     public async void ReadAccountByName_2()
     {
-        ActionResult<List<AccountResource>> request = await accountsController.ReadName(new ReadByNames()
+        ActionResult<List<AccountResource>> request = await base.accountsController.ReadName(new ReadByNames()
         {
             Lastname = "oucet",
         });
@@ -48,7 +48,7 @@ public class ReadNameControllerTests : AccountControllerTestsBase
         "Because similarity score is too low")]
     public async void ReadAccountByName_3()
     {
-        ActionResult<List<AccountResource>> request = await accountsController.ReadName(new ReadByNames()
+        ActionResult<List<AccountResource>> request = await base.accountsController.ReadName(new ReadByNames()
         {
             Lastname = "Tou",
         });
@@ -64,7 +64,7 @@ public class ReadNameControllerTests : AccountControllerTestsBase
         "Because names added similarity score are high enough")]
     public async void ReadAccountByName_4()
     {
-        ActionResult<List<AccountResource>> request = await accountsController.ReadName(new ReadByNames()
+        ActionResult<List<AccountResource>> request = await base.accountsController.ReadName(new ReadByNames()
         {
             Firstname = "Guillau",
             Lastname = "Tou",
@@ -82,7 +82,7 @@ public class ReadNameControllerTests : AccountControllerTestsBase
         "Because names added similarity score are high enough")]
     public async void ReadAccountByName_5()
     {
-        ActionResult<List<AccountResource>> request = await accountsController.ReadName(new ReadByNames()
+        ActionResult<List<AccountResource>> request = await base.accountsController.ReadName(new ReadByNames()
         {
             Firstname = "Gillome",
             Lastname = "Touchai",

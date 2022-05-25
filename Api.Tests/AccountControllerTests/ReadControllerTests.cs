@@ -1,10 +1,10 @@
 ﻿namespace Api.Tests.AccountControllerTests;
 
-public class ReadControllerTests : AccountControllerTestsBase
+public class ReadControllerTests : TestBase
 {
     public ReadControllerTests()
     {
-        _ = CreateAccount("gtouchet@myges.fr", "123Pass!", "Guillaume", "Touchet");
+        _ = base.CreateAccount("gtouchet@myges.fr", "123Pass!", "Guillaume", "Touchet");
     }
 
     [Fact(DisplayName =
@@ -12,9 +12,9 @@ public class ReadControllerTests : AccountControllerTestsBase
         "Should return OkObjectResult with status code 200")]
     public async void AccountReading_1()
     {
-        await CreateAccount("gtouchet2@myges.fr", "123Pass!", "Guillaume", "Touchet");
+        await base.CreateAccount("gtouchet2@myges.fr", "123Pass!", "Guillaume", "Touchet");
 
-        ActionResult<List<AccountResource>> request = await accountsController.Read();
+        ActionResult<List<AccountResource>> request = await base.accountsController.Read();
 
         request.Result.Should().BeOfType<OkObjectResult>().Which.StatusCode.Should().Be((int)HttpStatusCode.OK);
     }
@@ -24,9 +24,9 @@ public class ReadControllerTests : AccountControllerTestsBase
         "Should return all accounts")]
     public async void AccountReading_2()
     {
-        await CreateAccount("gtouchet2@myges.fr", "123Pass!", "Guillaume", "Touchet");
+        await base.CreateAccount("gtouchet2@myges.fr", "123Pass!", "Guillaume", "Touchet");
 
-        ActionResult<List<AccountResource>> request = await accountsController.Read();
+        ActionResult<List<AccountResource>> request = await base.accountsController.Read();
         OkObjectResult result = request.Result as OkObjectResult;
         List<AccountResource> accounts = result.Value as List<AccountResource>;
 
@@ -38,7 +38,7 @@ public class ReadControllerTests : AccountControllerTestsBase
         "Should return OkObjectResult with status code 200")]
     public async void AccountReading_3()
     {
-        ActionResult<List<AccountResource>> request = await accountsController.Read("gtouchet@myges.fr");
+        ActionResult<List<AccountResource>> request = await base.accountsController.Read("gtouchet@myges.fr");
 
         request.Result.Should().BeOfType<OkObjectResult>().Which.StatusCode.Should().Be((int)HttpStatusCode.OK);
     }
@@ -48,7 +48,7 @@ public class ReadControllerTests : AccountControllerTestsBase
         "Should return NotFoundObjectResult with status code 404")]
     public async void AccountReading_4()
     {
-        ActionResult<List<AccountResource>> request = await accountsController.Read("random@whatever.fr");
+        ActionResult<List<AccountResource>> request = await base.accountsController.Read("random@whatever.fr");
 
         request.Result.Should().BeOfType<NotFoundObjectResult>().Which.StatusCode.Should().Be((int)HttpStatusCode.NotFound);
     }

@@ -24,7 +24,8 @@ builder.Services.AddSingleton<DataValidator>(new DataValidator());
 builder.Services.AddSingleton<Mapper>(new Mapper());
 builder.Services.AddSingleton<Api.Utilitaries.StringComparer>(new Api.Utilitaries.StringComparer());
 
-builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+builder.Services.AddControllers()
+    .AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 // Swagger configs
 builder.Services.AddEndpointsApiExplorer();

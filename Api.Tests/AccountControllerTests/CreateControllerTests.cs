@@ -1,13 +1,13 @@
 ﻿namespace Api.Tests.AccountControllerTests;
 
-public class CreateControllerTests : AccountControllerTestsBase
+public class CreateControllerTests : TestBase
 {
     [Fact(DisplayName =
         "Account creation with valid request\n" +
         "Should return CreatedResult with status code 201")]
     public async void AccountCreation_1()
     {
-        ActionResult<AccountResource> request = await CreateAccount("gtouchet@myges.fr", "123Pass!", "Guillaume", "Touchet");
+        ActionResult<AccountResource> request = await base.CreateAccount("gtouchet@myges.fr", "123Pass!", "Guillaume", "Touchet");
 
         request.Result.Should().BeOfType<CreatedResult>().Which.StatusCode.Should().Be((int)HttpStatusCode.Created);
     }
@@ -17,7 +17,7 @@ public class CreateControllerTests : AccountControllerTestsBase
         "Should return CreatedResult with status code 201")]
     public async void AccountCreation_2()
     {
-        ActionResult<AccountResource> request = await CreateAccount("gtouchet@myges.fr", "123Pass!", null, null);
+        ActionResult<AccountResource> request = await base.CreateAccount("gtouchet@myges.fr", "123Pass!");
 
         request.Result.Should().BeOfType<CreatedResult>().Which.StatusCode.Should().Be((int)HttpStatusCode.Created);
     }
@@ -27,7 +27,7 @@ public class CreateControllerTests : AccountControllerTestsBase
         "Should set default names")]
     public async void AccountCreation_3()
     {
-        ActionResult<AccountResource> request = await CreateAccount("gtouchet@myges.fr", "123Pass!", null, null);
+        ActionResult<AccountResource> request = await base.CreateAccount("gtouchet@myges.fr", "123Pass!");
         CreatedResult result = request.Result as CreatedResult;
         AccountResource account = result.Value as AccountResource;
 
@@ -40,7 +40,7 @@ public class CreateControllerTests : AccountControllerTestsBase
         "Should return BadRequestObjectResult with status code 400")]
     public async void AccountCreation_4()
     {
-        ActionResult<AccountResource> request = await CreateAccount(null, "123Pass!", "Guillaume", "Touchet");
+        ActionResult<AccountResource> request = await base.CreateAccount(null, "123Pass!", "Guillaume", "Touchet");
 
         request.Result.Should().BeOfType<BadRequestObjectResult>().Which.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
     }
@@ -50,7 +50,7 @@ public class CreateControllerTests : AccountControllerTestsBase
         "Should return BadRequestObjectResult with status code 400")]
     public async void AccountCreation_5()
     {
-        ActionResult<AccountResource> request = await CreateAccount("gtouchet@myges.fr", null, "Guillaume", "Touchet");
+        ActionResult<AccountResource> request = await base.CreateAccount("gtouchet@myges.fr", null, "Guillaume", "Touchet");
 
         request.Result.Should().BeOfType<BadRequestObjectResult>().Which.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
     }
@@ -60,7 +60,7 @@ public class CreateControllerTests : AccountControllerTestsBase
         "Should return BadRequestObjectResult with status code 400")]
     public async void AccountCreation_6()
     {
-        ActionResult<AccountResource> request = await CreateAccount("myMailAddress", "123Pass!", "Guillaume", "Touchet");
+        ActionResult<AccountResource> request = await base.CreateAccount("myMailAddress", "123Pass!", "Guillaume", "Touchet");
 
         request.Result.Should().BeOfType<BadRequestObjectResult>().Which.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
     }
@@ -70,7 +70,7 @@ public class CreateControllerTests : AccountControllerTestsBase
         "Should return BadRequestObjectResult with status code 400")]
     public async void AccountCreation_7()
     {
-        ActionResult<AccountResource> request = await CreateAccount("gtouchet@myges.fr", "123", "Guillaume", "Touchet");
+        ActionResult<AccountResource> request = await base.CreateAccount("gtouchet@myges.fr", "123", "Guillaume", "Touchet");
 
         request.Result.Should().BeOfType<BadRequestObjectResult>().Which.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
     }
