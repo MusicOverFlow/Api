@@ -12,8 +12,6 @@ public class ReadControllerTests : TestBase
         "Should return OkObjectResult with status code 200")]
     public async void AccountReading_1()
     {
-        await base.CreateAccount("gtouchet2@myges.fr", "123Pass!", "Guillaume", "Touchet");
-
         ActionResult<List<AccountResource>> request = await base.accountsController.Read();
 
         request.Result.Should().BeOfType<OkObjectResult>().Which.StatusCode.Should().Be((int)HttpStatusCode.OK);

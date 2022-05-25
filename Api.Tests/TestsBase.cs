@@ -18,7 +18,6 @@ using Microsoft.Extensions.Configuration;
 using Moq;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
-using Api.Models.Enums;
 
 public class TestBase
 {
@@ -54,6 +53,11 @@ public class TestBase
         });
     }
 
+    protected async Task<ActionResult<List<AccountResource>>> ReadAccounts(string mailAddress = null)
+    {
+        return await this.accountsController.Read(mailAddress);
+    }
+
     protected async Task<ActionResult<PostResource>> CreatePost(AccountResource account, string title, string content, Guid? postId = null, string role = "User")
     {
         this.MockJwtAuthentication(account, role);
@@ -64,7 +68,7 @@ public class TestBase
             Content = content,
         }, postId);
     }
-
+    
     private void MockJwtAuthentication(AccountResource account, string role)
     {
         PostController controller = this.postController;

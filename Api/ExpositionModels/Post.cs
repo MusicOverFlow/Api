@@ -13,7 +13,10 @@ public class PostResource
     public DateTime CreatedAt { get; set; }
 
     public AccountResource Owner { get; set; }
+}
 
+public class PostResource_WithCommentaries_AndGroup_AndLikes : PostResource
+{
     public ICollection<CommentaryResource> Commentaries { get; set; }
 
     public GroupResource Group { get; set; }
@@ -22,10 +25,10 @@ public class PostResource
     public int LikesCount { get; set; }
 }
 
-/**
- * Request classes
- */
-public class CreatePost
+    /**
+     * Request classes
+     */
+    public class CreatePost
 {
     [Required, MaxLength(50)] public string Title { get; set; }
     [Required, MaxLength(250)] public string Content { get; set; }

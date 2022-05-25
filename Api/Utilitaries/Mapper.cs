@@ -16,6 +16,7 @@ public class Mapper
             c.CreateMap<Account, AccountResource_WithPosts_AndGroups>();
 
             c.CreateMap<Post, PostResource>();
+            c.CreateMap<Post, PostResource_WithCommentaries_AndGroup_AndLikes>();
 
             c.CreateMap<Commentary, CommentaryResource>();
             c.CreateMap<Commentary, CommentaryResource_WithPost>();
@@ -35,6 +36,8 @@ public class Mapper
     public AccountResource_WithPosts_AndGroups Account_ToResource_WithGroups_AndPosts(Account account) => this.mapper.Map<AccountResource_WithPosts_AndGroups>(account);
 
     public PostResource Post_ToResource(Post post) => this.mapper.Map<PostResource>(post);
+    public PostResource_WithCommentaries_AndGroup_AndLikes
+        Post_ToResource_WithCommentaries_AndGroup_AndLikes(Post post) => this.mapper.Map<PostResource_WithCommentaries_AndGroup_AndLikes>(post);
 
     public CommentaryResource Commentary_ToResource(Commentary commentary) => this.mapper.Map<CommentaryResource>(commentary);
     public CommentaryResource_WithPost Commentary_ToResource_WithPost(Commentary commentary) => this.mapper.Map<CommentaryResource_WithPost>(commentary);
