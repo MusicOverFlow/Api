@@ -43,20 +43,19 @@ public class TestBase
         this.authenticationController = new AuthenticationController(this.dbContext, this.configuration);
     }
     
-    protected void MockJwtAuthentication(AccountResource account, string role = "User")
+    protected void MockJwtAuthentication(AccountResource account)
     {
-        PostController controller = this.postController;
-
         Mock<HttpContext> mock = new Mock<HttpContext>();
+        
         mock.Setup(m => m.User).Returns(new ClaimsPrincipal(
             new ClaimsIdentity(
                 new Claim[]
                 {
                     new Claim(ClaimTypes.Email, account.MailAddress),
-                    new Claim(ClaimTypes.Role, role),
                 })));
 
-        controller.ControllerContext.HttpContext = mock.Object;
+        this.postController.ControllerContext.HttpContext = mock.Object;
+        this.groupController.ControllerContext.HttpContext = mock.Object;
     }
 
     /* useful for later testing

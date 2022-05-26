@@ -2,12 +2,14 @@
 
 public class CreateControllerTests : TestBase
 {
-    private AccountResource account;
-    
+    private readonly AccountResource account;
+    private readonly GroupResource group;
+
     public CreateControllerTests()
     {
         this.account = this.CreateAccount().Result;
         base.MockJwtAuthentication(this.account);
+        this.group = this.CreateGroup().Result;
     }
     
     private async Task<AccountResource> CreateAccount()
@@ -20,6 +22,18 @@ public class CreateControllerTests : TestBase
         var result = request.Result as CreatedResult;
         
         return result.Value as AccountResource;
+    }
+
+    private async Task<GroupResource> CreateGroup()
+    {
+        var request = await base.groupController.Create(new CreateGroup()
+        {
+            Name = "My awesome group",
+            Description = "This is an awesome group",
+        });
+        var result = request.Result as CreatedResult;
+
+        return result.Value as GroupResource;
     }
 
     [Fact(DisplayName =
@@ -104,6 +118,36 @@ public class CreateControllerTests : TestBase
         }, groupId: null);
 
         request.Result.Should().BeOfType<BadRequestObjectResult>().Which.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+    }
+
+    [Fact(DisplayName =
+        "Post creation by specifying an existing group ID,\n" +
+        "Should link this post to the group")]
+    public async void PostCreation_7()
+    {
+        var request = await base.postController.Create(new CreatePost()
+        {
+            Title = "Am I in a group ?",
+            Content = "Everyone's awesome here !",
+        }, groupId: this.group.Id);
+        var result = request.Result as CreatedResult;
+        var post = result.Value as PostResource;
+
+        post.Group.Id.Should().Be(this.group.Id);
+    }
+
+    [Fact(DisplayName =
+        "Post creation by specifying a random ID,\n" +
+        "Should return BadRequestObjectResult with status code 400")]
+    public async void PostCreation_8()
+    {
+        var request = await base.postController.Create(new CreatePost()
+        {
+            Title = "Am I in a group ?",
+            Content = "Seems not...",
+        }, groupId: Guid.NewGuid());
+
+        request.Result.Should().BeOfType<NotFoundObjectResult>().Which.StatusCode.Should().Be((int)HttpStatusCode.NotFound);
     }
 
     [Fact(DisplayName =
