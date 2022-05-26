@@ -33,7 +33,7 @@ public class Mapper
     public AccountResource Account_ToResource(Account a) => m.Map<AccountResource>(a);
     public AccountResource_WithGroups Account_ToResource_WithGroups(Account a) => m.Map<AccountResource_WithGroups>(a);
     public AccountResource_WithPosts Account_ToResource_WithPosts(Account a) => m.Map<AccountResource_WithPosts>(a);
-    public AccountResource_WithPosts_AndGroups Account_ToResource_WithGroups_AndPosts(Account a) => m.Map<AccountResource_WithPosts_AndGroups>(a);
+    public AccountResource_WithPosts_AndGroups Account_ToResource_WithPosts_AndGroups(Account a) => m.Map<AccountResource_WithPosts_AndGroups>(a);
 
     public PostResource Post_ToResource(Post p) => m.Map<PostResource>(p);
     public PostResource_WithCommentaries_AndLikes Post_ToResource_WithCommentaries_AndLikes(Post p) => m.Map<PostResource_WithCommentaries_AndLikes>(p);

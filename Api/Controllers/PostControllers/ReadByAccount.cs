@@ -12,6 +12,14 @@ public partial class PostController
         Account account = await this.context.Accounts
             .Include(a => a.OwnedPosts)
                 .ThenInclude(p => p.Group)
+                    .ThenInclude(g => g.Owner)
+            .Include(a => a.LikedPosts)
+                .ThenInclude(p => p.Group)
+                    .ThenInclude(g => g.Owner)
+            .Include(a => a.LikedCommentaries)
+                .ThenInclude(c => c.Post)
+                    .ThenInclude(p => p.Group)
+                        .ThenInclude(g => g.Owner)
             .FirstOrDefaultAsync(a => a.MailAddress.Equals(mailAddress));
 
         if (account == null)
