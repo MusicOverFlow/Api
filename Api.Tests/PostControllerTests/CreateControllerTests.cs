@@ -1,24 +1,25 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-
-namespace Api.Tests.PostControllerTests;
+﻿namespace Api.Tests.PostControllerTests;
 
 public class CreateControllerTests : TestBase
 {
-    private readonly AccountResource account;
+    private AccountResource account;
     
     public CreateControllerTests()
     {
-        _ = base.CreateAccount("gtouchet@myges.fr", "123Pass!");
-        this.account = this.GetAccount().Result;
+        this.account = this.CreateAccount().Result;
+        base.MockJwtAuthentication(this.account);
     }
     
-    private async Task<AccountResource> GetAccount()
+    private async Task<AccountResource> CreateAccount()
     {
-        var request = await base.ReadAccounts("gtouchet@myges.fr");
-        var result = request.Result as OkObjectResult;
-        var accounts = result.Value as List<AccountResource>;
-        return accounts.First();
+        var request = await base.accountsController.Create(new CreateAccountRequest()
+        {
+            MailAddress = "gtouchet@myges.fr",
+            Password = "123Pass!",
+        });
+        var result = request.Result as CreatedResult;
+        
+        return result.Value as AccountResource;
     }
 
     [Fact(DisplayName =
@@ -26,19 +27,27 @@ public class CreateControllerTests : TestBase
         "Should return CreatedResult with status code 201")]
     public async void PostCreation_1()
     {
-        ActionResult<PostResource> request = await base.CreatePost(this.account, "Post about something I like", "Coffee.");
+        var request = await base.postController.Create(new CreatePost()
+        {
+            Title = "Post about something I like",
+            Content = "Coffee",
+        }, groupId: null);
 
         request.Result.Should().BeOfType<CreatedResult>().Which.StatusCode.Should().Be((int)HttpStatusCode.Created);
     }
 
     [Fact(DisplayName =
-        "Post created by connected account,\n" +
+        "Post created by an account,\n" +
         "Should be owned by this account")]
     public async void PostCreation_2()
     {
-        ActionResult<PostResource> request = await base.CreatePost(this.account, "Post about the weather", "Das hot");
-        CreatedResult result = request.Result as CreatedResult;
-        PostResource post = result.Value as PostResource;
+        var request = await base.postController.Create(new CreatePost()
+        {
+            Title = "Post about something I hate",
+            Content = "Not sleeping enough",
+        }, groupId: null);
+        var result = request.Result as CreatedResult;
+        var post = result.Value as PostResource;
 
         post.Owner.MailAddress.Should().Be(this.account.MailAddress);
     }
@@ -48,31 +57,69 @@ public class CreateControllerTests : TestBase
         "Should return BadRequestObjectResult with status code 400")]
     public async void PostCreation_3()
     {
-        ActionResult<PostResource> request = await base.CreatePost(this.account, null, "Where's the title tho' ?");
+        var request = await base.postController.Create(new CreatePost()
+        {
+            Content = "Where's the title ?",
+        }, groupId: null);
 
         request.Result.Should().BeOfType<BadRequestObjectResult>().Which.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
     }
 
     [Fact(DisplayName =
-    "Post creation without content,\n" +
-    "Should return BadRequestObjectResult with status code 400")]
+        "Post creation without content,\n" +
+        "Should return BadRequestObjectResult with status code 400")]
     public async void PostCreation_4()
     {
-        ActionResult<PostResource> request = await base.CreatePost(this.account, "Content ? Hello ??", null);
+        var request = await base.postController.Create(new CreatePost()
+        {
+            Title = "Where's the content ?",
+        }, groupId: null);
 
         request.Result.Should().BeOfType<BadRequestObjectResult>().Which.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
     }
 
     [Fact(DisplayName =
-        "Post exposed resource should be of type PostResource,\n" +
+        "Post creation with empty title,\n" +
+        "Should return BadRequestObjectResult with status code 400")]
+    public async void PostCreation_5()
+    {
+        var request = await base.postController.Create(new CreatePost()
+        {
+            Title = "",
+            Content = "The title is empty",
+        }, groupId: null);
+
+        request.Result.Should().BeOfType<BadRequestObjectResult>().Which.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+    }
+
+    [Fact(DisplayName =
+        "Post creation with empty content,\n" +
+        "Should return BadRequestObjectResult with status code 400")]
+    public async void PostCreation_6()
+    {
+        var request = await base.postController.Create(new CreatePost()
+        {
+            Title = "The content is empty",
+            Content = "",
+        }, groupId: null);
+
+        request.Result.Should().BeOfType<BadRequestObjectResult>().Which.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+    }
+
+    [Fact(DisplayName =
+        "Exposed post after creation should be of type PostResource,\n" +
         "And its owner account should be of type AccountResource")]
     public async void PostCreation_Mapping()
     {
-        ActionResult<PostResource> request = await base.CreatePost(this.account, "Title", "Content");
-        CreatedResult result = request.Result as CreatedResult;
-        PostResource post = result.Value as PostResource;
+        var request = await base.postController.Create(new CreatePost()
+        {
+            Title = "How's the weather ?",
+            Content = "Das hot",
+        }, groupId: null);
+        var result = request.Result as CreatedResult;
+        var post = result.Value as PostResource;
 
         post.Should().BeOfType<PostResource>();
-        post.Owner.Should().BeOfType<AccountResource_WithPosts>();
+        post.Owner.Should().BeOfType<AccountResource>();
     }
 }

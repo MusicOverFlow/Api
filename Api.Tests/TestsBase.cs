@@ -5,6 +5,8 @@ global using Microsoft.AspNetCore.Mvc;
 global using System.Collections.Generic;
 global using System.Net;
 global using System;
+global using System.Threading.Tasks;
+global using System.Linq;
 using Api.Models;
 using Api.Utilitaries;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +14,6 @@ using Api.Controllers.AccountControllers;
 using Api.Controllers.PostControllers;
 using Api.Controllers.CommentaryControllers;
 using Api.Controllers.GroupControllers;
-using System.Threading.Tasks;
 using Api.Controllers.AuthenticationControllers;
 using Microsoft.Extensions.Configuration;
 using Moq;
@@ -22,7 +23,7 @@ using System.Security.Claims;
 public class TestBase
 {
     private readonly ModelsContext dbContext = new ModelsContext(new DbContextOptionsBuilder<ModelsContext>().UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
-    private readonly Mapper mapper = new Mapper();
+    protected readonly Mapper mapper = new Mapper();
     private readonly DataValidator dataValidator = new DataValidator();
     private readonly Api.Utilitaries.StringComparer stringComparer = new Api.Utilitaries.StringComparer();
     private readonly IConfiguration configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
@@ -41,40 +42,13 @@ public class TestBase
         this.groupController = new GroupController(this.dbContext, this.mapper, this.stringComparer);
         this.authenticationController = new AuthenticationController(this.dbContext, this.configuration);
     }
-
-    protected async Task<ActionResult<AccountResource>> CreateAccount(string mailAddress, string password, string firstname = null, string lastname = null)
-    {
-        return await this.accountsController.Create(new CreateAccountRequest()
-        {
-            MailAddress = mailAddress,
-            Password = password,
-            Firstname = firstname,
-            Lastname = lastname,
-        });
-    }
-
-    protected async Task<ActionResult<List<AccountResource>>> ReadAccounts(string mailAddress = null)
-    {
-        return await this.accountsController.Read(mailAddress);
-    }
-
-    protected async Task<ActionResult<PostResource>> CreatePost(AccountResource account, string title, string content, Guid? postId = null, string role = "User")
-    {
-        this.MockJwtAuthentication(account, role);
-
-        return await this.postController.Create(new CreatePost()
-        {
-            Title = title,
-            Content = content,
-        }, postId);
-    }
     
-    private void MockJwtAuthentication(AccountResource account, string role)
+    protected void MockJwtAuthentication(AccountResource account, string role = "User")
     {
         PostController controller = this.postController;
 
-        Mock<HttpContext> contextMock = new Mock<HttpContext>();
-        contextMock.Setup(x => x.User).Returns(new ClaimsPrincipal(
+        Mock<HttpContext> mock = new Mock<HttpContext>();
+        mock.Setup(m => m.User).Returns(new ClaimsPrincipal(
             new ClaimsIdentity(
                 new Claim[]
                 {
@@ -82,7 +56,7 @@ public class TestBase
                     new Claim(ClaimTypes.Role, role),
                 })));
 
-        controller.ControllerContext.HttpContext = contextMock.Object;
+        controller.ControllerContext.HttpContext = mock.Object;
     }
 
     /* useful for later testing

@@ -13,14 +13,14 @@ public class PostResource
     public DateTime CreatedAt { get; set; }
 
     public AccountResource Owner { get; set; }
-}
-
-public class PostResource_WithCommentaries_AndGroup_AndLikes : PostResource
-{
-    public ICollection<CommentaryResource> Commentaries { get; set; }
 
     public GroupResource Group { get; set; }
+}
 
+public class PostResource_WithCommentaries_AndLikes : PostResource
+{
+    public ICollection<CommentaryResource> Commentaries { get; set; }
+    
     public ICollection<AccountResource> Likes { get; set; }
     public int LikesCount { get; set; }
 }

@@ -3,7 +3,7 @@
 public partial class AccountController
 {
     [HttpGet, AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
-    public async Task<ActionResult<List<AccountResource>>> Read(string mailAddress = null)
+    public async Task<ActionResult<List<AccountResource_WithPosts_AndGroups>>> Read(string mailAddress = null)
     {
         IQueryable<Account> query = this.context.Accounts;
 
@@ -12,7 +12,7 @@ public partial class AccountController
             query = query.Where(a => a.MailAddress.Equals(mailAddress));
         }
 
-        List<AccountResource> accounts = new List<AccountResource>();
+        List<AccountResource_WithPosts_AndGroups> accounts = new List<AccountResource_WithPosts_AndGroups>();
 
         await query.ForEachAsync(a => accounts.Add(this.mapper.Account_ToResource_WithGroups_AndPosts(a)));
 

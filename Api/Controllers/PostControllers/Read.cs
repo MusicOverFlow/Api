@@ -3,11 +3,12 @@
 public partial class PostController
 {
     [HttpGet]
-    public async Task<ActionResult<List<PostResource>>> Read(Guid? id = null)
+    public async Task<ActionResult<List<PostResource_WithCommentaries_AndLikes>>> Read(Guid? id = null)
     {
         IQueryable<Post> query = this.context.Posts
             .Include(p => p.Owner)
             .Include(p => p.Group)
+            .Include(p => p.Commentaries)
             .Include(p => p.Likes);
 
         if (id != null)
@@ -15,9 +16,9 @@ public partial class PostController
             query = query.Where(a => a.Id.Equals(id));
         }
 
-        List<PostResource> posts = new List<PostResource>();
+        List<PostResource_WithCommentaries_AndLikes> posts = new List<PostResource_WithCommentaries_AndLikes>();
 
-        await query.ForEachAsync(p => posts.Add(this.mapper.Post_ToResource(p)));
+        await query.ForEachAsync(p => posts.Add(this.mapper.Post_ToResource_WithCommentaries_AndLikes(p)));
 
         if (id != null && posts.Count == 0)
         {

@@ -4,7 +4,7 @@ namespace Api.Utilitaries;
 
 public class Mapper
 {
-    private readonly IMapper mapper;
+    private readonly IMapper m;
 
     public Mapper()
     {
@@ -16,7 +16,7 @@ public class Mapper
             c.CreateMap<Account, AccountResource_WithPosts_AndGroups>();
 
             c.CreateMap<Post, PostResource>();
-            c.CreateMap<Post, PostResource_WithCommentaries_AndGroup_AndLikes>();
+            c.CreateMap<Post, PostResource_WithCommentaries_AndLikes>();
 
             c.CreateMap<Commentary, CommentaryResource>();
             c.CreateMap<Commentary, CommentaryResource_WithPost>();
@@ -27,23 +27,22 @@ public class Mapper
             c.CreateMap<Group, GroupResource_WithMembers_AndPosts>();
         });
 
-        this.mapper = configuration.CreateMapper();
+        this.m = configuration.CreateMapper();
     }
 
-    public AccountResource Account_ToResource(Account account) => this.mapper.Map<AccountResource>(account);
-    public AccountResource_WithGroups Account_ToResource_WithGroups(Account account) => this.mapper.Map<AccountResource_WithGroups>(account);
-    public AccountResource_WithPosts Account_ToResource_WithPosts(Account account) => this.mapper.Map<AccountResource_WithPosts>(account);
-    public AccountResource_WithPosts_AndGroups Account_ToResource_WithGroups_AndPosts(Account account) => this.mapper.Map<AccountResource_WithPosts_AndGroups>(account);
+    public AccountResource Account_ToResource(Account a) => m.Map<AccountResource>(a);
+    public AccountResource_WithGroups Account_ToResource_WithGroups(Account a) => m.Map<AccountResource_WithGroups>(a);
+    public AccountResource_WithPosts Account_ToResource_WithPosts(Account a) => m.Map<AccountResource_WithPosts>(a);
+    public AccountResource_WithPosts_AndGroups Account_ToResource_WithGroups_AndPosts(Account a) => m.Map<AccountResource_WithPosts_AndGroups>(a);
 
-    public PostResource Post_ToResource(Post post) => this.mapper.Map<PostResource>(post);
-    public PostResource_WithCommentaries_AndGroup_AndLikes
-        Post_ToResource_WithCommentaries_AndGroup_AndLikes(Post post) => this.mapper.Map<PostResource_WithCommentaries_AndGroup_AndLikes>(post);
+    public PostResource Post_ToResource(Post p) => m.Map<PostResource>(p);
+    public PostResource_WithCommentaries_AndLikes Post_ToResource_WithCommentaries_AndLikes(Post p) => m.Map<PostResource_WithCommentaries_AndLikes>(p);
 
-    public CommentaryResource Commentary_ToResource(Commentary commentary) => this.mapper.Map<CommentaryResource>(commentary);
-    public CommentaryResource_WithPost Commentary_ToResource_WithPost(Commentary commentary) => this.mapper.Map<CommentaryResource_WithPost>(commentary);
+    public CommentaryResource Commentary_ToResource(Commentary c) => m.Map<CommentaryResource>(c);
+    public CommentaryResource_WithPost Commentary_ToResource_WithPost(Commentary c) => m.Map<CommentaryResource_WithPost>(c);
 
-    public GroupResource Group_ToResource(Group group) => this.mapper.Map<GroupResource>(group);
-    public GroupResource_WithMembers Group_ToResource_WithMembers(Group group) => this.mapper.Map<GroupResource_WithMembers>(group);
-    public GroupResource_WithPosts Group_ToResource_WithPosts(Group group) => this.mapper.Map<GroupResource_WithPosts>(group);
-    public GroupResource_WithMembers_AndPosts Group_ToResource_WithMembers_AndPosts(Group group) => this.mapper.Map<GroupResource_WithMembers_AndPosts>(group);
+    public GroupResource Group_ToResource(Group g) => m.Map<GroupResource>(g);
+    public GroupResource_WithMembers Group_ToResource_WithMembers(Group g) => m.Map<GroupResource_WithMembers>(g);
+    public GroupResource_WithPosts Group_ToResource_WithPosts(Group g) => m.Map<GroupResource_WithPosts>(g);
+    public GroupResource_WithMembers_AndPosts Group_ToResource_WithMembers_AndPosts(Group g) => m.Map<GroupResource_WithMembers_AndPosts>(g);
 }
