@@ -11,7 +11,7 @@ public class MailValidationTests
         "Should be valid")]
     public void MailValidation_1()
     {
-        dataValidator.IsMailAddressValid("gtouchet@myges.fr").Should().BeTrue();
+        this.dataValidator.IsMailAddressValid("gtouchet@myges.fr").Should().BeTrue();
     }
 
     [Fact(DisplayName =
@@ -20,7 +20,7 @@ public class MailValidationTests
         "Because it is missing the '@'")]
     public void MailValidation_2()
     {
-        dataValidator.IsPasswordValid("gtouchesmyges.fr").Should().BeFalse();
+        this.dataValidator.IsPasswordValid("gtouchesmyges.fr").Should().BeFalse();
     }
 
     [Fact(DisplayName =
@@ -29,7 +29,7 @@ public class MailValidationTests
         "Because it is missing the '.'")]
     public void MailValidation_3()
     {
-        dataValidator.IsPasswordValid("gtouches@mygesfr").Should().BeFalse();
+        this.dataValidator.IsPasswordValid("gtouches@mygesfr").Should().BeFalse();
     }
 
     [Fact(DisplayName =
@@ -38,7 +38,7 @@ public class MailValidationTests
         "Because it is missing the domain")]
     public void MailValidation_4()
     {
-        dataValidator.IsPasswordValid("gtouches@").Should().BeFalse();
+        this.dataValidator.IsPasswordValid("gtouches@").Should().BeFalse();
     }
 
     [Fact(DisplayName =
@@ -47,7 +47,7 @@ public class MailValidationTests
         "Because it is missing the address's name")]
     public void MailValidation_5()
     {
-        dataValidator.IsPasswordValid("@myges.fr").Should().BeFalse();
+        this.dataValidator.IsPasswordValid("@myges.fr").Should().BeFalse();
     }
 
     [Fact(DisplayName =
@@ -55,7 +55,7 @@ public class MailValidationTests
         "Should not be valid")]
     public void MailValidation_6()
     {
-        dataValidator.IsPasswordValid("").Should().BeFalse();
+        this.dataValidator.IsPasswordValid("").Should().BeFalse();
     }
 
     [Fact(DisplayName =
@@ -63,6 +63,6 @@ public class MailValidationTests
         "Should not be valid")]
     public void MailValidation_7()
     {
-        dataValidator.IsPasswordValid(null).Should().BeFalse();
+        this.dataValidator.IsPasswordValid(null).Should().BeFalse();
     }
 }

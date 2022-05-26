@@ -47,6 +47,6 @@ public partial class GroupController
 
         await this.context.SaveChangesAsync();
 
-        return Ok(mapper.Group_ToResource_WithMembers(group));
+        return Ok(this.mapper.Group_ToResource_WithMembers(group));
     }        
 }

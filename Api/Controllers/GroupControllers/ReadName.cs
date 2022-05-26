@@ -3,7 +3,7 @@
 public partial class GroupController
 {
     [HttpGet("name")]
-    public async Task<ActionResult<List<GroupResource>>> ReadName(string name)
+    public async Task<ActionResult<List<GroupResource_WithMembers>>> ReadName(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
         {

@@ -7,11 +7,11 @@ public partial class CommentaryController
     [HttpPost]
     public async Task<ActionResult<CommentaryResource>> Create(CreateCommentary request, Guid? postId)
     {
-        string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
+        string mailAddress = User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
         Account account = await this.context.Accounts
             .FirstOrDefaultAsync(a => a.MailAddress.Equals(mailAddress));
-
+        
         if (account == null)
         {
             return NotFound(new { errorMessage = "Account not found" });
@@ -39,6 +39,6 @@ public partial class CommentaryController
 
         await this.context.SaveChangesAsync();
 
-        return Created(nameof(Create), mapper.Post_ToResource(post));
+        return Created(nameof(Create), this.mapper.Post_ToResource(post));
     }
 }

@@ -11,10 +11,9 @@ public partial class AccountController
 
         Account account = await this.context.Accounts
             .Include(a => a.OwnedPosts)
-            .Include(a => a.OwnedCommentaries)
-            .Include(a => a.Groups)
             .Include(a => a.LikedPosts)
             .Include(a => a.LikedCommentaries)
+            .Include(a => a.Groups)
             .FirstOrDefaultAsync(a => a.MailAddress.Equals(mailAddress));
 
         if (account == null)
@@ -22,6 +21,6 @@ public partial class AccountController
             return NotFound(new { message = "Account not found" });
         }
 
-        return Ok(this.mapper.Account_ToResource_WithGroups_AndPosts(account));
+        return Ok(this.mapper.Account_ToResource_WithPosts_AndGroups(account));
     }
 }

@@ -1,13 +1,19 @@
 ﻿namespace Api.Tests.AccountControllerTests;
 
-public class CreateControllerTests : AccountControllerTestsBase
+public class CreateControllerTests : TestBase
 {
     [Fact(DisplayName =
         "Account creation with valid request\n" +
         "Should return CreatedResult with status code 201")]
     public async void AccountCreation_1()
     {
-        ActionResult<AccountResource> request = await CreateAccount("gtouchet@myges.fr", "123Pass!", "Guillaume", "Touchet");
+        var request = await base.accountsController.Create(new CreateAccountRequest()
+        {
+            MailAddress = "gtouchet@myges.fr",
+            Password = "123Pass!",
+            Firstname = "Guillaume",
+            Lastname = "Touchet",
+        });
 
         request.Result.Should().BeOfType<CreatedResult>().Which.StatusCode.Should().Be((int)HttpStatusCode.Created);
     }
@@ -17,7 +23,11 @@ public class CreateControllerTests : AccountControllerTestsBase
         "Should return CreatedResult with status code 201")]
     public async void AccountCreation_2()
     {
-        ActionResult<AccountResource> request = await CreateAccount("gtouchet@myges.fr", "123Pass!", null, null);
+        var request = await base.accountsController.Create(new CreateAccountRequest()
+        {
+            MailAddress = "gtouchet@myges.fr",
+            Password = "123Pass!",
+        });
 
         request.Result.Should().BeOfType<CreatedResult>().Which.StatusCode.Should().Be((int)HttpStatusCode.Created);
     }
@@ -27,9 +37,13 @@ public class CreateControllerTests : AccountControllerTestsBase
         "Should set default names")]
     public async void AccountCreation_3()
     {
-        ActionResult<AccountResource> request = await CreateAccount("gtouchet@myges.fr", "123Pass!", null, null);
-        CreatedResult result = request.Result as CreatedResult;
-        AccountResource account = result.Value as AccountResource;
+        var request = await base.accountsController.Create(new CreateAccountRequest()
+        {
+            MailAddress = "gtouchet@myges.fr",
+            Password = "123Pass!",
+        });
+        var result = request.Result as CreatedResult;
+        var account = result.Value as AccountResource;
 
         account.Firstname.Should().Be("Unknown");
         account.Lastname.Should().Be("Unknown");
@@ -40,7 +54,12 @@ public class CreateControllerTests : AccountControllerTestsBase
         "Should return BadRequestObjectResult with status code 400")]
     public async void AccountCreation_4()
     {
-        ActionResult<AccountResource> request = await CreateAccount(null, "123Pass!", "Guillaume", "Touchet");
+        var request = await base.accountsController.Create(new CreateAccountRequest()
+        {
+            Password = "123Pass!",
+            Firstname = "Guillaume",
+            Lastname = "Touchet",
+        });
 
         request.Result.Should().BeOfType<BadRequestObjectResult>().Which.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
     }
@@ -50,7 +69,12 @@ public class CreateControllerTests : AccountControllerTestsBase
         "Should return BadRequestObjectResult with status code 400")]
     public async void AccountCreation_5()
     {
-        ActionResult<AccountResource> request = await CreateAccount("gtouchet@myges.fr", null, "Guillaume", "Touchet");
+        var request = await base.accountsController.Create(new CreateAccountRequest()
+        {
+            MailAddress = "gtouchet@myges.fr",
+            Firstname = "Guillaume",
+            Lastname = "Touchet",
+        });
 
         request.Result.Should().BeOfType<BadRequestObjectResult>().Which.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
     }
@@ -60,7 +84,13 @@ public class CreateControllerTests : AccountControllerTestsBase
         "Should return BadRequestObjectResult with status code 400")]
     public async void AccountCreation_6()
     {
-        ActionResult<AccountResource> request = await CreateAccount("myMailAddress", "123Pass!", "Guillaume", "Touchet");
+        var request = await base.accountsController.Create(new CreateAccountRequest()
+        {
+            MailAddress = "myMailAddress",
+            Password = "123Pass!",
+            Firstname = "Guillaume",
+            Lastname = "Touchet",
+        });
 
         request.Result.Should().BeOfType<BadRequestObjectResult>().Which.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
     }
@@ -70,8 +100,30 @@ public class CreateControllerTests : AccountControllerTestsBase
         "Should return BadRequestObjectResult with status code 400")]
     public async void AccountCreation_7()
     {
-        ActionResult<AccountResource> request = await CreateAccount("gtouchet@myges.fr", "123", "Guillaume", "Touchet");
+        var request = await base.accountsController.Create(new CreateAccountRequest()
+        {
+            MailAddress = "gtouchet@myges.fr",
+            Password = "123",
+            Firstname = "Guillaume",
+            Lastname = "Touchet",
+        });
 
         request.Result.Should().BeOfType<BadRequestObjectResult>().Which.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+    }
+
+    [Fact(DisplayName =
+        "Account creation result should be exposed as AccountResource")]
+    public async void AccountCreation_DataMapping()
+    {
+        var request = await base.accountsController.Create(new CreateAccountRequest()
+        {
+            MailAddress = "gtouchet@myges.fr",
+            Password = "123Pass!",
+            Firstname = "Guillaume",
+            Lastname = "Touchet",
+        });
+        var result = request.Result as CreatedResult;
+
+        result.Value.Should().BeOfType<AccountResource>();
     }
 }
