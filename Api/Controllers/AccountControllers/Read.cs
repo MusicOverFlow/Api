@@ -9,7 +9,8 @@ public partial class AccountController
             .Include(a => a.OwnedPosts)
             .Include(a => a.LikedPosts)
             .Include(a => a.LikedCommentaries)
-            .Include(a => a.Groups);
+            .Include(a => a.Groups)
+            .Include(a => a.Follows);
 
         if (!string.IsNullOrWhiteSpace(mailAddress))
         {

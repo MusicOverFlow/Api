@@ -5,7 +5,7 @@ namespace Api.Controllers.AccountControllers;
 public partial class AccountController
 {
     [HttpPut("like"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
-    public async Task<ActionResult> LikePost(Guid? id = null)
+    public async Task<ActionResult> LikeDislikePost(Guid? id = null)
     {
         string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
