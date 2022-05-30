@@ -8,6 +8,7 @@ public class CreateControllerTests : TestBase
     public CreateControllerTests()
     {
         this.account = this.CreateAccount().Result;
+        // account is connected
         base.MockJwtAuthentication(this.account);
         this.group = this.CreateGroup().Result;
     }

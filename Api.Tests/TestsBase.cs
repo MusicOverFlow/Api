@@ -54,6 +54,7 @@ public class TestBase
                     new Claim(ClaimTypes.Email, account.MailAddress),
                 })));
 
+        this.accountsController.ControllerContext.HttpContext = mock.Object;
         this.postController.ControllerContext.HttpContext = mock.Object;
         this.groupController.ControllerContext.HttpContext = mock.Object;
     }
