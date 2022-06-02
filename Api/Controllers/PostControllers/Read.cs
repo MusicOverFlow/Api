@@ -10,10 +10,10 @@ public partial class PostController
             .Include(p => p.Group)
             .Include(p => p.Commentaries)
             .Include(p => p.Likes);
-
+        
         if (id != null)
         {
-            query = query.Where(a => a.Id.Equals(id));
+            query = query.Where(p => p.Id.Equals(id));
         }
 
         List<PostResource_WithCommentaries_AndLikes> posts = new List<PostResource_WithCommentaries_AndLikes>();
