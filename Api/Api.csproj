@@ -33,4 +33,8 @@
     <ProjectReference Include="..\Api.Models\Api.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Files\" />
+  </ItemGroup>
+
 </Project>
