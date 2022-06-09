@@ -10,7 +10,7 @@ public partial class AccountController
 
         if (account == null)
         {
-            return NotFound(new { message = "Account not found" });
+            return NotFound(this.exceptionHandler.AccountNotFound);
         }
 
         this.context.Accounts.Remove(account);

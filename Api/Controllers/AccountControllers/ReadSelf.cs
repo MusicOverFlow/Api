@@ -18,7 +18,7 @@ public partial class AccountController
 
         if (account == null)
         {
-            return NotFound(new { message = "Account not found" });
+            return NotFound(this.exceptionHandler.AccountNotFound);
         }
 
         return Ok(this.mapper.Account_ToResource_WithPosts_AndGroups(account));

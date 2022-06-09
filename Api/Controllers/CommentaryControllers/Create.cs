@@ -14,7 +14,7 @@ public partial class CommentaryController
         
         if (account == null)
         {
-            return NotFound(new { errorMessage = "Account not found" });
+            return NotFound(this.exceptionHandler.AccountNotFound);
         }
 
         Post post = await this.context.Posts
@@ -22,7 +22,7 @@ public partial class CommentaryController
 
         if (post == null)
         {
-            return NotFound(new { errorMessage = "Post not found" });
+            return NotFound(this.exceptionHandler.PostOrCommentaryNotFound);
         }
 
         Commentary commentary = new Commentary

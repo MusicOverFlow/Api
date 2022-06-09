@@ -7,7 +7,7 @@ public partial class AccountController
     {
         if (string.IsNullOrWhiteSpace(request.Firstname) && string.IsNullOrWhiteSpace(request.Lastname))
         {
-            return BadRequest(new { message = "Invalid firstname and lastname" });
+            return BadRequest(this.exceptionHandler.InvalidName);
         }
 
         List<AccountResource> accounts = new List<AccountResource>();

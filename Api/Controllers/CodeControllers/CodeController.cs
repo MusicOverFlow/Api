@@ -4,10 +4,8 @@
 [Route("api/execute")]
 public partial class CodeController : ControllerBase
 {
-    private readonly IConfiguration configuration;
-
-    public CodeController(IConfiguration configuration)
+    public CodeController()
     {
-        this.configuration = configuration;
+
     }
 }

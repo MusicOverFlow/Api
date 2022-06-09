@@ -14,7 +14,7 @@ public partial class GroupController
 
         if (callerAccount == null)
         {
-            return NotFound(new { message = "Account not found" });
+            return NotFound(this.exceptionHandler.AccountNotFound);
         }
 
         Group group = await this.context.Groups
@@ -22,12 +22,12 @@ public partial class GroupController
 
         if (group == null)
         {
-            return NotFound(new { message = "Group not found" });
+            return NotFound(this.exceptionHandler.GroupNotFound);
         }
 
         if (!group.Owner.Id.Equals(callerAccount.Id))
         {
-            return BadRequest(new { message = "You are not the owner of the group" });
+            return BadRequest(this.exceptionHandler.NotOwnerOfGroup);
         }
 
         Account memberAccount = await this.context.Accounts
@@ -35,12 +35,12 @@ public partial class GroupController
 
         if (memberAccount == null)
         {
-            return NotFound(new { message = "Member account not found" });
+            return NotFound(this.exceptionHandler.AccountNotFound);
         }
 
         if (!group.Members.Any(m => m.MailAddress.Equals(memberMailAddress)))
         {
-            return BadRequest(new { message = "This account is not part of the group" });
+            return BadRequest(this.exceptionHandler.AccountNotInGroup);
         }
 
         group.Members.Remove(memberAccount);

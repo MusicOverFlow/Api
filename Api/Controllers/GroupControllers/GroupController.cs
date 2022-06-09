@@ -9,14 +9,17 @@ public partial class GroupController : ControllerBase
     private readonly ModelsContext context;
     private readonly Mapper mapper;
     private readonly Utilitaries.StringComparer stringComparer;
+    private readonly ExceptionHandler exceptionHandler;
 
     public GroupController(
         ModelsContext context,
         Mapper mapper,
-        Utilitaries.StringComparer stringComparer)
+        Utilitaries.StringComparer stringComparer,
+        ExceptionHandler exceptionHandler)
     {
         this.context = context;
         this.mapper = mapper;
         this.stringComparer = stringComparer;
+        this.exceptionHandler = exceptionHandler;
     }
 }

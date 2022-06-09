@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 
-namespace Api.Wrappers;
+namespace Api.Utilitaries;
 
 public class AuthorizeRolesAttribute : AuthorizeAttribute
 {

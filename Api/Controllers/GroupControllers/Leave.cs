@@ -14,7 +14,7 @@ public partial class GroupController
 
         if (account == null)
         {
-            return BadRequest(new { message = "Account not found" });
+            return BadRequest(this.exceptionHandler.AccountNotFound);
         }
 
         Group group = await this.context.Groups
@@ -24,12 +24,12 @@ public partial class GroupController
 
         if (group == null)
         {
-            return BadRequest(new { message = "Group not found" });
+            return BadRequest(this.exceptionHandler.GroupNotFound);
         }
 
         if (group.Owner.Equals(account))
         {
-            return BadRequest(new { message = "You can't leave a group which you are the owner of" });
+            return BadRequest(this.exceptionHandler.LeaveWhileOwner);
         }
 
         group.Members.Remove(account);

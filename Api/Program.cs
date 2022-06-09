@@ -5,7 +5,7 @@ global using Api.Models.Enums;
 global using Api.Utilitaries;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
-global using static Api.Wrappers.AuthorizeRolesAttribute;
+global using static Api.Utilitaries.AuthorizeRolesAttribute;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -20,9 +20,10 @@ bool dev = true;
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Singletons
-builder.Services.AddSingleton<DataValidator>(new DataValidator());
-builder.Services.AddSingleton<Mapper>(new Mapper());
-builder.Services.AddSingleton<Api.Utilitaries.StringComparer>(new Api.Utilitaries.StringComparer());
+builder.Services.AddSingleton(new DataValidator());
+builder.Services.AddSingleton(new Mapper());
+builder.Services.AddSingleton(new Api.Utilitaries.StringComparer());
+builder.Services.AddSingleton(new ExceptionHandler(new DirectoryInfo(Directory.GetCurrentDirectory()) + "/exceptions.json"));
 
 builder.Services.AddControllers()
     .AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);

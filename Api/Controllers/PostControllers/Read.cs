@@ -22,7 +22,7 @@ public partial class PostController
 
         if (id != null && posts.Count == 0)
         {
-            return NotFound(new { message = "Post not found" });
+            return NotFound(this.exceptionHandler.PostNotFound);
         }
 
         return Ok(posts);

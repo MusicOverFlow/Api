@@ -14,7 +14,7 @@ public partial class AccountController
 
         if (account == null)
         {
-            return NotFound(new { message = "Account not found" });
+            return NotFound(this.exceptionHandler.AccountNotFound);
         }
 
         Account callerAccount = await this.context.Accounts
@@ -23,7 +23,7 @@ public partial class AccountController
 
         if (callerAccount.Equals(account))
         {
-            return BadRequest(new { message = "You can't follow yourself" });
+            return BadRequest(this.exceptionHandler.SelfFollow);
         }
 
         if (!callerAccount.Follows.Remove(account))

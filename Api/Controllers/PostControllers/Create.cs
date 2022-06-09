@@ -14,12 +14,12 @@ public partial class PostController
 
         if (account == null)
         {
-            return NotFound(new { message = "Account not found" });
+            return NotFound(this.exceptionHandler.AccountNotFound);
         }
 
         if (string.IsNullOrWhiteSpace(request.Title) || string.IsNullOrWhiteSpace(request.Content))
         {
-            return BadRequest(new { message = "Title or content is empty" });
+            return BadRequest(this.exceptionHandler.PostTitleOrContentEmpty);
         }
 
         Group group = null;
@@ -30,7 +30,7 @@ public partial class PostController
 
             if (group == null)
             {
-                return NotFound(new { message = "Group not found" });
+                return NotFound(this.exceptionHandler.GroupNotFound);
             }
         }
 

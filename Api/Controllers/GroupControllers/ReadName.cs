@@ -7,7 +7,7 @@ public partial class GroupController
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            return BadRequest(new { message = "Invalid name" });
+            return BadRequest();
         }
 
         List<GroupResource_WithMembers> groups = new List<GroupResource_WithMembers>();
