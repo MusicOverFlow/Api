@@ -23,7 +23,7 @@ public partial class AccountController
 
         if (!string.IsNullOrWhiteSpace(mailAddress) && accounts.Count == 0)
         {
-            return NotFound(this.exceptionHandler.AccountNotFound);
+            return NotFound(this.exceptionHandler.GetException(BadRequestType.AccountNotFound));
         }
 
         return Ok(accounts);

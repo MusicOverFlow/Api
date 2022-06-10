@@ -27,7 +27,7 @@ public partial class PostController
 
         if (account == null)
         {
-            return NotFound(this.exceptionHandler.AccountNotFound);
+            return NotFound(this.exceptionHandler.GetException(BadRequestType.AccountNotFound));
         }
 
         return Ok(this.mapper.Account_ToResource_WithPosts(account));

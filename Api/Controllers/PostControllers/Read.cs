@@ -22,7 +22,7 @@ public partial class PostController
 
         if (id != null && posts.Count == 0)
         {
-            return NotFound(this.exceptionHandler.PostNotFound);
+            return NotFound(this.exceptionHandler.GetException(BadRequestType.PostNotFound));
         }
 
         return Ok(posts);

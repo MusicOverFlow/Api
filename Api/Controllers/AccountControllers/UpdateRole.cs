@@ -10,14 +10,14 @@ public partial class AccountController
 
         if (account == null)
         {
-            return NotFound(this.exceptionHandler.AccountNotFound);
+            return NotFound(this.exceptionHandler.GetException(BadRequestType.AccountNotFound));
         }
 
         string newRole = RoleParser.Handle(role);
 
         if (string.IsNullOrWhiteSpace(newRole))
         {
-            return BadRequest(this.exceptionHandler.InvalidRole);
+            return BadRequest(this.exceptionHandler.GetException(BadRequestType.InvalidRole));
         }
 
         account.Role = newRole;

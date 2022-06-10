@@ -14,7 +14,7 @@ public partial class GroupController
 
         if (account == null)
         {
-            return BadRequest(this.exceptionHandler.AccountNotFound);
+            return BadRequest(this.exceptionHandler.GetException(BadRequestType.AccountNotFound));
         }
 
         Group group = await this.context.Groups
@@ -24,12 +24,12 @@ public partial class GroupController
 
         if (group == null)
         {
-            return BadRequest(this.exceptionHandler.GroupNotFound);
+            return BadRequest(this.exceptionHandler.GetException(BadRequestType.GroupNotFound));
         }
 
         if (group.Owner.Equals(account))
         {
-            return BadRequest(this.exceptionHandler.LeaveWhileOwner);
+            return BadRequest(this.exceptionHandler.GetException(BadRequestType.LeaveWhileOwner));
         }
 
         group.Members.Remove(account);

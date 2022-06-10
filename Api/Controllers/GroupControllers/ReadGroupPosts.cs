@@ -13,7 +13,7 @@ public partial class GroupController
 
         if (group == null)
         {
-            return NotFound(this.exceptionHandler.GroupNotFound);
+            return NotFound(this.exceptionHandler.GetException(BadRequestType.GroupNotFound));
         }
 
         return Ok(this.mapper.Group_ToResource_WithPosts(group));

@@ -14,12 +14,12 @@ public partial class PostController
 
         if (account == null)
         {
-            return NotFound(this.exceptionHandler.AccountNotFound);
+            return NotFound(this.exceptionHandler.GetException(BadRequestType.AccountNotFound));
         }
 
         if (string.IsNullOrWhiteSpace(request.Title) || string.IsNullOrWhiteSpace(request.Content))
         {
-            return BadRequest(this.exceptionHandler.PostTitleOrContentEmpty);
+            return BadRequest(this.exceptionHandler.GetException(BadRequestType.PostTitleOrContentEmpty));
         }
 
         Group group = null;
@@ -30,7 +30,7 @@ public partial class PostController
 
             if (group == null)
             {
-                return NotFound(this.exceptionHandler.GroupNotFound);
+                return NotFound(this.exceptionHandler.GetException(BadRequestType.GroupNotFound));
             }
         }
 

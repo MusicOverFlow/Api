@@ -15,7 +15,7 @@ public partial class AuthenticationController
 
         if (account == null || !IsPasswordCorrect(request.Password, account.PasswordHash, account.PasswordSalt))
         {
-            return BadRequest(this.exceptionHandler.WrongCredentials);
+            return BadRequest(this.exceptionHandler.GetException(BadRequestType.WrongCredentials));
         }
 
         string jwt = this.CreateJwt(account);

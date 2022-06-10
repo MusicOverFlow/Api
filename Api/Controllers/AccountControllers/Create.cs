@@ -9,12 +9,12 @@ public partial class AccountController
     {
         if (!this.dataValidator.IsMailAddressValid(request.MailAddress))
         {
-            return BadRequest(this.exceptionHandler.InvalidMail);
+            return BadRequest(this.exceptionHandler.GetException(BadRequestType.InvalidMail));
         }
 
         if (!this.dataValidator.IsPasswordValid(request.Password))
         {
-            return BadRequest(this.exceptionHandler.InvalidPassword);
+            return BadRequest(this.exceptionHandler.GetException(BadRequestType.InvalidPassword));
         }
 
         bool isMailAlreadyInUse = await this.context.Accounts
@@ -22,7 +22,7 @@ public partial class AccountController
 
         if (isMailAlreadyInUse)
         {
-            return BadRequest(this.exceptionHandler.MailAlreadyInUse);
+            return BadRequest(this.exceptionHandler.GetException(BadRequestType.MailAlreadyInUse));
         }
 
         this.EncryptPassword(request.Password, out byte[] hash, out byte[] salt);

@@ -14,7 +14,7 @@ public partial class GroupController
 
         if (account == null)
         {
-            return NotFound(this.exceptionHandler.AccountNotFound);
+            return NotFound(this.exceptionHandler.GetException(BadRequestType.AccountNotFound));
         }
 
         Group group = await this.context.Groups
@@ -23,12 +23,12 @@ public partial class GroupController
 
         if (group == null)
         {
-            return NotFound(this.exceptionHandler.GroupNotFound);
+            return NotFound(this.exceptionHandler.GetException(BadRequestType.GroupNotFound));
         }
 
         if (group.Members.Any(m => m.Id.Equals(account.Id)))
         {
-            return BadRequest(this.exceptionHandler.AccountAlreadyInGroup);
+            return BadRequest(this.exceptionHandler.GetException(BadRequestType.AccountAlreadyInGroup));
         }
 
         group.Members.Add(account);
