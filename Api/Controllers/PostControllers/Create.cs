@@ -14,12 +14,12 @@ public partial class PostController
 
         if (account == null)
         {
-            return NotFound(this.exceptionHandler.GetException(BadRequestType.AccountNotFound));
+            return NotFound(this.exceptionHandler.GetError(ErrorType.AccountNotFound));
         }
 
         if (string.IsNullOrWhiteSpace(request.Title) || string.IsNullOrWhiteSpace(request.Content))
         {
-            return BadRequest(this.exceptionHandler.GetException(BadRequestType.PostTitleOrContentEmpty));
+            return BadRequest(this.exceptionHandler.GetError(ErrorType.PostTitleOrContentEmpty));
         }
 
         Group group = null;
@@ -30,7 +30,7 @@ public partial class PostController
 
             if (group == null)
             {
-                return NotFound(this.exceptionHandler.GetException(BadRequestType.GroupNotFound));
+                return NotFound(this.exceptionHandler.GetError(ErrorType.GroupNotFound));
             }
         }
 
@@ -48,6 +48,6 @@ public partial class PostController
 
         await this.context.SaveChangesAsync();
 
-        return Created(nameof(Create), post);
+        return Created(nameof(Create), this.mapper.Post_ToResource(post));
     }
 }

@@ -9,14 +9,14 @@ public partial class AccountController : ControllerBase
     private readonly ModelsContext context;
     private readonly Mapper mapper;
     private readonly DataValidator dataValidator;
-    private readonly Utilitaries.StringComparer stringComparer;
+    private readonly Utilitaries.LevenshteinDistance stringComparer;
     private readonly ExceptionHandler exceptionHandler;
 
     public AccountController(
         ModelsContext context,
         Mapper mapper,
         DataValidator dataValidator,
-        Utilitaries.StringComparer stringComparer,
+        Utilitaries.LevenshteinDistance stringComparer,
         ExceptionHandler exceptionHandler)
     {
         this.context = context;

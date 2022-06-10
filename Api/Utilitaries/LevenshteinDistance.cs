@@ -1,6 +1,6 @@
 ﻿namespace Api.Utilitaries;
 
-public class StringComparer
+public class LevenshteinDistance
 {
     public double Compare(string source, string target)
     {

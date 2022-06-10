@@ -4,35 +4,37 @@ namespace Api.Utilitaries;
 
 public class ExceptionHandler
 {
-    private Dictionary<string, Exception> exceptions;
+    private Dictionary<ErrorType, ErrorDto> errors;
 
-    public ExceptionHandler(string exceptionsFilepath)
+    public ExceptionHandler(string errorsFilepath)
     {
-        this.exceptions = this.ExceptionsRuntimeInitialization(exceptionsFilepath);
+        this.errors = this.GetErrorsFromFile(errorsFilepath);
     }
     
-    private Dictionary<string, Exception> ExceptionsRuntimeInitialization(string exceptionsFilepath)
+    private Dictionary<ErrorType, ErrorDto> GetErrorsFromFile(string errorsFilepath)
     {
-        return JsonSerializer.Deserialize<Dictionary<string, Exception>>(File.ReadAllText(exceptionsFilepath), new JsonSerializerOptions()
+        string fileContent = File.ReadAllText(errorsFilepath);
+        
+        return JsonSerializer.Deserialize<Dictionary<ErrorType, ErrorDto>>(fileContent, new JsonSerializerOptions()
         {
             PropertyNameCaseInsensitive = true,
         });
     }
 
-    public Exception GetException(BadRequestType badRequestType)
+    public ErrorDto GetError(ErrorType errorType)
     {
-        return this.exceptions.TryGetValue(badRequestType.ToString(), out Exception exception) ? exception : new Exception();
+        return this.errors.TryGetValue(errorType, out ErrorDto errorDto) ? errorDto : new ErrorDto();
     }
 }
 
-public class Exception
+public class ErrorDto
 {
-    public string Error { get; init; } = "Execution error";
+    public string Error { get; init; } = "Error";
     public string Message { get; init; } = "An error occured";
     public string Example { get; init; } = string.Empty;
 }
 
-public enum BadRequestType
+public enum ErrorType
 {
     InvalidMail,
     InvalidPassword,

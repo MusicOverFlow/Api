@@ -14,7 +14,7 @@ public partial class GroupController
 
         if (callerAccount == null)
         {
-            return NotFound(this.exceptionHandler.GetException(BadRequestType.AccountNotFound));
+            return NotFound(this.exceptionHandler.GetError(ErrorType.AccountNotFound));
         }
 
         Group group = await this.context.Groups
@@ -22,12 +22,12 @@ public partial class GroupController
 
         if (group == null)
         {
-            return NotFound(this.exceptionHandler.GetException(BadRequestType.GroupNotFound));
+            return NotFound(this.exceptionHandler.GetError(ErrorType.GroupNotFound));
         }
 
         if (!group.Owner.Id.Equals(callerAccount.Id))
         {
-            return BadRequest(this.exceptionHandler.GetException(BadRequestType.NotOwnerOfGroup));
+            return BadRequest(this.exceptionHandler.GetError(ErrorType.NotOwnerOfGroup));
         }
 
         Account memberAccount = await this.context.Accounts
@@ -35,12 +35,12 @@ public partial class GroupController
 
         if (memberAccount == null)
         {
-            return NotFound(this.exceptionHandler.GetException(BadRequestType.AccountNotFound));
+            return NotFound(this.exceptionHandler.GetError(ErrorType.AccountNotFound));
         }
 
         if (!group.Members.Any(m => m.MailAddress.Equals(memberMailAddress)))
         {
-            return BadRequest(this.exceptionHandler.GetException(BadRequestType.AccountNotInGroup));
+            return BadRequest(this.exceptionHandler.GetError(ErrorType.AccountNotInGroup));
         }
 
         group.Members.Remove(memberAccount);

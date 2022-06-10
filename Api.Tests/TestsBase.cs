@@ -19,14 +19,16 @@ using Microsoft.Extensions.Configuration;
 using Moq;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
+using System.IO;
 
 public class TestBase
 {
     private readonly ModelsContext dbContext = new ModelsContext(new DbContextOptionsBuilder<ModelsContext>().UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
     protected readonly Mapper mapper = new Mapper();
     private readonly DataValidator dataValidator = new DataValidator();
-    private readonly Api.Utilitaries.StringComparer stringComparer = new Api.Utilitaries.StringComparer();
+    private readonly LevenshteinDistance stringComparer = new LevenshteinDistance();
     private readonly IConfiguration configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
+    private readonly ExceptionHandler exceptionHandler = new ExceptionHandler(new DirectoryInfo(Directory.GetCurrentDirectory()) + "/exceptions.json");
 
     protected readonly AccountController accountsController;
     protected readonly PostController postController;
@@ -36,11 +38,11 @@ public class TestBase
 
     protected TestBase()
     {
-        this.accountsController = new AccountController(this.dbContext, this.mapper, this.dataValidator, this.stringComparer);
-        this.postController = new PostController(this.dbContext, this.mapper);
-        this.commentaryController = new CommentaryController(this.dbContext, this.mapper);
-        this.groupController = new GroupController(this.dbContext, this.mapper, this.stringComparer);
-        this.authenticationController = new AuthenticationController(this.dbContext, this.configuration);
+        this.accountsController = new AccountController(this.dbContext, this.mapper, this.dataValidator, this.stringComparer, this.exceptionHandler);
+        this.postController = new PostController(this.dbContext, this.mapper, this.exceptionHandler);
+        this.commentaryController = new CommentaryController(this.dbContext, this.mapper, this.exceptionHandler);
+        this.groupController = new GroupController(this.dbContext, this.mapper, this.stringComparer, this.exceptionHandler);
+        this.authenticationController = new AuthenticationController(this.dbContext, this.configuration, this.exceptionHandler);
     }
     
     protected void MockJwtAuthentication(AccountResource account)

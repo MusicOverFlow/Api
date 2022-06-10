@@ -15,13 +15,13 @@ public partial class GroupController
         
         if (account == null)
         {
-            return NotFound(this.exceptionHandler.GetException(BadRequestType.AccountNotFound));
+            return NotFound(this.exceptionHandler.GetError(ErrorType.AccountNotFound));
         }
 
         // TODO: words ban list ?
         if (string.IsNullOrWhiteSpace(request.Name))
         {
-            return BadRequest(this.exceptionHandler.GetException(BadRequestType.GroupeMissingName));
+            return BadRequest(this.exceptionHandler.GetError(ErrorType.GroupeMissingName));
         }
 
         Group group = new Group()

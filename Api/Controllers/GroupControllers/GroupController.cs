@@ -8,13 +8,13 @@ public partial class GroupController : ControllerBase
 
     private readonly ModelsContext context;
     private readonly Mapper mapper;
-    private readonly Utilitaries.StringComparer stringComparer;
+    private readonly Utilitaries.LevenshteinDistance stringComparer;
     private readonly ExceptionHandler exceptionHandler;
 
     public GroupController(
         ModelsContext context,
         Mapper mapper,
-        Utilitaries.StringComparer stringComparer,
+        Utilitaries.LevenshteinDistance stringComparer,
         ExceptionHandler exceptionHandler)
     {
         this.context = context;

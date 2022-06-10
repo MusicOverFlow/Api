@@ -20,10 +20,18 @@ bool dev = true;
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Singletons
-builder.Services.AddSingleton(new DataValidator());
-builder.Services.AddSingleton(new Mapper());
-builder.Services.AddSingleton(new Api.Utilitaries.StringComparer());
-builder.Services.AddSingleton(new ExceptionHandler(new DirectoryInfo(Directory.GetCurrentDirectory()) + "/exceptions.json"));
+try
+{
+    builder.Services.AddSingleton(new DataValidator());
+    builder.Services.AddSingleton(new Mapper());
+    builder.Services.AddSingleton(new LevenshteinDistance());
+    builder.Services.AddSingleton(new ExceptionHandler(new DirectoryInfo(Directory.GetCurrentDirectory()) + "/exceptions.json"));
+}
+catch (Exception e)
+{
+    Console.WriteLine(e.Message);
+    return;
+}
 
 builder.Services.AddControllers()
     .AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);

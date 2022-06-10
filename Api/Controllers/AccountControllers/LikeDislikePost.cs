@@ -16,7 +16,7 @@ public partial class AccountController
 
         if (account == null)
         {
-            return NotFound(this.exceptionHandler.GetException(BadRequestType.AccountNotFound));
+            return NotFound(this.exceptionHandler.GetError(ErrorType.AccountNotFound));
         }
 
         Post post = await this.context.Posts
@@ -45,7 +45,7 @@ public partial class AccountController
 
             if (commentary == null)
             {
-                return NotFound(this.exceptionHandler.GetException(BadRequestType.PostOrCommentaryNotFound));
+                return NotFound(this.exceptionHandler.GetError(ErrorType.PostOrCommentaryNotFound));
             }
 
             if (commentary.Likes.Contains(account))
