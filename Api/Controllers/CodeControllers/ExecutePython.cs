@@ -22,7 +22,7 @@ public partial class CodeController
         Process process = Process.Start(new ProcessStartInfo()
         {
             FileName = "docker",
-            Arguments = $"run --rm -v {scriptFilepath}:/files script-execution python {guid}",
+            Arguments = $"run --rm -v {scriptFilepath}:/files scriptexecutionimage.azurecr.io/script-execution python {guid}",
             CreateNoWindow = true,
             UseShellExecute = false,
             RedirectStandardOutput = true,
