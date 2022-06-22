@@ -1,38 +1,36 @@
-﻿
-namespace Api.Models.Enums
+﻿namespace Api.Models.Enums;
+
+public enum Role
 {
-    public enum Role
+    User,
+    Moderator,
+    Admin,
+}
+
+public static class RoleParser
+{
+    public static string Handle(string value)
     {
-        User,
-        Moderator,
-        Admin,
+        if (EqualsIgnoreCase(value, nameof(Role.User)))
+        {
+            return nameof(Role.User);
+        }
+        else if (EqualsIgnoreCase(value, nameof(Role.Moderator)))
+        {
+            return nameof(Role.Moderator);
+        }
+        else if (EqualsIgnoreCase(value, nameof(Role.Admin)))
+        {
+            return nameof(Role.Admin);
+        }
+        else
+        {
+            return string.Empty;
+        }
     }
 
-    public static class RoleParser
+    private static bool EqualsIgnoreCase(string val1, string val2)
     {
-        public static string Handle(string value)
-        {
-            if (EqualsIgnoreCase(value, nameof(Role.User)))
-            {
-                return nameof(Role.User);
-            }
-            else if (EqualsIgnoreCase(value, nameof(Role.Moderator)))
-            {
-                return nameof(Role.Moderator);
-            }
-            else if (EqualsIgnoreCase(value, nameof(Role.Admin)))
-            {
-                return nameof(Role.Admin);
-            }
-            else
-            {
-                return string.Empty;
-            }
-        }
-
-        private static bool EqualsIgnoreCase(string val1, string val2)
-        {
-            return val1.Equals(val2, StringComparison.OrdinalIgnoreCase);
-        }
+        return val1.Equals(val2, StringComparison.OrdinalIgnoreCase);
     }
 }

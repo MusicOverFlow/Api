@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Api.Models.Entities;
+﻿namespace Api.Models.Entities;
 
 [Table("Posts")]
 public class Post
@@ -15,29 +12,12 @@ public class Post
     [Required]
     public DateTime CreatedAt { get; set; }
 
-    public Account Account { get; set; }
+    public Account Owner { get; set; }
+
     public ICollection<Commentary> Commentaries { get; set; }
-}
 
-public class PostResource
-{
-    public Guid Id { get; set; }
-    public string Title { get; set; }
-    public string Content { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public Group Group { get; set; }
 
-    public AccountResource Account { get; set; }
-    public ICollection<CommentaryResource> Commentaries { get; set; }
-}
-
-public class CreatePost
-{
-    [Required] public string Title { get; set; }
-    [Required] public string Content { get; set; }
-}
-
-// TODO: une route sur l'api pour savoir si un post est liké par un utilisateur ou pas
-public class LikeDislike
-{
-    [Required] public Guid PostId { get; set; }
+    public ICollection<Account> Likes { get; set; }
+    public int LikesCount { get; set; }
 }

@@ -1,0 +1,75 @@
+﻿{
+  "InvalidMail": {
+    "error": "Invalid mail address",
+    "message": "The mail address you entered is not conform",
+    "example": "Example: do you really need an example for that ?.. duuuh@imstoopid.dumb ... Happy ?"
+  },
+  "InvalidPassword": {
+    "error": "Invalid password",
+    "message": "The password you entered is not valid, it should contain at least one upper and lower character, a number, a symbol, and be between 8 and 20 characters long",
+    "example": "Example: ************ oops, it's censored, sorry"
+  },
+  "MailAlreadyInUse": {
+    "error": "Mail address already in use",
+    "message": "The mail address you entered is already in use. If you forgot your password, you can retrieve it by clicking on the 'forgot password' button, if you're trying to steal this account, please stop."
+  },
+  "AccountNotFound": {
+    "error": "Account not found",
+    "message": "No account linked to this mail address found, strange"
+  },
+  "SelfFollow": {
+    "error": "Trying to follow yourself",
+    "message": "You cannot follow yourself, how egocentric are you ?"
+  },
+  "PostOrCommentaryNotFound": {
+    "error": "Post or commentary not found",
+    "message": "Something went wrong, veeeery wrong, please try refreshing your browser"
+  },
+  "InvalidName": {
+    "error": "Invalid first or last name",
+    "message": "wtf are you doing, how hard is it to enter a name ??",
+    "example": "Example: I'll not feed an obvious troll"
+  },
+  "InvalidRole": {
+    "error": "Invalid role",
+    "message": "Invalid role, available roles are 'User', 'Moderator', 'Admin', but you should know that, since you're actually an admin. Jeez'..."
+  },
+  "WrongCredentials": {
+    "error": "Wrong credentials",
+    "message": "lol noob"
+  },
+  "GroupeMissingName": {
+    "error": "Your group is missing a name",
+    "message": "Please give your group a name",
+    "example": "Example: 'f0r s3xy p30pl3 0nly :3 oulala'"
+  },
+  "GroupNotFound": {
+    "error": "Group not found",
+    "message": "Could not find this group, sounds like a conspiracy to me è_é"
+  },
+  "AccountAlreadyInGroup": {
+    "error": "Account already in this group",
+    "message": "You already are a member of this amazing group"
+  },
+  "LeaveWhileOwner": {
+    "error": "Cannot leave a group while owner",
+    "message": "You cannot leave this groupe since you are the owner of said group, what will the members do whitout you, you beautiful sausage"
+  },
+  "NotOwnerOfGroup": {
+    "error": "Not the owner of the group",
+    "message": "You are not the owner of this group, just a nobody. Deal with it."
+  },
+  "AccountNotInGroup": {
+    "error": "Account not in this group",
+    "message": "This account is not a member of this group, too bad for them 'cause this place's on FIRE !"
+  },
+  "PostTitleOrContentEmpty": {
+    "error": "Post title or content empty",
+    "message": "You have to enter a title and some content to your post",
+    "example": "Example: 'NFT's are cooool' - 'JUST KIDDING, it's trash tier, f*ck it'"
+  },
+  "PostNotFound": {
+    "error": "Post not found",
+    "message": "This is bad, this is not supposed to happen ! RUN !"
+  }
+}

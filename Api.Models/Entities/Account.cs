@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Api.Models.Entities;
+﻿namespace Api.Models.Entities;
 
 [Table("Accounts")]
 public class Account
@@ -16,38 +13,20 @@ public class Account
     public byte[] PasswordSalt { get; set; }
     [Required]
     public string Role { get; set; }
-    [Required, MaxLength(20)]
+    [Required]
     public string Firstname { get; set; }
-    [Required, MaxLength(20)]
+    [Required]
     public string Lastname { get; set; }
     [Required]
     public DateTime CreatedAt { get; set; }
 
-    public ICollection<Post> Posts { get; set; }
-    public ICollection<Commentary> Commentaries { get; set; }
-}
+    public ICollection<Post> OwnedPosts { get; set; }
+    public ICollection<Commentary> OwnedCommentaries { get; set; }
 
-public class AccountResource
-{
-    public string MailAddress { get; set; }
-    public string Firstname { get; set; }
-    public string Lastname { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public ICollection<Group> Groups { get; set; }
 
-    public ICollection<PostResource> Posts { get; set; }
-    public ICollection<PostResource> Commentaries { get; set; }
-}
-
-public class CreateAccount
-{
-    [Required] public string MailAddress { get; set; }
-    [Required] public string Password { get; set; }
-    public string Firstname { get; set; } = "Unknown";
-    public string Lastname { get; set; } = "Unknown";
-}
-
-public class Authentication
-{
-    [Required] public string MailAddress { get; set; }
-    [Required] public string Password { get; set; }
+    public ICollection<Post> LikedPosts { get; set; }
+    public ICollection<Commentary> LikedCommentaries { get; set; }
+    
+    public ICollection<Account> Follows { get; set; }
 }

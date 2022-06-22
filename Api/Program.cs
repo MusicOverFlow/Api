@@ -1,14 +1,40 @@
+global using Api.ExpositionModels;
+global using Api.Models;
+global using Api.Models.Entities;
+global using Api.Models.Enums;
+global using Api.Utilitaries;
+global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.EntityFrameworkCore;
+global using static Api.Utilitaries.AuthorizeRolesAttribute;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Api.Models;
-using System.Text;
 using Microsoft.OpenApi.Models;
+using System.Text;
 using System.Text.Json.Serialization;
+
+
+bool dev = true;
+
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+// Singletons
+try
+{
+    builder.Services.AddSingleton(new DataValidator());
+    builder.Services.AddSingleton(new Mapper());
+    builder.Services.AddSingleton(new LevenshteinDistance());
+    builder.Services.AddSingleton(new ExceptionHandler(new DirectoryInfo(Directory.GetCurrentDirectory()) + "/exceptions.json"));
+}
+catch (Exception e)
+{
+    Console.WriteLine(e.Message);
+    return;
+}
+
+builder.Services.AddControllers()
+    .AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 // Swagger configs
 builder.Services.AddEndpointsApiExplorer();
@@ -56,14 +82,28 @@ builder.Services
 
 builder.Services.AddDbContext<ModelsContext>(options =>
 {
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("MusicOverflow"),
+    if (dev)
+    {
+        options.UseNpgsql(
+        builder.Configuration.GetConnectionString("MusicOverflowHeroku"),
         optionBuilder => optionBuilder.MigrationsAssembly("Api"));
+    }
+    else
+    {
+        options.UseSqlServer(
+        builder.Configuration.GetConnectionString("MusicOverflowAzure"),
+        optionBuilder => optionBuilder.MigrationsAssembly("Api"));
+    }
 });
 
 builder.Services.AddCors();
 
 WebApplication app = builder.Build();
+
+if (dev)
+{
+    AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+}
 
 app.UseCors(policy => policy
     .AllowAnyOrigin()
