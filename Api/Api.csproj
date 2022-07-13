@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="11.0.1" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.13.0" />
     <PackageReference Include="EmailValidation" Version="1.0.7" />
     <PackageReference Include="EzPasswordValidator" Version="2.1.0" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Cors" Version="5.2.8" />

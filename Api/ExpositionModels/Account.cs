@@ -10,6 +10,8 @@ public class AccountResource
     public string MailAddress { get; set; }
     public string Firstname { get; set; }
     public string Lastname { get; set; }
+    public string Pseudonym { get; set; }
+    public string ProfilPicUrl { get; set; }
     public DateTime CreatedAt { get; set; }
 
     public ICollection<AccountResource> Follows { get; set; }
@@ -45,9 +47,11 @@ public class CreateAccountRequest
     [Required] public string Password { get; set; }
     public string Firstname { get; set; }
     public string Lastname { get; set; }
+    public string Pseudonym { get; set; }
+    public byte[] ProfilPic { get; set; }
 }
 
-public class ReadByNames
+public class ReadByNames // TODO: by pseudo
 {
     public string Firstname { get; set; }
     public string Lastname { get; set; }

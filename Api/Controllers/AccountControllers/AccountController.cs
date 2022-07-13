@@ -9,19 +9,22 @@ public partial class AccountController : ControllerBase
     private readonly ModelsContext context;
     private readonly Mapper mapper;
     private readonly DataValidator dataValidator;
-    private readonly Utilitaries.LevenshteinDistance stringComparer;
+    private readonly IConfiguration configuration;
+    private readonly LevenshteinDistance stringComparer;
     private readonly ExceptionHandler exceptionHandler;
 
     public AccountController(
         ModelsContext context,
         Mapper mapper,
         DataValidator dataValidator,
-        Utilitaries.LevenshteinDistance stringComparer,
+        IConfiguration configuration,
+        LevenshteinDistance stringComparer,
         ExceptionHandler exceptionHandler)
     {
         this.context = context;
         this.mapper = mapper;
         this.dataValidator = dataValidator;
+        this.configuration = configuration;        
         this.stringComparer = stringComparer;
         this.exceptionHandler = exceptionHandler;
     }

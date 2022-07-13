@@ -18,6 +18,9 @@ public class Account
     [Required]
     public string Lastname { get; set; }
     [Required]
+    public string Pseudonym { get; set; }
+    public string ProfilPicUrl { get; set; }
+    [Required]
     public DateTime CreatedAt { get; set; }
 
     public ICollection<Post> OwnedPosts { get; set; }
