@@ -22,7 +22,7 @@ public partial class CodeController
         Process process = Process.Start(new ProcessStartInfo()
         {
             FileName = "docker",
-            Arguments = $"run --rm -v {scriptFilepath}:/files script-execution c {guid}",
+            Arguments = $"run --rm -v {scriptFilepath}:/files gtouchet/pa-script-execution c {guid}",
             CreateNoWindow = true,
             UseShellExecute = false,
             RedirectStandardOutput = true,
