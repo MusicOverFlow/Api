@@ -11,7 +11,7 @@ public class AccountResource
     public string Firstname { get; set; }
     public string Lastname { get; set; }
     public string Pseudonym { get; set; }
-    public string ProfilPicUrl { get; set; }
+    public string PicUrl { get; set; }
     public DateTime CreatedAt { get; set; }
 
     public ICollection<AccountResource> Follows { get; set; }

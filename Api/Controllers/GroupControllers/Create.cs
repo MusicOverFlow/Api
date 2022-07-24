@@ -28,6 +28,7 @@ public partial class GroupController
         {
             Name = request.Name,
             Description = request.Description,
+            PicUrl = this.GetGroupPicUrl(request.GroupPic).Result,
             CreatedAt = DateTime.Now,
             
             Owner = account,
