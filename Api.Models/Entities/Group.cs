@@ -10,6 +10,8 @@ public class Group
     [Required, MaxLength(100)]
     public string Description { get; set; }
     [Required]
+    public string PicUrl { get; set; }
+    [Required]
     public DateTime CreatedAt { get; set; }
 
     public Account Owner { get; set; }

@@ -34,7 +34,7 @@ public partial class AccountController
             Firstname = request.Firstname ?? "Unknown",
             Lastname = request.Lastname ?? "Unknown",
             Pseudonym = request.Pseudonym ?? "Anonymous",
-            ProfilPicUrl = this.GetProfilPicUrl(request.ProfilPic, request.MailAddress.Trim()).Result,
+            PicUrl = this.GetProfilPicUrl(request.ProfilPic, request.MailAddress.Trim()).Result,
             CreatedAt = DateTime.Now,
         };
 

@@ -17,7 +17,7 @@ public partial class AccountController
             return NotFound(this.exceptionHandler.GetError(ErrorType.AccountNotFound));
         }
 
-        account.ProfilPicUrl = this.GetProfilPicUrl(request.ProfilPic, account.MailAddress).Result;
+        account.PicUrl = this.GetProfilPicUrl(request.ProfilPic, account.MailAddress).Result;
         await this.context.SaveChangesAsync();
 
         return Ok(this.mapper.Account_ToResource(account));

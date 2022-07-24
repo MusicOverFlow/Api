@@ -19,7 +19,8 @@ public class Account
     public string Lastname { get; set; }
     [Required]
     public string Pseudonym { get; set; }
-    public string ProfilPicUrl { get; set; }
+    [Required]
+    public string PicUrl { get; set; }
     [Required]
     public DateTime CreatedAt { get; set; }
 
