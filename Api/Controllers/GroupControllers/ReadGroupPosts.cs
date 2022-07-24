@@ -2,7 +2,7 @@
 
 public partial class GroupController
 {
-    [HttpGet("posts")]
+    [HttpGet("posts"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
     public async Task<ActionResult<List<GroupResource_WithMembers_AndPosts>>> ReadGroupPosts(Guid? groupId)
     {
         Group group = await this.context.Groups
