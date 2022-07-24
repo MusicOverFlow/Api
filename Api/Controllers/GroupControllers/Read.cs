@@ -6,6 +6,7 @@ public partial class GroupController
     public async Task<ActionResult<GroupResource>> Read()
     {
         List<Group> groups = await this.context.Groups
+            .Include(g => g.Id)
             .Include(g => g.Name)
             .Include(g => g.Description)
             .Include(g => g.PicUrl)
