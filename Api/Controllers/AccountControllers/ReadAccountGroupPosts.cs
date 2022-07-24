@@ -11,8 +11,11 @@ public partial class AccountController
 
         Account account = await this.context.Accounts
             .Include(a => a.Groups)
+                .ThenInclude(g => g.Posts.OrderByDescending(g => g.CreatedAt))
+                    .ThenInclude(p => p.Commentaries)
+            .Include(a => a.Groups)
                 .ThenInclude(g => g.Posts)
-                    .ThenInclude(p => new { p.Commentaries, p.Likes })
+                    .ThenInclude(p => p.Likes)
             .FirstOrDefaultAsync(a => a.MailAddress.Equals(mailAddress));
 
         if (account == null)

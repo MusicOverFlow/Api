@@ -18,6 +18,7 @@ public partial class CommentaryController
         }
 
         Post post = await this.context.Posts
+            .Include(p => p.Commentaries)
             .FirstOrDefaultAsync(p => p.Id.Equals(postId));
 
         if (post == null)
@@ -39,6 +40,6 @@ public partial class CommentaryController
 
         await this.context.SaveChangesAsync();
 
-        return Created(nameof(Create), this.mapper.Post_ToResource(post));
+        return Created(nameof(Create), this.mapper.Post_ToResource_WithCommentaries_AndLikes(post));
     }
 }

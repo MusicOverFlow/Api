@@ -6,7 +6,7 @@ public partial class GroupController
     public async Task<ActionResult<List<GroupResource_WithMembers>>> ReadById(Guid id)
     {
         Group group = await this.context.Groups
-            .Include(g => g.Posts.OrderBy(g => g.CreatedAt))
+            .Include(g => g.Posts.OrderByDescending(g => g.CreatedAt))
             .FirstOrDefaultAsync(g => g.Id.Equals(id));
 
         if (group == null)
