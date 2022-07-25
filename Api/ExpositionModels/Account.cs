@@ -51,7 +51,7 @@ public class CreateAccountRequest
     public byte[] ProfilPic { get; set; }
 }
 
-public class ReadByNames // TODO: by pseudo
+public class ReadByNames
 {
     public string Firstname { get; set; }
     public string Lastname { get; set; }
