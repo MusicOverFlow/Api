@@ -30,6 +30,11 @@
     "message": "wtf are you doing, how hard is it to enter a name ??",
     "example": "Example: I'll not feed an obvious troll"
   },
+  "InvalidPseudonym": {
+    "error": "Invalid pseudonym",
+    "message": "Did you really know the pseudo of your friends ? Just kidding, you didn't have friends",
+    "example": "Cheh"
+  },
   "InvalidRole": {
     "error": "Invalid role",
     "message": "Invalid role, available roles are 'User', 'Moderator', 'Admin', but you should know that, since you're actually an admin. Jeez'..."

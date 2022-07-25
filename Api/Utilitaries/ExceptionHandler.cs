@@ -43,6 +43,7 @@ public enum ErrorType
     SelfFollow,
     PostOrCommentaryNotFound,
     InvalidName,
+    InvalidPseudonym,
     InvalidRole,
     WrongCredentials,
     GroupeMissingName,
