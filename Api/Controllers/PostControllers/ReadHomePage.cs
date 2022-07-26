@@ -12,22 +12,19 @@ public partial class PostController
         // TODO: OOF, obligé y'a plus simple, à creuser
         Account account = await this.context.Accounts
             .Include(a => a.OwnedPosts)
-                .ThenInclude(p => p.Group)
-                    .ThenInclude(g => g.Owner)
+                .ThenInclude(p => p.Commentaries)
+                    .ThenInclude(c => c.Owner)
             .Include(a => a.OwnedCommentaries)
                 .ThenInclude(c => c.Post)
                     .ThenInclude(p => p.Owner)
             .Include(a => a.LikedPosts)
-                .ThenInclude(p => p.Group)
-                    .ThenInclude(g => g.Owner)
+                .ThenInclude(p => p.Owner)
             .Include(a => a.LikedCommentaries)
                 .ThenInclude(c => c.Post)
-                    .ThenInclude(p => p.Group)
-                        .ThenInclude(g => g.Owner)
+                    .ThenInclude(p => p.Owner)
             .Include(a => a.Follows)
                 .ThenInclude(f => f.OwnedPosts)
                     .ThenInclude(p => p.Commentaries)
-                        .ThenInclude(c => c.Likes)
             .Include(a => a.Follows)
                 .ThenInclude(f => f.OwnedPosts)
                     .ThenInclude(p => p.Commentaries)
@@ -36,6 +33,7 @@ public partial class PostController
                     .ThenInclude(p => p.Likes)
             .Include(a => a.Follows)
                 .ThenInclude(f => f.OwnedCommentaries)
+                    .ThenInclude(c => c.Post)
             .FirstOrDefaultAsync(a => a.MailAddress.Equals(mailAddress));
 
         if (account == null)
@@ -47,24 +45,34 @@ public partial class PostController
 
         account.OwnedPosts.ToList().ForEach(p =>
         {
-            posts.Add(this.mapper.Post_ToResource_WithCommentaries_AndLikes(p));
+            if (!Contains(posts, p.Id)) posts.Add(this.mapper.Post_ToResource_WithCommentaries_AndLikes(p));
         });
         account.OwnedCommentaries.ToList().ForEach(c =>
         {
-            posts.Add(this.mapper.Post_ToResource_WithCommentaries_AndLikes(c.Post));
+            if (!Contains(posts, c.Post.Id)) posts.Add(this.mapper.Post_ToResource_WithCommentaries_AndLikes(c.Post));
         });
         account.Follows.ToList().ForEach(f =>
         {
             f.OwnedPosts.ToList().ForEach(p =>
             {
-                posts.Add(this.mapper.Post_ToResource_WithCommentaries_AndLikes(p));
+                if (!Contains(posts, p.Id)) posts.Add(this.mapper.Post_ToResource_WithCommentaries_AndLikes(p));
             });
             f.OwnedCommentaries.ToList().ForEach(c =>
             {
-                posts.Add(this.mapper.Post_ToResource_WithCommentaries_AndLikes(c.Post));
+                if (!Contains(posts, c.Post.Id)) posts.Add(this.mapper.Post_ToResource_WithCommentaries_AndLikes(c.Post));
             });
         });
 
-        return Ok(posts.Take(20).OrderByDescending(p => p.CreatedAt).ToList());
+        return Ok(posts.OrderByDescending(p => p.CreatedAt).ToList());
+    }
+
+    private bool Contains(List<PostResource_WithCommentaries_AndLikes> posts, Guid id)
+    {
+        bool result = false;
+        posts.ForEach(p =>
+        {
+            if (p.Id.Equals(id)) result = true;
+        });
+        return result;
     }
 }

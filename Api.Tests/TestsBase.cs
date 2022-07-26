@@ -59,6 +59,7 @@ public class TestBase
         this.accountsController.ControllerContext.HttpContext = mock.Object;
         this.postController.ControllerContext.HttpContext = mock.Object;
         this.groupController.ControllerContext.HttpContext = mock.Object;
+        this.commentaryController.ControllerContext.HttpContext = mock.Object;
     }
 
     /* useful for later testing
