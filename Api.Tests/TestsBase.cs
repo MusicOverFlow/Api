@@ -23,7 +23,8 @@ using System.IO;
 
 public class TestBase
 {
-    private readonly ModelsContext dbContext = new ModelsContext(new DbContextOptionsBuilder<ModelsContext>().UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
+    private readonly ModelsContext dbContext = new ModelsContext(
+        new DbContextOptionsBuilder<ModelsContext>().UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
     protected readonly Mapper mapper = new Mapper();
     private readonly DataValidator dataValidator = new DataValidator();
     private readonly LevenshteinDistance stringComparer = new LevenshteinDistance();

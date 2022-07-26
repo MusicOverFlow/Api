@@ -63,7 +63,7 @@ public class FollowUnfollowControllerTests : TestBase
 
         var request = await base.accountsController.Read(this.connectedAccount.MailAddress);
         var result = request.Result as OkObjectResult;
-        var accounts = result.Value as List<AccountResource_WithPosts_AndGroups>;
+        var accounts = result.Value as List<AccountResource_WithPosts_AndGroups_AndFollows>;
         var account = accounts.First();
 
         account.Follows.First().Should().BeEquivalentTo(this.secondAccount);
@@ -81,7 +81,7 @@ public class FollowUnfollowControllerTests : TestBase
 
         var request = await base.accountsController.Read(this.connectedAccount.MailAddress);
         var result = request.Result as OkObjectResult;
-        var accounts = result.Value as List<AccountResource_WithPosts_AndGroups>;
+        var accounts = result.Value as List<AccountResource_WithPosts_AndGroups_AndFollows>;
         var account = accounts.First();
 
         account.Follows.Count.Should().Be(0);
