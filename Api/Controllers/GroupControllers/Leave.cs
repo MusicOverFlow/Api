@@ -18,8 +18,6 @@ public partial class GroupController
         }
 
         Group group = await this.context.Groups
-            .Include(g => g.Owner)
-            .Include(g => g.Members)
             .FirstOrDefaultAsync(g => g.Id.Equals(groupId));
 
         if (group == null)

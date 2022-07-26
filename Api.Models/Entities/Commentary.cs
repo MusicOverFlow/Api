@@ -10,10 +10,10 @@ public class Commentary
     [Required]
     public DateTime CreatedAt { get; set; }
 
-    public Account Owner { get; set; }
+    public virtual Account Owner { get; set; }
 
-    public Post Post { get; set; }
+    public virtual Post Post { get; set; }
 
-    public ICollection<Account> Likes { get; set; }
+    public virtual ICollection<Account> Likes { get; set; }
     public int LikesCount { get; set; }
 }

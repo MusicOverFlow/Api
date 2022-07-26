@@ -36,7 +36,7 @@ public class ReadControllerTests : TestBase
         var request = await base.accountsController.Read();
         var result = request.Result as OkObjectResult;
         
-        result.Value.As<List<AccountResource_WithPosts_AndGroups>>().Count.Should().Be(2);
+        result.Value.As<List<AccountResource_WithPosts_AndGroups_AndFollows>>().Count.Should().Be(2);
     }
 
     [Fact(DisplayName =
@@ -56,7 +56,7 @@ public class ReadControllerTests : TestBase
     {
         var request = await base.accountsController.Read("gtouchet@myges.fr");
         var result = request.Result as OkObjectResult;
-        var account = result.Value as List<AccountResource_WithPosts_AndGroups>;
+        var account = result.Value as List<AccountResource_WithPosts_AndGroups_AndFollows>;
 
         account.First().MailAddress.Should().Be("gtouchet@myges.fr");
         account.First().Firstname.Should().Be("Guillaume");
@@ -80,6 +80,6 @@ public class ReadControllerTests : TestBase
         var request = await base.accountsController.Read();
         var result = request.Result as OkObjectResult;
 
-        result.Value.Should().BeOfType<List<AccountResource_WithPosts_AndGroups>>();
+        result.Value.Should().BeOfType<List<AccountResource_WithPosts_AndGroups_AndFollows>>();
     }
 }

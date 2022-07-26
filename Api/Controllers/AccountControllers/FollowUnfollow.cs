@@ -18,7 +18,6 @@ public partial class AccountController
         }
 
         Account callerAccount = await this.context.Accounts
-            .Include(a => a.Follows)
             .FirstOrDefaultAsync(a => a.MailAddress.Equals(callerMailAddress));
 
         if (callerAccount.Equals(account))

@@ -3,7 +3,7 @@
 public partial class GroupController
 {
     [HttpGet("name")]
-    public async Task<ActionResult<List<GroupResource_WithMembers>>> ReadName(string name)
+    public async Task<ActionResult<List<GroupResource>>> ReadName(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
@@ -13,8 +13,6 @@ public partial class GroupController
         List<GroupResource_WithMembers> groups = new List<GroupResource_WithMembers>();
 
         await this.context.Groups
-            .Include(g => g.Owner)
-            .Include(g => g.Members)
             .ForEachAsync(g =>
             {
                 if (groups.Count >= this.MAX_GROUPS_IN_SEARCHES)

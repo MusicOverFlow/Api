@@ -15,7 +15,6 @@ public partial class PostController : ControllerBase
     {
         this.context = context;
         this.mapper = mapper;
-        
         this.exceptionHandler = exceptionHandler;
     }
 }

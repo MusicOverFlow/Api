@@ -48,7 +48,7 @@ public partial class AccountController : ControllerBase
         }
         else
         {
-            return "https://musicoverflowstorage.blob.core.windows.net/profil-pics/placeholder.png";
+            return "https://musicoverflowstorage.blob.core.windows.net/profil-pics/placeholder.profilpic.png";
         }
     }
 

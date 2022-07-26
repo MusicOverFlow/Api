@@ -23,7 +23,8 @@ using System.IO;
 
 public class TestBase
 {
-    private readonly ModelsContext dbContext = new ModelsContext(new DbContextOptionsBuilder<ModelsContext>().UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
+    private readonly ModelsContext dbContext = new ModelsContext(
+        new DbContextOptionsBuilder<ModelsContext>().UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
     protected readonly Mapper mapper = new Mapper();
     private readonly DataValidator dataValidator = new DataValidator();
     private readonly LevenshteinDistance stringComparer = new LevenshteinDistance();
@@ -59,6 +60,7 @@ public class TestBase
         this.accountsController.ControllerContext.HttpContext = mock.Object;
         this.postController.ControllerContext.HttpContext = mock.Object;
         this.groupController.ControllerContext.HttpContext = mock.Object;
+        this.commentaryController.ControllerContext.HttpContext = mock.Object;
     }
 
     /* useful for later testing
