@@ -39,6 +39,6 @@ public partial class CommentaryController
 
         await this.context.SaveChangesAsync();
 
-        return Created(nameof(Create), this.mapper.Post_ToResource_WithCommentaries_AndLikes(post));
+        return Created(nameof(Create), this.mapper.Post_ToResource(post));
     }
 }

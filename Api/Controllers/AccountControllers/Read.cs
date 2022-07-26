@@ -13,9 +13,9 @@ public partial class AccountController
             query = query.Where(a => a.MailAddress.Equals(mailAddress));
         }
 
-        List<AccountResource_WithPosts_AndGroups> accounts = new List<AccountResource_WithPosts_AndGroups>();
+        List<AccountResource_WithPosts_AndGroups_AndFollows> accounts = new List<AccountResource_WithPosts_AndGroups_AndFollows>();
 
-        await query.ForEachAsync(a => accounts.Add(this.mapper.Account_ToResource_WithPosts_AndGroups(a)));
+        await query.ForEachAsync(a => accounts.Add(this.mapper.Account_ToResource_WithPosts_AndGroups_AndFollows(a)));
 
         if (!string.IsNullOrWhiteSpace(mailAddress) && accounts.Count == 0)
         {

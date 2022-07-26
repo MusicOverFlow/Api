@@ -18,7 +18,6 @@ public partial class AccountController
         }
 
         Post post = await this.context.Posts
-            .Include(p => p.Likes)
             .FirstOrDefaultAsync(p => p.Id.Equals(id));
 
         if (post != null)
@@ -38,7 +37,6 @@ public partial class AccountController
         else
         {
             Commentary commentary = await this.context.Commentaries
-                .Include(c => c.Likes)
                 .FirstOrDefaultAsync(c => c.Id.Equals(id));
 
             if (commentary == null)

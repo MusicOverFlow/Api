@@ -19,6 +19,6 @@ public partial class AccountController
 
         return Ok(account.Groups
             .SelectMany(g => g.Posts)
-            .Select(p => this.mapper.Post_ToResource_WithCommentaries_AndLikes(p)));
+            .Select(p => this.mapper.Post_ToResource(p)));
     }
 }

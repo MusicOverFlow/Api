@@ -5,7 +5,7 @@ namespace Api.Controllers.PostControllers;
 public partial class PostController
 {
     [HttpGet("homePage"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
-    public async Task<ActionResult<PostResource_WithCommentaries_AndLikes>> ReadHomePage()
+    public async Task<ActionResult<PostResource>> ReadHomePage()
     {
         string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
@@ -41,32 +41,32 @@ public partial class PostController
             return NotFound(this.exceptionHandler.GetError(ErrorType.AccountNotFound));
         }
 
-        List<PostResource_WithCommentaries_AndLikes> posts = new List<PostResource_WithCommentaries_AndLikes>();
+        List<PostResource> posts = new List<PostResource>();
 
         account.OwnedPosts.ToList().ForEach(p =>
         {
-            if (!Contains(posts, p.Id)) posts.Add(this.mapper.Post_ToResource_WithCommentaries_AndLikes(p));
+            if (!Contains(posts, p.Id)) posts.Add(this.mapper.Post_ToResource(p));
         });
         account.OwnedCommentaries.ToList().ForEach(c =>
         {
-            if (!Contains(posts, c.Post.Id)) posts.Add(this.mapper.Post_ToResource_WithCommentaries_AndLikes(c.Post));
+            if (!Contains(posts, c.Post.Id)) posts.Add(this.mapper.Post_ToResource(c.Post));
         });
         account.Follows.ToList().ForEach(f =>
         {
             f.OwnedPosts.ToList().ForEach(p =>
             {
-                if (!Contains(posts, p.Id)) posts.Add(this.mapper.Post_ToResource_WithCommentaries_AndLikes(p));
+                if (!Contains(posts, p.Id)) posts.Add(this.mapper.Post_ToResource(p));
             });
             f.OwnedCommentaries.ToList().ForEach(c =>
             {
-                if (!Contains(posts, c.Post.Id)) posts.Add(this.mapper.Post_ToResource_WithCommentaries_AndLikes(c.Post));
+                if (!Contains(posts, c.Post.Id)) posts.Add(this.mapper.Post_ToResource(c.Post));
             });
         });
 
         return Ok(posts.OrderByDescending(p => p.CreatedAt).ToList());
     }
 
-    private bool Contains(List<PostResource_WithCommentaries_AndLikes> posts, Guid id)
+    private bool Contains(List<PostResource> posts, Guid id)
     {
         bool result = false;
         posts.ForEach(p =>

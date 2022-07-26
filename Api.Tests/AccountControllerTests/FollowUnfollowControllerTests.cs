@@ -7,7 +7,7 @@ public class FollowUnfollowControllerTests : TestBase
     public FollowUnfollowControllerTests()
     {
         this.connectedAccount = this.CreateAccount("gtouchet1@myges.fr", "123Pass!").Result;
-        // firstAccount is the caller
+
         base.MockJwtAuthentication(this.connectedAccount);
         this.secondAccount = this.CreateAccount("gtouchet2@myges.fr", "123Pass!").Result;
     }

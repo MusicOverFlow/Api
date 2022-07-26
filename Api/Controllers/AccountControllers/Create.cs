@@ -24,7 +24,17 @@ public partial class AccountController
         }
 
         this.EncryptPassword(request.Password, out byte[] hash, out byte[] salt);
-        
+
+        IFormFile file = Request.Form.Files.Any() ? Request.Form.Files[0] : new FormFileCollection()[0];
+        string picUrl = string.Empty;
+        using (var ms = new MemoryStream())
+        {
+            file.CopyTo(ms);
+            byte[] fileBytes = ms.ToArray();
+
+            picUrl = this.GetProfilPicUrl(fileBytes, request.MailAddress.Trim()).Result;
+        }
+
         Account account = new Account()
         {
             MailAddress = request.MailAddress.Trim(),
@@ -34,7 +44,7 @@ public partial class AccountController
             Firstname = request.Firstname ?? "Unknown",
             Lastname = request.Lastname ?? "Unknown",
             Pseudonym = request.Pseudonym ?? "Anonymous",
-            PicUrl = this.GetProfilPicUrl(request.ProfilPic, request.MailAddress.Trim()).Result,
+            PicUrl = picUrl,
             CreatedAt = DateTime.Now,
         };
 

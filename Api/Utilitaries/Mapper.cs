@@ -16,7 +16,6 @@ public class Mapper
             c.CreateMap<Account, AccountResource_WithPosts_AndGroups_AndFollows>();
 
             c.CreateMap<Post, PostResource>();
-            c.CreateMap<Post, PostResource_WithCommentaries_AndLikes>();
 
             c.CreateMap<Commentary, CommentaryResource>();
             c.CreateMap<Commentary, CommentaryResource_WithPost>();
@@ -36,7 +35,6 @@ public class Mapper
     public AccountResource_WithPosts_AndGroups_AndFollows Account_ToResource_WithPosts_AndGroups_AndFollows(Account a) => m.Map<AccountResource_WithPosts_AndGroups_AndFollows>(a);
 
     public PostResource Post_ToResource(Post p) => m.Map<PostResource>(p);
-    public PostResource_WithCommentaries_AndLikes Post_ToResource_WithCommentaries_AndLikes(Post p) => m.Map<PostResource_WithCommentaries_AndLikes>(p);
 
     public CommentaryResource Commentary_ToResource(Commentary c) => m.Map<CommentaryResource>(c);
     public CommentaryResource_WithPost Commentary_ToResource_WithPost(Commentary c) => m.Map<CommentaryResource_WithPost>(c);

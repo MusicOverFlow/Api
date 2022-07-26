@@ -67,7 +67,7 @@ public class ReadHomePageTests : TestBase
 
         var request = await base.postController.ReadHomePage();
         var result = request.Result as OkObjectResult;
-        var posts = result.Value as List<PostResource_WithCommentaries_AndLikes>;
+        var posts = result.Value as List<PostResource>;
 
         List<string> postTitles = new List<string>();
         posts.ForEach(p => postTitles.Add(p.Title));
@@ -100,7 +100,7 @@ public class ReadHomePageTests : TestBase
 
         var request = await base.postController.ReadHomePage();
         var result = request.Result as OkObjectResult;
-        var posts = result.Value as List<PostResource_WithCommentaries_AndLikes>;
+        var posts = result.Value as List<PostResource>;
 
         List<string> postTitles = new List<string>();
         posts.ForEach(p => postTitles.Add(p.Title));
@@ -137,7 +137,7 @@ public class ReadHomePageTests : TestBase
 
         var request = await base.postController.ReadHomePage();
         var result = request.Result as OkObjectResult;
-        var posts = result.Value as List<PostResource_WithCommentaries_AndLikes>;
+        var posts = result.Value as List<PostResource>;
 
         List<string> postTitles = new List<string>();
         posts.ForEach(p => postTitles.Add(p.Title));
