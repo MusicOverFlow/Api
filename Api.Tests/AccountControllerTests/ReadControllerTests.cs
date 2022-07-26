@@ -4,13 +4,13 @@ public class ReadControllerTests : TestBase
 {
     public ReadControllerTests()
     {
-        _ = base.accountsController.Create(new CreateAccountRequest()
-        {
-            MailAddress = "gtouchet@myges.fr",
-            Password = "123Pass!",
-            Firstname = "Guillaume",
-            Lastname = "Touchet",
-        });
+        _ = base.accountsController.Create(
+                mailAddress: "gtouchet@myges.fr",
+                password: "123Pass!",
+                firstname: "Guillaume",
+                lastname: "Touchet",
+                pseudonym: null,
+                profilPic: null);
     }
 
     [Fact(DisplayName =
@@ -28,11 +28,13 @@ public class ReadControllerTests : TestBase
         "Should return all accounts")]
     public async void AccountReading_2()
     {
-        await base.accountsController.Create(new CreateAccountRequest()
-        {
-            MailAddress = "gtouchet2@myges.fr",
-            Password = "123Pass!",
-        });
+        await base.accountsController.Create(
+            mailAddress: "gtouchet2@myges.fr",
+            password: "123Pass!",
+            firstname: null,
+            lastname: null,
+            pseudonym: null,
+            profilPic: null);
         var request = await base.accountsController.Read();
         var result = request.Result as OkObjectResult;
         

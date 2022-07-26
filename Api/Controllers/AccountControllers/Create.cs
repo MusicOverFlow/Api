@@ -31,14 +31,17 @@ public partial class AccountController
         
         this.EncryptPassword(password, out byte[] hash, out byte[] salt);
 
-        IFormFile file = Request.Form.Files.GetFile(nameof(profilPic));
         byte[] fileBytes = null;
-        if (file != null && file.Length > 0)
+        if (Request != null)
         {
-            using (MemoryStream ms = new MemoryStream())
+            IFormFile file = Request.Form.Files.GetFile(nameof(profilPic));
+            if (file != null && file.Length > 0)
             {
-                file.CopyTo(ms);
-                fileBytes = ms.ToArray();
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    file.CopyTo(ms);
+                    fileBytes = ms.ToArray();
+                }
             }
         }
         string picUrl = this.GetProfilPicUrl(fileBytes, mailAddress.Trim()).Result;

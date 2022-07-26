@@ -23,6 +23,7 @@ using System.IO;
 
 public class TestBase
 {
+    // TODO: fix lazy loading in tests
     private readonly ModelsContext dbContext = new ModelsContext(
         new DbContextOptionsBuilder<ModelsContext>().UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
     protected readonly Mapper mapper = new Mapper();

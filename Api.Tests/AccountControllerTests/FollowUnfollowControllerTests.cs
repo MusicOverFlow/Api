@@ -2,7 +2,7 @@
 
 public class FollowUnfollowControllerTests : TestBase
 {
-    private AccountResource connectedAccount, secondAccount;
+    private readonly AccountResource connectedAccount, secondAccount;
 
     public FollowUnfollowControllerTests()
     {
@@ -14,11 +14,13 @@ public class FollowUnfollowControllerTests : TestBase
 
     private async Task<AccountResource> CreateAccount(string mail, string password)
     {
-        var request = await base.accountsController.Create(new CreateAccountRequest()
-        {
-            MailAddress = mail,
-            Password = password,
-        });
+        var request = await base.accountsController.Create(
+            mailAddress: mail,
+            password: password,
+            firstname: null,
+            lastname: null,
+            pseudonym: null,
+            profilPic: null);
         var result = request.Result as CreatedResult;
 
         return result.Value as AccountResource;

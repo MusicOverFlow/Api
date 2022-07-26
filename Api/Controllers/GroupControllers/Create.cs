@@ -25,14 +25,17 @@ public partial class GroupController
             return BadRequest(this.exceptionHandler.GetError(ErrorType.GroupeMissingName));
         }
 
-        IFormFile file = Request.Form.Files.GetFile(nameof(groupPic));
         byte[] fileBytes = null;
-        if (file != null && file.Length > 0)
+        if (Request != null)
         {
-            using (MemoryStream ms = new MemoryStream())
+            IFormFile file = Request.Form.Files.GetFile(nameof(groupPic));
+            if (file != null && file.Length > 0)
             {
-                file.CopyTo(ms);
-                fileBytes = ms.ToArray();
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    file.CopyTo(ms);
+                    fileBytes = ms.ToArray();
+                }
             }
         }
         string picUrl = this.GetGroupPicUrl(fileBytes).Result;

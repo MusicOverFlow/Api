@@ -14,11 +14,13 @@ public class ReadHomePageTests : TestBase
 
     private async Task<AccountResource> CreateAccount(string mail)
     {
-        var request = await base.accountsController.Create(new CreateAccountRequest()
-        {
-            MailAddress = mail,
-            Password = "123Pass!",
-        });
+        var request = await base.accountsController.Create(
+                mailAddress: mail,
+                password: "123Pass!",
+                firstname: null,
+                lastname: null,
+                pseudonym: null,
+                profilPic: null);
         var result = request.Result as CreatedResult;
 
         return result.Value as AccountResource;

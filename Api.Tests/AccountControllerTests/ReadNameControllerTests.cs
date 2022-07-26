@@ -4,13 +4,13 @@ public class ReadNameControllerTests : TestBase
 {
     public ReadNameControllerTests()
     {
-        _ = base.accountsController.Create(new CreateAccountRequest()
-        {
-            MailAddress = "gtouchet@myges.fr",
-            Password = "123Pass!",
-            Firstname = "Guillaume",
-            Lastname = "Touchet",
-        });
+        _ = base.accountsController.Create(
+                mailAddress: "gtouchet@myges.fr",
+                password: "123Pass!",
+                firstname: "Guillaume",
+                lastname: "Touchet",
+                pseudonym: null,
+                profilPic: null);
     }
 
     [Fact(DisplayName =
