@@ -5,7 +5,10 @@ namespace Api.Controllers.GroupControllers;
 public partial class GroupController
 {
     [HttpPost]
-    public async Task<ActionResult<GroupResource>> Create(CreateGroup request)
+    public async Task<ActionResult<GroupResource>> Create(
+        [FromForm] string name,
+        [FromForm] string description,
+        [FromForm] byte[] groupPic)
     {
         string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
@@ -17,26 +20,27 @@ public partial class GroupController
             return NotFound(this.exceptionHandler.GetError(ErrorType.AccountNotFound));
         }
 
-        if (string.IsNullOrWhiteSpace(request.Name))
+        if (string.IsNullOrWhiteSpace(name))
         {
             return BadRequest(this.exceptionHandler.GetError(ErrorType.GroupeMissingName));
         }
 
-        string picUrl = string.Empty;
-        IFormFile file = Request.Form.Files.Any() ? Request.Form.Files[0] : new FormFileCollection()[0];
-
-        using (var ms = new MemoryStream())
+        IFormFile file = Request.Form.Files.GetFile(nameof(groupPic));
+        byte[] fileBytes = null;
+        if (file != null && file.Length > 0)
         {
-            file.CopyTo(ms);
-            byte[] fileBytes = ms.ToArray();
-
-            picUrl = this.GetGroupPicUrl(Request.Form.Files.Any() ? fileBytes : null).Result;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                file.CopyTo(ms);
+                fileBytes = ms.ToArray();
+            }
         }
-
+        string picUrl = this.GetGroupPicUrl(fileBytes).Result;
+        
         Group group = new Group()
         {
-            Name = request.Name,
-            Description = request.Description,
+            Name = name,
+            Description = description,
             PicUrl = picUrl,
             CreatedAt = DateTime.Now,
             

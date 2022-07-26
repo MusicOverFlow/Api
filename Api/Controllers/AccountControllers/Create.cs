@@ -3,47 +3,55 @@
 public partial class AccountController
 {
     [HttpPost]
-    public async Task<ActionResult<AccountResource>> Create(CreateAccountRequest request)
+    public async Task<ActionResult<AccountResource>> Create(
+        [FromForm] string mailAddress,
+        [FromForm] string password,
+        [FromForm] string firstname,
+        [FromForm] string lastname,
+        [FromForm] string pseudonym,
+        [FromForm] byte[] profilPic)
     {
-        if (!this.dataValidator.IsMailAddressValid(request.MailAddress))
+        if (!this.dataValidator.IsMailAddressValid(mailAddress))
         {
             return BadRequest(this.exceptionHandler.GetError(ErrorType.InvalidMail));
         }
 
-        if (!this.dataValidator.IsPasswordValid(request.Password))
+        if (!this.dataValidator.IsPasswordValid(password))
         {
             return BadRequest(this.exceptionHandler.GetError(ErrorType.InvalidPassword));
         }
 
         bool isMailAlreadyInUse = await this.context.Accounts
-            .AnyAsync(a => a.MailAddress.Equals(request.MailAddress));
+            .AnyAsync(a => a.MailAddress.Equals(mailAddress));
 
         if (isMailAlreadyInUse)
         {
             return BadRequest(this.exceptionHandler.GetError(ErrorType.MailAlreadyInUse));
         }
+        
+        this.EncryptPassword(password, out byte[] hash, out byte[] salt);
 
-        this.EncryptPassword(request.Password, out byte[] hash, out byte[] salt);
-
-        IFormFile file = Request.Form.Files.Any() ? Request.Form.Files[0] : new FormFileCollection()[0];
-        string picUrl = string.Empty;
-        using (var ms = new MemoryStream())
+        IFormFile file = Request.Form.Files.GetFile(nameof(profilPic));
+        byte[] fileBytes = null;
+        if (file != null && file.Length > 0)
         {
-            file.CopyTo(ms);
-            byte[] fileBytes = ms.ToArray();
-
-            picUrl = this.GetProfilPicUrl(fileBytes, request.MailAddress.Trim()).Result;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                file.CopyTo(ms);
+                fileBytes = ms.ToArray();
+            }
         }
+        string picUrl = this.GetProfilPicUrl(fileBytes, mailAddress.Trim()).Result;
 
         Account account = new Account()
         {
-            MailAddress = request.MailAddress.Trim(),
+            MailAddress = mailAddress.Trim(),
             PasswordHash = hash,
             PasswordSalt = salt,
             Role = Role.Admin.ToString(),
-            Firstname = request.Firstname ?? "Unknown",
-            Lastname = request.Lastname ?? "Unknown",
-            Pseudonym = request.Pseudonym ?? "Anonymous",
+            Firstname = firstname ?? "Unknown",
+            Lastname = lastname ?? "Unknown",
+            Pseudonym = pseudonym ?? "Anonymous",
             PicUrl = picUrl,
             CreatedAt = DateTime.Now,
         };

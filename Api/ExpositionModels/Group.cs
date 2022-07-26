@@ -2,9 +2,6 @@
 
 namespace Api.ExpositionModels;
 
-/**
- * Resource classes
- */
 public class GroupResource
 {
     public Guid Id { get; set; }
@@ -29,13 +26,4 @@ public class GroupResource_WithMembers_AndPosts : GroupResource
 {
     public ICollection<AccountResource> Members { get; set; }
     public ICollection<PostResource> Posts { get; set; }
-}
-
-/**
- * Request classes
- */
-public class CreateGroup
-{
-    [Required, MaxLength(25)] public string Name { get; set; }
-    [Required, MaxLength(100)] public string Description { get; set; }
 }
