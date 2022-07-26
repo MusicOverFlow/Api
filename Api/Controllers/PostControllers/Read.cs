@@ -12,9 +12,9 @@ public partial class PostController
             query = query.Where(p => p.Id.Equals(id));
         }
 
-        List<PostResource> posts = new List<PostResource>();
-
-        await query.ForEachAsync(p => posts.Add(this.mapper.Post_ToResource(p)));
+        List<PostResource> posts = await query
+            .Select(p => this.mapper.Post_ToResource(p))
+            .ToListAsync();
 
         if (id != null && posts.Count == 0)
         {

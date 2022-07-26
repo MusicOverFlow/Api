@@ -17,8 +17,13 @@ public partial class AccountController
             return NotFound(this.exceptionHandler.GetError(ErrorType.AccountNotFound));
         }
 
-        return Ok(account.Groups
-            .SelectMany(g => g.Posts)
-            .Select(p => this.mapper.Post_ToResource(p)));
+        List<PostResource> posts = new List<PostResource>();
+        account.Groups
+            .ToList()
+            .ForEach(g => g.Posts
+                .ToList()
+                .ForEach(p => posts.Add(this.mapper.Post_ToResource(p))));
+
+        return Ok(posts);
     }
 }

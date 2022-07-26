@@ -13,8 +13,6 @@ public partial class GroupController
         List<GroupResource_WithMembers> groups = new List<GroupResource_WithMembers>();
 
         await this.context.Groups
-            .Include(g => g.Owner)
-            .Include(g => g.Members)
             .ForEachAsync(g =>
             {
                 if (groups.Count >= this.MAX_GROUPS_IN_SEARCHES)
