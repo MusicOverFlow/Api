@@ -13,6 +13,7 @@ public partial class AccountController
             .Include(a => a.Groups)
                 .ThenInclude(g => g.Posts.OrderByDescending(g => g.CreatedAt))
                     .ThenInclude(p => p.Commentaries)
+                        .ThenInclude(c => c.Likes)
             .Include(a => a.Groups)
                 .ThenInclude(g => g.Posts)
                     .ThenInclude(p => p.Likes)
