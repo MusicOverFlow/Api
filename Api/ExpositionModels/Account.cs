@@ -57,11 +57,6 @@ public class ReadByNames
     public string Lastname { get; set; }
 }
 
-public class ReadByPseudonym
-{
-    public string Pseudonym { get; set; }
-}
-
 public class Authentication
 {
     [Required] public string MailAddress { get; set; }

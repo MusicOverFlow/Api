@@ -3,9 +3,9 @@
 public partial class AccountController
 {
     [HttpGet("pseudonym"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
-    public async Task<ActionResult<List<AccountResource>>> ReadPseudonym(ReadByPseudonym request)
+    public async Task<ActionResult<List<AccountResource>>> ReadPseudonym(String pseudonym)
     {
-        if (string.IsNullOrWhiteSpace(request.Pseudonym))
+        if (string.IsNullOrWhiteSpace(pseudonym))
         {
             return BadRequest(exceptionHandler.GetError(ErrorType.InvalidPseudonym));
         }
@@ -19,7 +19,7 @@ public partial class AccountController
                 return;
             }
 
-            double pseudonymScore = stringComparer.Compare(request.Pseudonym, a.Pseudonym);
+            double pseudonymScore = stringComparer.Compare(pseudonym, a.Pseudonym);
 
             if (pseudonymScore >= 0.6)
             {
