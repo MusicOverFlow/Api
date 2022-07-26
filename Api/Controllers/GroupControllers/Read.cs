@@ -6,12 +6,10 @@ public partial class GroupController
     public async Task<ActionResult<GroupResource>> Read()
     {
         List<Group> groups = await this.context.Groups
+            .Include(g => g.Owner)
+            .Include(g => g.Members)
             .ToListAsync();
 
-        List<GroupResource> groupResources = new List<GroupResource>();
-
-        groups.ForEach(g => groupResources.Add(this.mapper.Group_ToResource(g)));
-
-        return Ok(groupResources);
+        return Ok(groups.Select(g => this.mapper.Group_ToResource(g)));
     }
 }

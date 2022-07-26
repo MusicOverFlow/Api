@@ -48,6 +48,7 @@ public enum ErrorType
     WrongCredentials,
     GroupeMissingName,
     GroupNotFound,
+    NotMemberOfGroup,
     AccountAlreadyInGroup,
     LeaveWhileOwner,
     NotOwnerOfGroup,

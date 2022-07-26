@@ -84,9 +84,14 @@ builder.Services.AddDbContext<ModelsContext>(options =>
 {
     if (dev)
     {
+        options.UseLazyLoadingProxies();
         options.UseNpgsql(
-        builder.Configuration.GetConnectionString("MusicOverflowHeroku"),
-        optionBuilder => optionBuilder.MigrationsAssembly("Api"));
+            builder.Configuration.GetConnectionString("MusicOverflowHeroku"),
+            optionBuilder =>
+            {
+                optionBuilder.MigrationsAssembly("Api");
+                optionBuilder.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
+            });
     }
     else
     {

@@ -5,7 +5,7 @@ namespace Api.Controllers.AccountControllers;
 public partial class AccountController
 {
     [HttpPut("profilpic"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
-    public async Task<ActionResult<AccountResource>> UpdateProfilPic(UpdateProfilPic request)
+    public async Task<ActionResult> UpdateProfilPic(UpdateProfilPic request)
     {
         string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
@@ -20,6 +20,6 @@ public partial class AccountController
         account.PicUrl = this.GetProfilPicUrl(request.ProfilPic, account.MailAddress).Result;
         await this.context.SaveChangesAsync();
 
-        return Ok(this.mapper.Account_ToResource(account));
+        return Ok();
     }
 }

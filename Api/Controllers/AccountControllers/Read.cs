@@ -3,13 +3,9 @@
 public partial class AccountController
 {
     [HttpGet, AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
-    public async Task<ActionResult<List<AccountResource_WithPosts_AndGroups>>> Read(string mailAddress = null)
+    public async Task<ActionResult<List<AccountResource>>> Read(string mailAddress = null)
     {
         IQueryable<Account> query = this.context.Accounts
-            .Include(a => a.OwnedPosts)
-            .Include(a => a.LikedPosts)
-            .Include(a => a.LikedCommentaries)
-            .Include(a => a.Groups)
             .Include(a => a.Follows);
 
         if (!string.IsNullOrWhiteSpace(mailAddress))

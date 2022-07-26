@@ -10,11 +10,6 @@ public partial class AccountController
         string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
         Account account = await this.context.Accounts
-            .Include(a => a.OwnedPosts)
-            .Include(a => a.LikedPosts)
-            .Include(a => a.LikedCommentaries)
-            .Include(a => a.Groups)
-            .Include(a => a.Follows)
             .FirstOrDefaultAsync(a => a.MailAddress.Equals(mailAddress));
 
         if (account == null)
@@ -22,6 +17,6 @@ public partial class AccountController
             return NotFound(this.exceptionHandler.GetError(ErrorType.AccountNotFound));
         }
 
-        return Ok(this.mapper.Account_ToResource_WithPosts_AndGroups(account));
+        return Ok(this.mapper.Account_ToResource_WithPosts_AndGroups_AndFollows(account));
     }
 }

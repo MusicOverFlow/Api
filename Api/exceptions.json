@@ -52,6 +52,10 @@
     "error": "Group not found",
     "message": "Could not find this group, sounds like a conspiracy to me è_é"
   },
+  "NotMemberOfGroup": {
+    "error": "You are not a member of this group",
+    "message": "Therefore, you cannot see this group's posts, how does that feel, nerd ?"
+  },
   "AccountAlreadyInGroup": {
     "error": "Account already in this group",
     "message": "You already are a member of this amazing group"

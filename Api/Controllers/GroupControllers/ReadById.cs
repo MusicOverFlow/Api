@@ -3,10 +3,11 @@
 public partial class GroupController
 {
     [HttpGet("id"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
-    public async Task<ActionResult<List<GroupResource_WithMembers>>> ReadById(Guid id)
+    public async Task<ActionResult<List<GroupResource>>> ReadById(Guid id)
     {
         Group group = await this.context.Groups
-            .Include(g => g.Posts.OrderByDescending(g => g.CreatedAt))
+            .Include(g => g.Owner)
+            .Include(g => g.Members)
             .FirstOrDefaultAsync(g => g.Id.Equals(id));
 
         if (group == null)
@@ -14,6 +15,6 @@ public partial class GroupController
             return NotFound(this.exceptionHandler.GetError(ErrorType.GroupNotFound));
         }
 
-        return Ok(this.mapper.Group_ToResource_WithPosts(group));
+        return Ok(this.mapper.Group_ToResource_WithMembers(group));
     }
 }

@@ -5,7 +5,7 @@ namespace Api.Controllers.AccountControllers;
 public partial class AccountController
 {
     [HttpPut("mail"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
-    public async Task<ActionResult<AccountResource>> UpdateMailAddress(string mailAddress)
+    public async Task<ActionResult> UpdateMailAddress(string mailAddress)
     {
         string actualMailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
@@ -33,6 +33,6 @@ public partial class AccountController
         account.MailAddress = mailAddress;
         await this.context.SaveChangesAsync();
 
-        return Ok(this.mapper.Account_ToResource(account));
+        return Ok();
     }
 }

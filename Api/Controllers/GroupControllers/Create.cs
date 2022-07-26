@@ -10,7 +10,6 @@ public partial class GroupController
         string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
         Account account = await this.context.Accounts
-            .Include(a => a.Groups)
             .FirstOrDefaultAsync(a => a.MailAddress.Equals(mailAddress));
         
         if (account == null)

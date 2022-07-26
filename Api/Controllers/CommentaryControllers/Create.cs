@@ -18,7 +18,6 @@ public partial class CommentaryController
         }
 
         Post post = await this.context.Posts
-            .Include(p => p.Commentaries)
             .FirstOrDefaultAsync(p => p.Id.Equals(postId));
 
         if (post == null)

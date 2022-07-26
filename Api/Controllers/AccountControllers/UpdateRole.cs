@@ -3,7 +3,7 @@
 public partial class AccountController
 {
     [HttpPut("role"), AuthorizeEnum(Role.Admin)]
-    public async Task<ActionResult<AccountResource>> UpdateRole(string mailAddress, string role)
+    public async Task<ActionResult> UpdateRole(string mailAddress, string role)
     {
         Account account = await this.context.Accounts
             .FirstOrDefaultAsync(a => a.MailAddress.Equals(mailAddress));
@@ -24,6 +24,6 @@ public partial class AccountController
 
         await this.context.SaveChangesAsync();
 
-        return Ok(this.mapper.Account_ToResource(account));
+        return Ok();
     }
 }

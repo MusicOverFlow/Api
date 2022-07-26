@@ -5,14 +5,7 @@ public partial class PostController
     [HttpGet]
     public async Task<ActionResult<List<PostResource_WithCommentaries_AndLikes>>> Read(Guid? id = null)
     {
-        IQueryable<Post> query = this.context.Posts
-            .Include(p => p.Owner)
-            .Include(p => p.Group)
-            .Include(p => p.Commentaries)
-                .ThenInclude(c => c.Owner)
-            .Include(p => p.Commentaries)
-                .ThenInclude(c => c.Likes)
-            .Include(p => p.Likes);
+        IQueryable<Post> query = this.context.Posts;
         
         if (id != null)
         {

@@ -5,7 +5,7 @@ namespace Api.Controllers.AccountControllers;
 public partial class AccountController
 {
     [HttpPut("password"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
-    public async Task<ActionResult<AccountResource>> UpdatePassword(string password)
+    public async Task<ActionResult> UpdatePassword(string password)
     {
         string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 

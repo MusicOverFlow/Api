@@ -10,8 +10,6 @@ public partial class AccountController
         string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
         Account account = await this.context.Accounts
-            .Include(a => a.LikedPosts)
-            .Include(a => a.LikedCommentaries)
             .FirstOrDefaultAsync(a => a.MailAddress.Equals(mailAddress));
 
         if (account == null)
