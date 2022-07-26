@@ -12,20 +12,26 @@ public partial class AccountController
 
         List<AccountResource> accounts = new List<AccountResource>();
 
-        await this.context.Accounts.ForEachAsync(a =>
-        {
-            if (accounts.Count >= MAX_ACCOUNTS_IN_SEARCHES)
+        await this.context.Accounts
+            .Include(a => a.Follows)
+            .ForEachAsync(a =>
             {
-                return;
-            }
+                if (accounts.Count >= MAX_ACCOUNTS_IN_SEARCHES)
+                {
+                    return;
+                }
 
+<<<<<<< Updated upstream
             double pseudonymScore = stringComparer.Compare(pseudonym, a.Pseudonym);
+=======
+                double pseudonymScore = stringComparer.Compare(request.Pseudonym, a.Pseudonym);
+>>>>>>> Stashed changes
 
-            if (pseudonymScore >= 0.6)
-            {
-                accounts.Add(mapper.Account_ToResource(a));
-            }
-        });
+                if (pseudonymScore >= 0.6)
+                {
+                    accounts.Add(mapper.Account_ToResource(a));
+                }
+            });
 
         return Ok(accounts);
     }

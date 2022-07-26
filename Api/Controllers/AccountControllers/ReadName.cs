@@ -12,7 +12,9 @@ public partial class AccountController
 
         List<AccountResource> accounts = new List<AccountResource>();
 
-        await this.context.Accounts.ForEachAsync(a =>
+        await this.context.Accounts
+            .Include(a => a.Follows)
+            .ForEachAsync(a =>
         {
             if (accounts.Count >= this.MAX_ACCOUNTS_IN_SEARCHES)
             {

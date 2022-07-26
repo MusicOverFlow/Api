@@ -14,6 +14,7 @@ public partial class AccountController
             .Include(a => a.LikedPosts)
             .Include(a => a.LikedCommentaries)
             .Include(a => a.Groups)
+            .Include(a => a.Follows)
             .FirstOrDefaultAsync(a => a.MailAddress.Equals(mailAddress));
 
         if (account == null)

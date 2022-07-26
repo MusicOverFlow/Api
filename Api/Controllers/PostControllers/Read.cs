@@ -9,6 +9,9 @@ public partial class PostController
             .Include(p => p.Owner)
             .Include(p => p.Group)
             .Include(p => p.Commentaries)
+                .ThenInclude(c => c.Owner)
+            .Include(p => p.Commentaries)
+                .ThenInclude(c => c.Likes)
             .Include(p => p.Likes);
         
         if (id != null)
