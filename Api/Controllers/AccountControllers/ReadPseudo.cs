@@ -3,7 +3,7 @@
 public partial class AccountController
 {
     [HttpGet("pseudonym"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
-    public async Task<ActionResult<List<AccountResource>>> ReadPseudonym(String pseudonym)
+    public async Task<ActionResult<List<AccountResource>>> ReadPseudonym(string pseudonym)
     {
         if (string.IsNullOrWhiteSpace(pseudonym))
         {
@@ -20,12 +20,8 @@ public partial class AccountController
                 {
                     return;
                 }
-
-<<<<<<< Updated upstream
-            double pseudonymScore = stringComparer.Compare(pseudonym, a.Pseudonym);
-=======
-                double pseudonymScore = stringComparer.Compare(request.Pseudonym, a.Pseudonym);
->>>>>>> Stashed changes
+                
+                double pseudonymScore = stringComparer.Compare(pseudonym, a.Pseudonym);
 
                 if (pseudonymScore >= 0.6)
                 {
