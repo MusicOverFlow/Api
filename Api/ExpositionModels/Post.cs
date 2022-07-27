@@ -20,6 +20,8 @@ public class PostResource
     public int LikesCount { get; set; }
 
     public ICollection<CommentaryResource> Commentaries { get; set; }
+
+    public string MusicUrl { get; set; }
 }
 
 /**

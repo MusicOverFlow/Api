@@ -20,4 +20,6 @@ public class Post
 
     public virtual ICollection<Account> Likes { get; set; }
     public int LikesCount { get; set; }
+
+    public string MusicUrl { get; set; }
 }

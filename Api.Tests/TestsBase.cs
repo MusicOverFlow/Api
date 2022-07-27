@@ -44,7 +44,7 @@ public class TestBase
     protected TestBase()
     {
         this.accountsController = new AccountController(this.dbContext, this.mapper, this.dataValidator, this.configuration, this.stringComparer, this.exceptionHandler);
-        this.postController = new PostController(this.dbContext, this.mapper, this.exceptionHandler);
+        this.postController = new PostController(this.dbContext, this.mapper, this.configuration, this.exceptionHandler);
         this.commentaryController = new CommentaryController(this.dbContext, this.mapper, this.exceptionHandler);
         this.groupController = new GroupController(this.dbContext, this.mapper, this.configuration, this.stringComparer, this.exceptionHandler);
         this.authenticationController = new AuthenticationController(this.dbContext, this.configuration, this.exceptionHandler);

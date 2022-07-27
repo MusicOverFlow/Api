@@ -32,7 +32,7 @@ public partial class AccountController : ControllerBase
         this.exceptionHandler = exceptionHandler;
     }
 
-    async private Task<string> GetProfilPicUrl(byte[] profilPic, string mailAddress)
+    private async Task<string> GetProfilPicUrl(byte[] profilPic, string mailAddress)
     {
         if (profilPic != null)
         {
