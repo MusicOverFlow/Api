@@ -21,34 +21,24 @@ public partial class PostController
 
         account.OwnedPosts.ToList().ForEach(p =>
         {
-            if (!Contains(posts, p.Id)) posts.Add(this.mapper.Post_ToResource(p));
+            if (!this.Contains(posts, p.Id)) posts.Add(this.mapper.Post_ToResource(p));
         });
         account.OwnedCommentaries.ToList().ForEach(c =>
         {
-            if (!Contains(posts, c.Post.Id)) posts.Add(this.mapper.Post_ToResource(c.Post));
+            if (!this.Contains(posts, c.Post.Id)) posts.Add(this.mapper.Post_ToResource(c.Post));
         });
         account.Follows.ToList().ForEach(f =>
         {
             f.OwnedPosts.ToList().ForEach(p =>
             {
-                if (!Contains(posts, p.Id)) posts.Add(this.mapper.Post_ToResource(p));
+                if (!this.Contains(posts, p.Id)) posts.Add(this.mapper.Post_ToResource(p));
             });
             f.OwnedCommentaries.ToList().ForEach(c =>
             {
-                if (!Contains(posts, c.Post.Id)) posts.Add(this.mapper.Post_ToResource(c.Post));
+                if (!this.Contains(posts, c.Post.Id)) posts.Add(this.mapper.Post_ToResource(c.Post));
             });
         });
 
         return Ok(posts.OrderByDescending(p => p.CreatedAt).ToList());
-    }
-
-    private bool Contains(List<PostResource> posts, Guid id)
-    {
-        bool result = false;
-        posts.ForEach(p =>
-        {
-            if (p.Id.Equals(id)) result = true;
-        });
-        return result;
     }
 }

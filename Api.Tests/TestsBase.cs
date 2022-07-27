@@ -23,9 +23,12 @@ using System.IO;
 
 public class TestBase
 {
-    // TODO: fix lazy loading in tests
+    // TODO: try to use lazy loading context in tests
     private readonly ModelsContext dbContext = new ModelsContext(
-        new DbContextOptionsBuilder<ModelsContext>().UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
+        new DbContextOptionsBuilder<ModelsContext>()
+            .UseLazyLoadingProxies()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .Options);
     protected readonly Mapper mapper = new Mapper();
     private readonly DataValidator dataValidator = new DataValidator();
     private readonly LevenshteinDistance stringComparer = new LevenshteinDistance();

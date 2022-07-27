@@ -17,4 +17,14 @@ public partial class PostController : ControllerBase
         this.mapper = mapper;
         this.exceptionHandler = exceptionHandler;
     }
+
+    private bool Contains(List<PostResource> posts, Guid id)
+    {
+        bool result = false;
+        posts.ForEach(p =>
+        {
+            if (p.Id.Equals(id)) result = true;
+        });
+        return result;
+    }
 }

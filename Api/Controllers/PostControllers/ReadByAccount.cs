@@ -17,10 +17,17 @@ public partial class PostController
             return NotFound(this.exceptionHandler.GetError(ErrorType.AccountNotFound));
         }
 
-        List<PostResource> posts = account.OwnedPosts
-            .Select(p => this.mapper.Post_ToResource(p))
-            .ToList();
+        List<PostResource> posts = new List<PostResource>();
 
-        return Ok(posts);
+        account.OwnedPosts.ToList().ForEach(p =>
+        {
+            if (!this.Contains(posts, p.Id)) posts.Add(this.mapper.Post_ToResource(p));
+        });
+        account.OwnedCommentaries.ToList().ForEach(c =>
+        {
+            if (!this.Contains(posts, c.Post.Id)) posts.Add(this.mapper.Post_ToResource(c.Post));
+        });
+
+        return Ok(posts.OrderByDescending(p => p.CreatedAt).ToList());
     }
 }
