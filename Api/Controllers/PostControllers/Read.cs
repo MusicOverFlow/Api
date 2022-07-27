@@ -2,7 +2,7 @@
 
 public partial class PostController
 {
-    [HttpGet]
+    [HttpGet, AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
     public async Task<ActionResult<List<PostResource>>> Read(Guid? id = null)
     {
         IQueryable<Post> query = this.context.Posts;

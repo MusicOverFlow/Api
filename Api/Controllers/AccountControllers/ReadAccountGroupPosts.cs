@@ -4,7 +4,7 @@ namespace Api.Controllers.AccountControllers;
 
 public partial class AccountController
 {
-    [HttpGet("groupPosts")]
+    [HttpGet("groupPosts"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
     public async Task<ActionResult<List<PostResource>>> ReadAccountGroupPosts()
     {
         string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;

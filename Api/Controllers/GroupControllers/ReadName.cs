@@ -2,7 +2,7 @@
 
 public partial class GroupController
 {
-    [HttpGet("name")]
+    [HttpGet("name"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
     public async Task<ActionResult<List<GroupResource>>> ReadName(string name)
     {
         if (string.IsNullOrWhiteSpace(name))

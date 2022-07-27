@@ -2,7 +2,7 @@
 
 public partial class GroupController
 {
-    [HttpGet]
+    [HttpGet, AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
     public async Task<ActionResult<List<GroupResource>>> Read(Guid? id = null)
     {
         IQueryable<Group> query = this.context.Groups;

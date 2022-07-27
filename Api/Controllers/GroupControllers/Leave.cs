@@ -4,7 +4,7 @@ namespace Api.Controllers.GroupControllers;
 
 public partial class GroupController
 {
-    [HttpPost("leave")]
+    [HttpPost("leave"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
     public async Task<ActionResult> Leave(Guid groupId)
     {
         string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;

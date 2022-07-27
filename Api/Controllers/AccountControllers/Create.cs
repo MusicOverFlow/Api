@@ -51,7 +51,7 @@ public partial class AccountController
             MailAddress = mailAddress.Trim(),
             PasswordHash = hash,
             PasswordSalt = salt,
-            Role = Role.Admin.ToString(),
+            Role = Role.User.ToString(),
             Firstname = firstname ?? "Unknown",
             Lastname = lastname ?? "Unknown",
             Pseudonym = pseudonym ?? "Anonymous",

@@ -4,7 +4,7 @@ namespace Api.Controllers.GroupControllers;
 
 public partial class GroupController
 {
-    [HttpPost]
+    [HttpPost, AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
     public async Task<ActionResult<GroupResource>> Create(
         [FromForm] string name,
         [FromForm] string description,
