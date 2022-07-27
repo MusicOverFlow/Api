@@ -11,10 +11,8 @@ public class AccountResource
     public string Firstname { get; set; }
     public string Lastname { get; set; }
     public string Pseudonym { get; set; }
-    public string ProfilPicUrl { get; set; }
+    public string PicUrl { get; set; }
     public DateTime CreatedAt { get; set; }
-
-    public ICollection<AccountResource> Follows { get; set; }
 }
 
 public class AccountResource_WithPosts : AccountResource
@@ -22,20 +20,17 @@ public class AccountResource_WithPosts : AccountResource
     public ICollection<PostResource> OwnedPosts { get; set; }
     public ICollection<PostResource> LikedPosts { get; set; }
     public ICollection<CommentaryResource> LikedCommentaries { get; set; }
+    public ICollection<CommentaryResource> OwnedCommentaries { get; set; }
 }
 
-public class AccountResource_WithGroups : AccountResource
+public class AccountResource_WithPosts_AndGroups : AccountResource_WithPosts
 {
     public ICollection<GroupResource> Groups { get; set; }
 }
 
-public class AccountResource_WithPosts_AndGroups : AccountResource
+public class AccountResource_WithPosts_AndGroups_AndFollows : AccountResource_WithPosts_AndGroups
 {
-    public ICollection<PostResource> OwnedPosts { get; set; }
-    public ICollection<PostResource> LikedPosts { get; set; }
-    public ICollection<CommentaryResource> LikedCommentaries { get; set; }
-
-    public ICollection<GroupResource> Groups { get; set; }
+    public ICollection<AccountResource> Follows { get; set; }
 }
 
 /**
@@ -51,7 +46,7 @@ public class CreateAccountRequest
     public byte[] ProfilPic { get; set; }
 }
 
-public class ReadByNames // TODO: by pseudo
+public class ReadByNames
 {
     public string Firstname { get; set; }
     public string Lastname { get; set; }

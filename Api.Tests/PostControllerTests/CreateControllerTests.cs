@@ -1,4 +1,6 @@
-﻿namespace Api.Tests.PostControllerTests;
+﻿using Microsoft.AspNetCore.Http;
+
+namespace Api.Tests.PostControllerTests;
 
 public class CreateControllerTests : TestBase
 {
@@ -15,11 +17,13 @@ public class CreateControllerTests : TestBase
     
     private async Task<AccountResource> CreateAccount()
     {
-        var request = await base.accountsController.Create(new CreateAccountRequest()
-        {
-            MailAddress = "gtouchet@myges.fr",
-            Password = "123Pass!",
-        });
+        var request = await base.accountsController.Create(
+            mailAddress: "gtouchet@myges.fr",
+            password: "123Pass!",
+            firstname: null,
+            lastname: null,
+            pseudonym: null,
+            profilPic: null);
         var result = request.Result as CreatedResult;
         
         return result.Value as AccountResource;
@@ -27,11 +31,10 @@ public class CreateControllerTests : TestBase
 
     private async Task<GroupResource> CreateGroup()
     {
-        var request = await base.groupController.Create(new CreateGroup()
-        {
-            Name = "My awesome group",
-            Description = "This is an awesome group",
-        });
+        var request = await base.groupController.Create(
+            name: "My awesome group",
+            description: "This is an awesome group",
+            groupPic: null);
         var result = request.Result as CreatedResult;
 
         return result.Value as GroupResource;

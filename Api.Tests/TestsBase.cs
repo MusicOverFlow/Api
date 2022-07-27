@@ -23,7 +23,12 @@ using System.IO;
 
 public class TestBase
 {
-    private readonly ModelsContext dbContext = new ModelsContext(new DbContextOptionsBuilder<ModelsContext>().UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
+    // TODO: try to use lazy loading context in tests
+    private readonly ModelsContext dbContext = new ModelsContext(
+        new DbContextOptionsBuilder<ModelsContext>()
+            .UseLazyLoadingProxies()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .Options);
     protected readonly Mapper mapper = new Mapper();
     private readonly DataValidator dataValidator = new DataValidator();
     private readonly LevenshteinDistance stringComparer = new LevenshteinDistance();
@@ -38,10 +43,10 @@ public class TestBase
 
     protected TestBase()
     {
-        this.accountsController = new AccountController(this.dbContext, this.mapper, this.dataValidator, this.stringComparer, this.exceptionHandler);
-        this.postController = new PostController(this.dbContext, this.mapper, this.exceptionHandler);
+        this.accountsController = new AccountController(this.dbContext, this.mapper, this.dataValidator, this.configuration, this.stringComparer, this.exceptionHandler);
+        this.postController = new PostController(this.dbContext, this.mapper, this.configuration, this.exceptionHandler);
         this.commentaryController = new CommentaryController(this.dbContext, this.mapper, this.exceptionHandler);
-        this.groupController = new GroupController(this.dbContext, this.mapper, this.stringComparer, this.exceptionHandler);
+        this.groupController = new GroupController(this.dbContext, this.mapper, this.configuration, this.stringComparer, this.exceptionHandler);
         this.authenticationController = new AuthenticationController(this.dbContext, this.configuration, this.exceptionHandler);
     }
     
@@ -59,6 +64,7 @@ public class TestBase
         this.accountsController.ControllerContext.HttpContext = mock.Object;
         this.postController.ControllerContext.HttpContext = mock.Object;
         this.groupController.ControllerContext.HttpContext = mock.Object;
+        this.commentaryController.ControllerContext.HttpContext = mock.Object;
     }
 
     /* useful for later testing

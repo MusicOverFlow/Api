@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Api.Migrations
 {
     [DbContext(typeof(ModelsContext))]
-    [Migration("20220530121728_follows")]
-    partial class follows
+    [Migration("20220724122938_reset")]
+    partial class reset
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -101,6 +101,14 @@ namespace Api.Migrations
                         .IsRequired()
                         .HasColumnType("bytea");
 
+                    b.Property<string>("PicUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Pseudonym")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Role")
                         .IsRequired()
                         .HasColumnType("text");
@@ -164,6 +172,10 @@ namespace Api.Migrations
 
                     b.Property<Guid?>("OwnerId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("PicUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 

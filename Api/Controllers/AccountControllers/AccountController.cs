@@ -32,7 +32,7 @@ public partial class AccountController : ControllerBase
         this.exceptionHandler = exceptionHandler;
     }
 
-    async private Task<string> GetProfilPicUrl(byte[] profilPic, string mailAddress)
+    private async Task<string> GetProfilPicUrl(byte[] profilPic, string mailAddress)
     {
         if (profilPic != null)
         {
@@ -48,7 +48,7 @@ public partial class AccountController : ControllerBase
         }
         else
         {
-            return "https://musicoverflowstorage.blob.core.windows.net/profil-pics/placeholder.png";
+            return "https://musicoverflowstorage.blob.core.windows.net/profil-pics/placeholder.profilpic.png";
         }
     }
 

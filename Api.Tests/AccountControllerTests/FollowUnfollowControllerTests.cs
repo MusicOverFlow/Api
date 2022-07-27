@@ -2,23 +2,25 @@
 
 public class FollowUnfollowControllerTests : TestBase
 {
-    private AccountResource connectedAccount, secondAccount;
+    private readonly AccountResource connectedAccount, secondAccount;
 
     public FollowUnfollowControllerTests()
     {
         this.connectedAccount = this.CreateAccount("gtouchet1@myges.fr", "123Pass!").Result;
-        // firstAccount is the caller
+
         base.MockJwtAuthentication(this.connectedAccount);
         this.secondAccount = this.CreateAccount("gtouchet2@myges.fr", "123Pass!").Result;
     }
 
     private async Task<AccountResource> CreateAccount(string mail, string password)
     {
-        var request = await base.accountsController.Create(new CreateAccountRequest()
-        {
-            MailAddress = mail,
-            Password = password,
-        });
+        var request = await base.accountsController.Create(
+            mailAddress: mail,
+            password: password,
+            firstname: null,
+            lastname: null,
+            pseudonym: null,
+            profilPic: null);
         var result = request.Result as CreatedResult;
 
         return result.Value as AccountResource;
@@ -63,7 +65,7 @@ public class FollowUnfollowControllerTests : TestBase
 
         var request = await base.accountsController.Read(this.connectedAccount.MailAddress);
         var result = request.Result as OkObjectResult;
-        var accounts = result.Value as List<AccountResource_WithPosts_AndGroups>;
+        var accounts = result.Value as List<AccountResource_WithPosts_AndGroups_AndFollows>;
         var account = accounts.First();
 
         account.Follows.First().Should().BeEquivalentTo(this.secondAccount);
@@ -81,7 +83,7 @@ public class FollowUnfollowControllerTests : TestBase
 
         var request = await base.accountsController.Read(this.connectedAccount.MailAddress);
         var result = request.Result as OkObjectResult;
-        var accounts = result.Value as List<AccountResource_WithPosts_AndGroups>;
+        var accounts = result.Value as List<AccountResource_WithPosts_AndGroups_AndFollows>;
         var account = accounts.First();
 
         account.Follows.Count.Should().Be(0);

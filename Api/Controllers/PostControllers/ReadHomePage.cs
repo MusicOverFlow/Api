@@ -1,11 +1,11 @@
-using System.Security.Claims;
+﻿using System.Security.Claims;
 
 namespace Api.Controllers.PostControllers;
 
 public partial class PostController
 {
-    [HttpGet("byAccount"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
-    public async Task<ActionResult<List<PostResource>>> ReadByAccount()
+    [HttpGet("homePage"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
+    public async Task<ActionResult<List<PostResource>>> ReadHomePage()
     {
         string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
@@ -26,6 +26,17 @@ public partial class PostController
         account.OwnedCommentaries.ToList().ForEach(c =>
         {
             if (!this.Contains(posts, c.Post.Id)) posts.Add(this.mapper.Post_ToResource(c.Post));
+        });
+        account.Follows.ToList().ForEach(f =>
+        {
+            f.OwnedPosts.ToList().ForEach(p =>
+            {
+                if (!this.Contains(posts, p.Id)) posts.Add(this.mapper.Post_ToResource(p));
+            });
+            f.OwnedCommentaries.ToList().ForEach(c =>
+            {
+                if (!this.Contains(posts, c.Post.Id)) posts.Add(this.mapper.Post_ToResource(c.Post));
+            });
         });
 
         return Ok(posts.OrderByDescending(p => p.CreatedAt).ToList());

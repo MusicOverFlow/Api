@@ -12,12 +12,14 @@ public class Post
     [Required]
     public DateTime CreatedAt { get; set; }
 
-    public Account Owner { get; set; }
+    public virtual Account Owner { get; set; }
 
-    public ICollection<Commentary> Commentaries { get; set; }
+    public virtual ICollection<Commentary> Commentaries { get; set; }
 
-    public Group Group { get; set; }
+    public virtual Group Group { get; set; }
 
-    public ICollection<Account> Likes { get; set; }
+    public virtual ICollection<Account> Likes { get; set; }
     public int LikesCount { get; set; }
+
+    public string MusicUrl { get; set; }
 }

@@ -17,7 +17,7 @@ namespace Api.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.5")
+                .HasAnnotation("ProductVersion", "6.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -99,7 +99,8 @@ namespace Api.Migrations
                         .IsRequired()
                         .HasColumnType("bytea");
 
-                    b.Property<string>("ProfilPicUrl")
+                    b.Property<string>("PicUrl")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Pseudonym")
@@ -170,6 +171,10 @@ namespace Api.Migrations
                     b.Property<Guid?>("OwnerId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("PicUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.HasIndex("OwnerId");
@@ -196,6 +201,9 @@ namespace Api.Migrations
 
                     b.Property<int>("LikesCount")
                         .HasColumnType("integer");
+
+                    b.Property<string>("MusicUrl")
+                        .HasColumnType("text");
 
                     b.Property<Guid?>("OwnerId")
                         .HasColumnType("uuid");

@@ -11,12 +11,11 @@ public class Mapper
         MapperConfiguration configuration = new MapperConfiguration(c =>
         {
             c.CreateMap<Account, AccountResource>();
-            c.CreateMap<Account, AccountResource_WithGroups>();
             c.CreateMap<Account, AccountResource_WithPosts>();
             c.CreateMap<Account, AccountResource_WithPosts_AndGroups>();
+            c.CreateMap<Account, AccountResource_WithPosts_AndGroups_AndFollows>();
 
             c.CreateMap<Post, PostResource>();
-            c.CreateMap<Post, PostResource_WithCommentaries_AndLikes>();
 
             c.CreateMap<Commentary, CommentaryResource>();
             c.CreateMap<Commentary, CommentaryResource_WithPost>();
@@ -31,12 +30,11 @@ public class Mapper
     }
 
     public AccountResource Account_ToResource(Account a) => m.Map<AccountResource>(a);
-    public AccountResource_WithGroups Account_ToResource_WithGroups(Account a) => m.Map<AccountResource_WithGroups>(a);
     public AccountResource_WithPosts Account_ToResource_WithPosts(Account a) => m.Map<AccountResource_WithPosts>(a);
     public AccountResource_WithPosts_AndGroups Account_ToResource_WithPosts_AndGroups(Account a) => m.Map<AccountResource_WithPosts_AndGroups>(a);
+    public AccountResource_WithPosts_AndGroups_AndFollows Account_ToResource_WithPosts_AndGroups_AndFollows(Account a) => m.Map<AccountResource_WithPosts_AndGroups_AndFollows>(a);
 
     public PostResource Post_ToResource(Post p) => m.Map<PostResource>(p);
-    public PostResource_WithCommentaries_AndLikes Post_ToResource_WithCommentaries_AndLikes(Post p) => m.Map<PostResource_WithCommentaries_AndLikes>(p);
 
     public CommentaryResource Commentary_ToResource(Commentary c) => m.Map<CommentaryResource>(c);
     public CommentaryResource_WithPost Commentary_ToResource_WithPost(Commentary c) => m.Map<CommentaryResource_WithPost>(c);

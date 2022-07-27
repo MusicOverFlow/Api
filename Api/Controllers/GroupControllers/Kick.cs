@@ -4,7 +4,7 @@ namespace Api.Controllers.GroupControllers;
 
 public partial class GroupController
 {
-    [HttpPost("kick")]
+    [HttpPost("kick"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
     public async Task<ActionResult<GroupResource>> Kick(Guid groupId, string memberMailAddress)
     {
         string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;

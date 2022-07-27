@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Api.Migrations
 {
-    public partial class models : Migration
+    public partial class reset : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -20,11 +20,19 @@ namespace Api.Migrations
                     Role = table.Column<string>(type: "text", nullable: false),
                     Firstname = table.Column<string>(type: "text", nullable: false),
                     Lastname = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Pseudonym = table.Column<string>(type: "text", nullable: false),
+                    PicUrl = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    AccountId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Accounts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Accounts_Accounts_AccountId",
+                        column: x => x.AccountId,
+                        principalTable: "Accounts",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -34,6 +42,7 @@ namespace Api.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "character varying(25)", maxLength: 25, nullable: false),
                     Description = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    PicUrl = table.Column<string>(type: "text", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     OwnerId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
@@ -189,6 +198,11 @@ namespace Api.Migrations
                 name: "IX_AccountPost_LikesId",
                 table: "AccountPost",
                 column: "LikesId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Accounts_AccountId",
+                table: "Accounts",
+                column: "AccountId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Commentaries_OwnerId",

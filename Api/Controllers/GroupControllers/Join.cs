@@ -4,7 +4,7 @@ namespace Api.Controllers.GroupControllers;
 
 public partial class GroupController
 {
-    [HttpPost("join")]
+    [HttpPost("join"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
     public async Task<ActionResult<GroupResource>> Join(Guid groupId)
     {
         string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
@@ -18,7 +18,6 @@ public partial class GroupController
         }
 
         Group group = await this.context.Groups
-            .Include(g => g.Members)
             .FirstOrDefaultAsync(p => p.Id.Equals(groupId));
 
         if (group == null)

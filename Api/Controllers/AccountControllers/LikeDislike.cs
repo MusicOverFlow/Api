@@ -5,13 +5,11 @@ namespace Api.Controllers.AccountControllers;
 public partial class AccountController
 {
     [HttpPut("like"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
-    public async Task<ActionResult> LikeDislikePost(Guid? id = null)
+    public async Task<ActionResult> LikeDislike(Guid? id = null)
     {
         string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
         Account account = await this.context.Accounts
-            .Include(a => a.LikedPosts)
-            .Include(a => a.LikedCommentaries)
             .FirstOrDefaultAsync(a => a.MailAddress.Equals(mailAddress));
 
         if (account == null)
@@ -20,7 +18,6 @@ public partial class AccountController
         }
 
         Post post = await this.context.Posts
-            .Include(p => p.Likes)
             .FirstOrDefaultAsync(p => p.Id.Equals(id));
 
         if (post != null)
@@ -40,7 +37,6 @@ public partial class AccountController
         else
         {
             Commentary commentary = await this.context.Commentaries
-                .Include(c => c.Likes)
                 .FirstOrDefaultAsync(c => c.Id.Equals(id));
 
             if (commentary == null)

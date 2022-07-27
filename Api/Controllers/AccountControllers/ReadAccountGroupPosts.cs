@@ -4,8 +4,8 @@ namespace Api.Controllers.AccountControllers;
 
 public partial class AccountController
 {
-    [HttpGet("self"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
-    public async Task<ActionResult<AccountResource>> ReadSelf()
+    [HttpGet("groupPosts"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
+    public async Task<ActionResult<List<PostResource>>> ReadAccountGroupPosts()
     {
         string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
@@ -17,6 +17,13 @@ public partial class AccountController
             return NotFound(this.exceptionHandler.GetError(ErrorType.AccountNotFound));
         }
 
-        return Ok(this.mapper.Account_ToResource_WithPosts_AndGroups_AndFollows(account));
+        List<PostResource> posts = new List<PostResource>();
+        account.Groups
+            .ToList()
+            .ForEach(g => g.Posts
+                .ToList()
+                .ForEach(p => posts.Add(this.mapper.Post_ToResource(p))));
+
+        return Ok(posts);
     }
 }

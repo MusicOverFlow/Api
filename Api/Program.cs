@@ -8,6 +8,7 @@ global using Microsoft.EntityFrameworkCore;
 global using static Api.Utilitaries.AuthorizeRolesAttribute;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -18,6 +19,12 @@ bool dev = true;
 
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+
+builder.Services.Configure<FormOptions>(o => {
+    o.ValueLengthLimit = int.MaxValue;
+    o.MultipartBodyLengthLimit = int.MaxValue;
+    o.MemoryBufferThreshold = int.MaxValue;
+});
 
 // Singletons
 try
@@ -84,9 +91,14 @@ builder.Services.AddDbContext<ModelsContext>(options =>
 {
     if (dev)
     {
+        options.UseLazyLoadingProxies();
         options.UseNpgsql(
-        builder.Configuration.GetConnectionString("MusicOverflowHeroku"),
-        optionBuilder => optionBuilder.MigrationsAssembly("Api"));
+            builder.Configuration.GetConnectionString("MusicOverflowHeroku"),
+            optionBuilder =>
+            {
+                optionBuilder.MigrationsAssembly("Api");
+                optionBuilder.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
+            });
     }
     else
     {

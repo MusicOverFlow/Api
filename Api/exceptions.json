@@ -30,6 +30,11 @@
     "message": "wtf are you doing, how hard is it to enter a name ??",
     "example": "Example: I'll not feed an obvious troll"
   },
+  "InvalidPseudonym": {
+    "error": "Invalid pseudonym",
+    "message": "Did you really know the pseudo of your friends ? Just kidding, you didn't have friends",
+    "example": "Cheh"
+  },
   "InvalidRole": {
     "error": "Invalid role",
     "message": "Invalid role, available roles are 'User', 'Moderator', 'Admin', but you should know that, since you're actually an admin. Jeez'..."
@@ -46,6 +51,10 @@
   "GroupNotFound": {
     "error": "Group not found",
     "message": "Could not find this group, sounds like a conspiracy to me è_é"
+  },
+  "NotMemberOfGroup": {
+    "error": "You are not a member of this group",
+    "message": "Therefore, you cannot see this group's posts, how does that feel, nerd ?"
   },
   "AccountAlreadyInGroup": {
     "error": "Account already in this group",
@@ -71,5 +80,10 @@
   "PostNotFound": {
     "error": "Post not found",
     "message": "This is bad, this is not supposed to happen ! RUN !"
+  },
+  "WrongFormatFile": {
+    "error": "Wrong format for file",
+    "message": "You can only upload .mp3 or .wav files",
+    "example": "REEEEEEEE.wav"
   }
 }

@@ -14,11 +14,13 @@ public class ReadControllerTests : TestBase
 
     private async Task<AccountResource> CreateAccount()
     {
-        var request = await base.accountsController.Create(new CreateAccountRequest()
-        {
-            MailAddress = "gtouchet@myges.fr",
-            Password = "123Pass!",
-        });
+        var request = await base.accountsController.Create(
+                mailAddress: "gtouchet@myges.fr",
+                password: "123Pass!",
+                firstname: "Guillaume",
+                lastname: "Touchet",
+                pseudonym: null,
+                profilPic: null);
         var result = request.Result as CreatedResult;
 
         return result.Value as AccountResource;
@@ -59,7 +61,7 @@ public class ReadControllerTests : TestBase
 
         var request = await base.postController.Read();
         var result = request.Result as OkObjectResult;
-        var posts = result.Value as List<PostResource_WithCommentaries_AndLikes>;
+        var posts = result.Value as List<PostResource>;
 
         posts.Count.Should().Be(2);
     }
@@ -81,7 +83,7 @@ public class ReadControllerTests : TestBase
     {
         var request = await base.postController.Read(this.post.Id);
         var result = request.Result as OkObjectResult;
-        var posts = result.Value as List<PostResource_WithCommentaries_AndLikes>;
+        var posts = result.Value as List<PostResource>;
 
         posts.First().Id.Should().Be(this.post.Id);
     }
@@ -103,6 +105,6 @@ public class ReadControllerTests : TestBase
         var request = await base.postController.Read();
         var result = request.Result as OkObjectResult;
 
-        result.Value.Should().BeOfType<List<PostResource_WithCommentaries_AndLikes>>();
+        result.Value.Should().BeOfType<List<PostResource>>();
     }
 }

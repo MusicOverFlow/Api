@@ -42,6 +42,8 @@ public partial class PostController
 
             Owner = account,
             Group = group,
+
+            MusicUrl = null,
         };
 
         this.context.Posts.Add(post);
