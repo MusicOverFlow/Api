@@ -5,7 +5,7 @@ namespace Api.Controllers.GroupControllers;
 public partial class GroupController
 {
     [HttpGet("posts"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
-    public async Task<ActionResult<List<GroupResource>>> ReadGroupPosts(Guid? groupId)
+    public async Task<ActionResult<GroupResource>> ReadGroupPosts(Guid? groupId)
     {
         string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
