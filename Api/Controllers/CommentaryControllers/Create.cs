@@ -5,7 +5,7 @@ namespace Api.Controllers.CommentaryControllers;
 public partial class CommentaryController
 {
     [HttpPost]
-    public async Task<ActionResult<CommentaryResource>> Create(CreateCommentary request, Guid? postId)
+    public async Task<ActionResult<PostResource>> Create(CreateCommentary request, Guid? postId)
     {
         string mailAddress = User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
