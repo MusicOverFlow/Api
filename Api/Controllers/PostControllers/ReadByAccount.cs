@@ -5,7 +5,7 @@ namespace Api.Controllers.PostControllers;
 public partial class PostController
 {
     [HttpGet("byAccount"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
-    public async Task<ActionResult<PostResource>> ReadByAccount()
+    public async Task<ActionResult<List<PostResource>>> ReadByAccount()
     {
         string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
