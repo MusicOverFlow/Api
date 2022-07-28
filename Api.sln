@@ -3,14 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32319.34
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api", "Api\Api.csproj", "{10CAE5AF-B770-4189-A53F-A29FC35A2B8A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api", "Api\Api.csproj", "{10CAE5AF-B770-4189-A53F-A29FC35A2B8A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Tests", "Api.Tests\Api.Tests.csproj", "{FE662C71-3376-424D-B9E1-0DC0C63943A0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api.Tests", "Api.Tests\Api.Tests.csproj", "{FE662C71-3376-424D-B9E1-0DC0C63943A0}"
 	ProjectSection(ProjectDependencies) = postProject
 		{10CAE5AF-B770-4189-A53F-A29FC35A2B8A} = {10CAE5AF-B770-4189-A53F-A29FC35A2B8A}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Models", "Api.Models\Api.Models.csproj", "{D1DECBC8-29BE-4439-A370-A6B6CA419AFC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api.Models", "Api.Models\Api.Models.csproj", "{D1DECBC8-29BE-4439-A370-A6B6CA419AFC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1A3C8A06-917B-49A7-B260-E7D9FFC573F0}"
 	ProjectSection(SolutionItems) = preProject
