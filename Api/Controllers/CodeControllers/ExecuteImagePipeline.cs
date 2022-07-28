@@ -1,61 +1,62 @@
 ﻿using System.Diagnostics;
-using System.Text;
 
 namespace Api.Controllers.CodeControllers;
 
 public partial class CodeController
 {
-    [HttpPost("textPipeline")]
-    public async Task<ActionResult<PipelineResult>> ExecuteTextPipeline(
+    [HttpPost("imagePipeline")]
+    public async Task<ActionResult<PipelineResult>> ExecuteImagePipeline(
         [FromForm] string scripts,
         [FromForm] byte[] fileInput)
     {
         byte[] fileBytes = null;
+        IFormFile file = null;
         if (Request != null)
         {
-            IFormFile file = Request.Form.Files.GetFile(nameof(fileInput));
+            file = Request.Form.Files.GetFile(nameof(fileInput));
             if (file == null || file.Length == 0)
             {
                 return BadRequest();
             }
-            
+
             using (MemoryStream ms = new MemoryStream())
             {
                 file.CopyTo(ms);
                 fileBytes = ms.ToArray();
             }
         }
-        
+
         Guid fileGuid = Guid.NewGuid();
-        string filepath = new DirectoryInfo(Directory.GetCurrentDirectory()).Parent + $@"/Api/Files/TextPipeline_{fileGuid}";
-        string result = Encoding.Default.GetString(fileBytes);
+        string filepath = new DirectoryInfo(Directory.GetCurrentDirectory()) + $@"/Files/ImagePipeline_{fileGuid}.{Path.GetExtension(file.FileName)}";
         
         foreach (string script in scripts.Split("."))
         {
-            await System.IO.File.WriteAllTextAsync(filepath, result);
+            await System.IO.File.WriteAllBytesAsync(filepath, fileBytes);
 
             Process compiler = Process.Start(new ProcessStartInfo()
             {
                 FileName = "python",
                 Arguments =
                     $"{new DirectoryInfo(Directory.GetCurrentDirectory()).Parent}" +
-                    $"/PipelineScripts/Text/{script}.py " +
+                    $"/PipelineScripts/Image/{script}.py " +
                     $"{filepath}",
                 RedirectStandardError = true,
                 RedirectStandardOutput = true,
             });
 
-            using (StreamReader resultStream = compiler.StandardOutput)
+            using (StreamReader resultStream = compiler.StandardError)
             {
-                result = await resultStream.ReadToEndAsync();
+                Console.WriteLine(await resultStream.ReadToEndAsync());
             }
+
+            fileBytes = await System.IO.File.ReadAllBytesAsync(filepath);
         }
 
         System.IO.File.Delete(filepath);
-
+        
         return Ok(new PipelineResult()
         {
-            Output = Encoding.Default.GetBytes(result),
+            Output = fileBytes,
         });
     }
 }

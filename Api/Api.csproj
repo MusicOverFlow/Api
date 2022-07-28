@@ -42,9 +42,4 @@
     <ProjectReference Include="..\Api.Models\Api.Models.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Controllers\CodeControllers\PipelineScripts\Image\" />
-    <Folder Include="Controllers\CodeControllers\PipelineScripts\Text\" />
-  </ItemGroup>
-
 </Project>
