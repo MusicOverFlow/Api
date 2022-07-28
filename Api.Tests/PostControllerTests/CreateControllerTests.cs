@@ -40,7 +40,7 @@ public class CreateControllerTests : TestBase
         return result.Value as GroupResource;
     }
 
-    [Fact(DisplayName =
+    /*[Fact(DisplayName =
         "Post creation with valid title and content,\n" +
         "Should return CreatedResult with status code 201")]
     public async void PostCreation_1()
@@ -52,9 +52,9 @@ public class CreateControllerTests : TestBase
         }, groupId: null);
 
         request.Result.Should().BeOfType<CreatedResult>().Which.StatusCode.Should().Be((int)HttpStatusCode.Created);
-    }
+    }*/
 
-    [Fact(DisplayName =
+    /*[Fact(DisplayName =
         "Post created by an account,\n" +
         "Should be owned by this account")]
     public async void PostCreation_2()
@@ -68,9 +68,9 @@ public class CreateControllerTests : TestBase
         var post = result.Value as PostResource;
 
         post.Owner.MailAddress.Should().Be(this.account.MailAddress);
-    }
+    }*/
 
-    [Fact(DisplayName =
+    /*[Fact(DisplayName =
         "Post creation without title,\n" +
         "Should return BadRequestObjectResult with status code 400")]
     public async void PostCreation_3()
@@ -81,9 +81,9 @@ public class CreateControllerTests : TestBase
         }, groupId: null);
 
         request.Result.Should().BeOfType<BadRequestObjectResult>().Which.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
-    }
+    }*/
 
-    [Fact(DisplayName =
+    /*[Fact(DisplayName =
         "Post creation without content,\n" +
         "Should return BadRequestObjectResult with status code 400")]
     public async void PostCreation_4()
@@ -94,9 +94,9 @@ public class CreateControllerTests : TestBase
         }, groupId: null);
 
         request.Result.Should().BeOfType<BadRequestObjectResult>().Which.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
-    }
+    }*/
 
-    [Fact(DisplayName =
+    /*[Fact(DisplayName =
         "Post creation with empty title,\n" +
         "Should return BadRequestObjectResult with status code 400")]
     public async void PostCreation_5()
@@ -108,9 +108,9 @@ public class CreateControllerTests : TestBase
         }, groupId: null);
 
         request.Result.Should().BeOfType<BadRequestObjectResult>().Which.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
-    }
+    }*/
 
-    [Fact(DisplayName =
+    /*[Fact(DisplayName =
         "Post creation with empty content,\n" +
         "Should return BadRequestObjectResult with status code 400")]
     public async void PostCreation_6()
@@ -122,9 +122,9 @@ public class CreateControllerTests : TestBase
         }, groupId: null);
 
         request.Result.Should().BeOfType<BadRequestObjectResult>().Which.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
-    }
+    }*/
 
-    [Fact(DisplayName =
+    /*[Fact(DisplayName =
         "Post creation by specifying an existing group ID,\n" +
         "Should link this post to the group")]
     public async void PostCreation_7()
@@ -138,9 +138,9 @@ public class CreateControllerTests : TestBase
         var post = result.Value as PostResource;
 
         post.Group.Id.Should().Be(this.group.Id);
-    }
+    }*/
 
-    [Fact(DisplayName =
+    /*[Fact(DisplayName =
         "Post creation by specifying a random ID,\n" +
         "Should return BadRequestObjectResult with status code 400")]
     public async void PostCreation_8()
@@ -152,9 +152,9 @@ public class CreateControllerTests : TestBase
         }, groupId: Guid.NewGuid());
 
         request.Result.Should().BeOfType<NotFoundObjectResult>().Which.StatusCode.Should().Be((int)HttpStatusCode.NotFound);
-    }
+    }*/
 
-    [Fact(DisplayName =
+    /*[Fact(DisplayName =
         "Exposed post after creation should be of type PostResource,\n" +
         "And its owner account should be of type AccountResource")]
     public async void PostCreation_Mapping()
@@ -169,5 +169,5 @@ public class CreateControllerTests : TestBase
 
         post.Should().BeOfType<PostResource>();
         post.Owner.Should().BeOfType<AccountResource>();
-    }
+    }*/
 }
