@@ -38,12 +38,16 @@ public partial class CodeController
                 FileName = "python",
                 Arguments =
                     $"{new DirectoryInfo(Directory.GetCurrentDirectory()).Parent}" +
-                    $"/PipelineScripts/Image/{script}.py " +
+                    $"/PipelineScripts/{script}.py " +
                     $"{filepath}",
                 RedirectStandardError = true,
                 RedirectStandardOutput = true,
             });
 
+            using (StreamReader resultStream = compiler.StandardOutput)
+            {
+                Console.WriteLine(await resultStream.ReadToEndAsync());
+            }
             using (StreamReader resultStream = compiler.StandardError)
             {
                 Console.WriteLine(await resultStream.ReadToEndAsync());

@@ -2,16 +2,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>f51bc682-1166-412f-88f8-236ee9378031</ProjectGuid>
+    <ProjectGuid>a0e9db64-fd9c-488f-9128-de03dc39f93c</ProjectGuid>
     <ProjectHome>.</ProjectHome>
     <StartupFile>
     </StartupFile>
-    <SearchPath>
-    </SearchPath>
+    <SearchPath>PipelineScripts_Env\Lib\site-packages</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>PipelineScripts</Name>
     <RootNamespace>PipelineScripts</RootNamespace>
+    <InterpreterId>MSBuild|PipelineScripts_Env|$(MSBuildProjectFullPath)</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,15 +22,22 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Image\BlackAndWhite.py" />
-    <Compile Include="Text\AddSpacesBetweenChars.py" />
-    <Compile Include="Text\Invert.py" />
-    <Compile Include="Text\LowerToUpper.py" />
-    <Compile Include="Text\UpperToLower.py" />
+    <Interpreter Include="PipelineScripts_Env\">
+      <Id>PipelineScripts_Env</Id>
+      <Version>3.9</Version>
+      <Description>PipelineScripts_Env (Python 3.9 (64-bit))</Description>
+      <InterpreterPath>Scripts\python.exe</InterpreterPath>
+      <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
+      <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
+      <Architecture>X64</Architecture>
+    </Interpreter>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Image\" />
-    <Folder Include="Text\" />
+    <Compile Include="AddSpacesBetweenChars.py" />
+    <Compile Include="BlackAndWhite.py" />
+    <Compile Include="Invert.py" />
+    <Compile Include="LowerToUpper.py" />
+    <Compile Include="UpperToLower.py" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
