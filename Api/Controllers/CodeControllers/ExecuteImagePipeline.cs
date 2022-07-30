@@ -45,7 +45,7 @@ public partial class CodeController
         
         foreach (string script in scripts.Split("."))
         {
-            string methodToCall = script.Contains("-") ? script.Split("-")[0] : script;
+            string methodToCall = script.Split("-")[0];
             MethodInfo method = this.GetType().GetMethod(methodToCall, BindingFlags.NonPublic | BindingFlags.Instance);
             
             if (method == null)
