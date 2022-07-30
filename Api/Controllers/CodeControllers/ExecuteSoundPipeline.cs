@@ -1,11 +1,11 @@
 ﻿using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
-using SoundTouch;
 using System.Globalization;
 using System.Reflection;
 
 namespace Api.Controllers.CodeControllers;
 
+#pragma warning disable CS1998, IDE0051
 public partial class CodeController
 {
     [HttpPost("soundPipeline")]
@@ -40,9 +40,10 @@ public partial class CodeController
                     new object[] { });
         }
 
+        // TODO: stocker sur un container et renvoyer le lien ? Oui carrément en fait.
         return Ok(new PipelineResult()
         {
-            Output = this.ReadByte(fileStream),
+            Output = this.ReadBytes(fileStream),
         });
     }
 
@@ -53,8 +54,7 @@ public partial class CodeController
             SmbPitchShiftingSampleProvider pitch = new SmbPitchShiftingSampleProvider(fileReader.ToSampleProvider());
             pitch.PitchFactor = rate;
 
-            // Test code to see if the pitch is working
-            // Headphone warning
+            // TODO: virer ce code quand les tests seront terminés
             WaveOutEvent device = new WaveOutEvent();
             device.Init(pitch.Take(TimeSpan.FromSeconds(fileReader.TotalTime.TotalSeconds)));
             device.Play();
@@ -62,15 +62,15 @@ public partial class CodeController
         }
     }
 
-    private byte[] ReadByte(Stream input)
+    private byte[] ReadBytes(Stream input)
     {
-        byte[] buffer = new byte[16 * 1024];
+        byte[] result = new byte[16 * 1024];
         using (MemoryStream ms = new MemoryStream())
         {
             int read;
-            while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
+            while ((read = input.Read(result, 0, result.Length)) > 0)
             {
-                ms.Write(buffer, 0, read);
+                ms.Write(result, 0, read);
             }
             return ms.ToArray();
         }
