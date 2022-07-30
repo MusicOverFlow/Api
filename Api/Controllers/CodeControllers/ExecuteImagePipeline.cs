@@ -28,12 +28,12 @@ public partial class CodeController
 
         Guid fileGuid = Guid.NewGuid();
         string filepath = new DirectoryInfo(Directory.GetCurrentDirectory()) + $@"/Files/ImagePipeline_{fileGuid}.{Path.GetExtension(file.FileName)}";
-        
+
         foreach (string script in scripts.Split("."))
         {
             await System.IO.File.WriteAllBytesAsync(filepath, fileBytes);
 
-            Process compiler = Process.Start(new ProcessStartInfo()
+            ProcessStartInfo processStartInfo = new ProcessStartInfo()
             {
                 FileName = "python",
                 Arguments =
@@ -42,7 +42,13 @@ public partial class CodeController
                     $"{filepath}",
                 RedirectStandardError = true,
                 RedirectStandardOutput = true,
-            });
+                UseShellExecute = false,
+            };
+            processStartInfo.EnvironmentVariables["PYTHONPATH"] = 
+                $"C:/Users/33677/anaconda3";
+            
+
+            Process compiler = Process.Start(processStartInfo);
 
             using (StreamReader resultStream = compiler.StandardOutput)
             {
