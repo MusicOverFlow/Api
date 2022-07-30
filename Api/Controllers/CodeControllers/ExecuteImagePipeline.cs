@@ -6,11 +6,18 @@ using System.Reflection;
 
 namespace Api.Controllers.CodeControllers;
 
-#pragma warning disable CS1998
+#pragma warning disable CS1998, IDE0051
 public partial class CodeController
 {
     /// <summary>
-    /// Available scripts : Grayscale Invert Rotate45 Rotate90 FlipHorizontal FlipVertical
+    /// <b>Available scripts :</b><br/>
+    /// Grayscale<br/>
+    /// Invert<br/>
+    /// FlipHorizontal<br/>
+    /// FlipVertical<br/>
+    /// Rotate-XXX (degrees)<br/>
+    /// Resize-XXX (%)<br/>
+    /// Blur ?
     /// </summary>
     /// <param name="scripts"></param>
     /// <param name="fileInput"></param>
@@ -38,10 +45,18 @@ public partial class CodeController
         
         foreach (string script in scripts.Split("."))
         {
+            string methodToCall = script.Contains("-") ? script.Split("-")[0] : script;
+            MethodInfo method = this.GetType().GetMethod(methodToCall, BindingFlags.NonPublic | BindingFlags.Instance);
+            
+            if (method == null)
+            {
+                return BadRequest(new { error = $"Unknown script '{methodToCall}'" });
+            }
+
             IImageFormat format;
-            Image scriptResult = (Image) this.GetType()
-                .GetMethod(script, BindingFlags.NonPublic | BindingFlags.Instance)
-                .Invoke(this, new[] { Image.Load<Rgba32>(fileBytes, out format) });
+            Image scriptResult = (Image) method.Invoke(this, script.Contains("-") ?
+                    new object[] { Image.Load<Rgba32>(fileBytes, out format), int.Parse(script.Split("-")[1]) } :
+                    new [] { Image.Load<Rgba32>(fileBytes, out format) });
             
             using (var ms = new MemoryStream())
             {
@@ -68,18 +83,6 @@ public partial class CodeController
         return image;
     }
 
-    private Image Rotate45(Image image)
-    {
-        image.Mutate(i => i.Rotate(45));
-        return image;
-    }
-
-    private Image Rotate90(Image image)
-    {
-        image.Mutate(i => i.Rotate(90));
-        return image;
-    }
-
     private Image FlipHorizontal(Image image)
     {
         image.Mutate(i => i.Flip(FlipMode.Horizontal));
@@ -89,6 +92,31 @@ public partial class CodeController
     private Image FlipVertical(Image image)
     {
         image.Mutate(i => i.Flip(FlipMode.Vertical));
+        return image;
+    }
+
+    private Image Rotate(Image image, int degrees)
+    {
+        image.Mutate(i => i.Rotate(degrees));
+        return image;
+    }
+
+    private Image Resize(Image image, int sizeMultiplierPercent)
+    {
+        if (sizeMultiplierPercent <= 0)
+        {
+            return image;
+        }
+        
+        int newWidth = image.Width * sizeMultiplierPercent / 100;
+        int newHeight = image.Height * sizeMultiplierPercent / 100;
+        image.Mutate(i => i.Resize(newWidth, newHeight));
+        return image;
+    }
+
+    private Image Blur(Image image)
+    {
+        image.Mutate(i => i.GaussianBlur());
         return image;
     }
 }
