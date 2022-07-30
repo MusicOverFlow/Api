@@ -1,19 +1,29 @@
-﻿using System.Diagnostics;
+﻿using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
+using System.Reflection;
 
 namespace Api.Controllers.CodeControllers;
 
+#pragma warning disable CS1998
 public partial class CodeController
 {
+    /// <summary>
+    /// Available scripts : Grayscale Invert Rotate45 Rotate90 FlipHorizontal FlipVertical
+    /// </summary>
+    /// <param name="scripts"></param>
+    /// <param name="fileInput"></param>
+    /// <returns></returns>
     [HttpPost("imagePipeline")]
     public async Task<ActionResult<PipelineResult>> ExecuteImagePipeline(
         [FromForm] string scripts,
         [FromForm] byte[] fileInput)
     {
         byte[] fileBytes = null;
-        IFormFile file = null;
         if (Request != null)
         {
-            file = Request.Form.Files.GetFile(nameof(fileInput));
+            IFormFile file = Request.Form.Files.GetFile(nameof(fileInput));
             if (file == null || file.Length == 0)
             {
                 return BadRequest();
@@ -25,48 +35,60 @@ public partial class CodeController
                 fileBytes = ms.ToArray();
             }
         }
-
-        Guid fileGuid = Guid.NewGuid();
-        string filepath = new DirectoryInfo(Directory.GetCurrentDirectory()) + $@"/Files/ImagePipeline_{fileGuid}.{Path.GetExtension(file.FileName)}";
-
+        
         foreach (string script in scripts.Split("."))
         {
-            await System.IO.File.WriteAllBytesAsync(filepath, fileBytes);
-
-            ProcessStartInfo processStartInfo = new ProcessStartInfo()
-            {
-                FileName = "python",
-                Arguments =
-                    $"{new DirectoryInfo(Directory.GetCurrentDirectory()).Parent}" +
-                    $"/PipelineScripts/{script}.py " +
-                    $"{filepath}",
-                RedirectStandardError = true,
-                RedirectStandardOutput = true,
-                UseShellExecute = false,
-            };
-            processStartInfo.EnvironmentVariables["PYTHONPATH"] = 
-                $"C:/Users/33677/anaconda3";
+            IImageFormat format;
+            Image scriptResult = (Image) this.GetType()
+                .GetMethod(script, BindingFlags.NonPublic | BindingFlags.Instance)
+                .Invoke(this, new[] { Image.Load<Rgba32>(fileBytes, out format) });
             
-
-            Process compiler = Process.Start(processStartInfo);
-
-            using (StreamReader resultStream = compiler.StandardOutput)
+            using (var ms = new MemoryStream())
             {
-                Console.WriteLine(await resultStream.ReadToEndAsync());
+                scriptResult.Save(ms, format);
+                fileBytes = ms.ToArray();
             }
-            using (StreamReader resultStream = compiler.StandardError)
-            {
-                Console.WriteLine(await resultStream.ReadToEndAsync());
-            }
-
-            fileBytes = await System.IO.File.ReadAllBytesAsync(filepath);
         }
 
-        System.IO.File.Delete(filepath);
-        
         return Ok(new PipelineResult()
         {
             Output = fileBytes,
         });
+    }
+
+    private Image Grayscale(Image image)
+    {
+        image.Mutate(i => i.Grayscale());
+        return image;
+    }
+
+    private Image Invert(Image image)
+    {
+        image.Mutate(i => i.Invert());
+        return image;
+    }
+
+    private Image Rotate45(Image image)
+    {
+        image.Mutate(i => i.Rotate(45));
+        return image;
+    }
+
+    private Image Rotate90(Image image)
+    {
+        image.Mutate(i => i.Rotate(90));
+        return image;
+    }
+
+    private Image FlipHorizontal(Image image)
+    {
+        image.Mutate(i => i.Flip(FlipMode.Horizontal));
+        return image;
+    }
+
+    private Image FlipVertical(Image image)
+    {
+        image.Mutate(i => i.Flip(FlipMode.Vertical));
+        return image;
     }
 }
