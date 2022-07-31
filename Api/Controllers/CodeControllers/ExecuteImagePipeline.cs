@@ -15,9 +15,9 @@ public partial class CodeController
     /// Invert<br/>
     /// FlipHorizontal<br/>
     /// FlipVertical<br/>
+    /// Blur<br/>
     /// Rotate-XXX (degrees)<br/>
     /// Resize-XXX (%)<br/>
-    /// Blur ?
     /// </summary>
     /// <param name="scripts"></param>
     /// <param name="fileInput"></param>
@@ -95,6 +95,12 @@ public partial class CodeController
         return image;
     }
 
+    private Image Blur(Image image)
+    {
+        image.Mutate(i => i.GaussianBlur());
+        return image;
+    }
+
     private Image Rotate(Image image, int degrees)
     {
         image.Mutate(i => i.Rotate(degrees));
@@ -111,12 +117,6 @@ public partial class CodeController
         int newWidth = image.Width * sizeMultiplierPercent / 100;
         int newHeight = image.Height * sizeMultiplierPercent / 100;
         image.Mutate(i => i.Resize(newWidth, newHeight));
-        return image;
-    }
-
-    private Image Blur(Image image)
-    {
-        image.Mutate(i => i.GaussianBlur());
         return image;
     }
 }

@@ -8,15 +8,23 @@ namespace Api.Controllers.CodeControllers;
 #pragma warning disable CS1998, IDE0051
 public partial class CodeController
 {
+    /// <summary>
+    /// <b>Available scripts :</b><br/>
+    /// Pitch-X (ex: Pitch-1,25)<br/>
+    /// </summary>
+    /// <param name="scripts"></param>
+    /// <param name="fileInput"></param>
+    /// <returns></returns>
     [HttpPost("soundPipeline")]
-    public async Task<ActionResult<PipelineResult>> ExecuteSoundPipeline(
+    public async Task<ActionResult<string>> ExecuteSoundPipeline(
         [FromForm] string scripts,
         [FromForm] byte[] fileInput)
     {
         Stream fileStream = new MemoryStream();
+        IFormFile file = null;
         if (Request != null)
         {
-            IFormFile file = Request.Form.Files.GetFile(nameof(fileInput));
+            file = Request.Form.Files.GetFile(nameof(fileInput));
             if (file == null)
             {
                 return BadRequest();
@@ -24,6 +32,9 @@ public partial class CodeController
 
             fileStream = file.OpenReadStream();
         }
+
+        Guid fileGuid = Guid.NewGuid();
+        string filepath = new DirectoryInfo(Directory.GetCurrentDirectory()) + $@"/Files/SoundPipeline_{fileGuid}";
 
         foreach (string script in scripts.Split("."))
         {
@@ -36,29 +47,24 @@ public partial class CodeController
             }
 
             method.Invoke(this, script.Contains("-") ?
-                    new object[] { fileStream, float.Parse(script.Replace(",", ".").Split("-")[1], CultureInfo.InvariantCulture) } :
-                    new object[] { });
+                new object[] { fileStream, float.Parse(script.Replace(",", ".").Split("-")[1], CultureInfo.InvariantCulture), filepath } :
+                new object[] { });
+            
+            fileStream = new FileStream(filepath, FileMode.Open);
+            //System.IO.File.Delete(filepath);
         }
 
-        // TODO: stocker sur un container et renvoyer le lien ? Oui carrément en fait.
-        return Ok(new PipelineResult()
-        {
-            Output = this.ReadBytes(fileStream),
-        });
+        return Ok(new { Output = this.blob.GetPipelineSoundUrl(this.ReadBytes(fileStream), file.FileName).Result });
     }
 
-    private void Pitch(Stream fileStream, float rate)
+    private void Pitch(Stream fileStream, float rate, string filepath)
     {
-        using (Mp3FileReader fileReader = new Mp3FileReader(fileStream))
+        using (WaveFileReader fileReader = new WaveFileReader(fileStream))
         {
             SmbPitchShiftingSampleProvider pitch = new SmbPitchShiftingSampleProvider(fileReader.ToSampleProvider());
             pitch.PitchFactor = rate;
-
-            // TODO: virer ce code quand les tests seront terminés
-            WaveOutEvent device = new WaveOutEvent();
-            device.Init(pitch.Take(TimeSpan.FromSeconds(fileReader.TotalTime.TotalSeconds)));
-            device.Play();
-            Thread.Sleep((int)fileReader.TotalTime.TotalSeconds * 1000);
+            
+            WaveFileWriter.CreateWaveFile(filepath, pitch.ToWaveProvider());
         }
     }
 

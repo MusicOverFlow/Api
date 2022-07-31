@@ -35,6 +35,11 @@ public partial class AccountController
         if (Request != null)
         {
             IFormFile file = Request.Form.Files.GetFile(nameof(profilPic));
+            if (!this.IsFileExtensionSupported(file.FileName))
+            {
+                return BadRequest(new { error = "Profil pic format not supported" });
+            }
+            
             if (file != null && file.Length > 0)
             {
                 using (MemoryStream ms = new MemoryStream())
@@ -44,7 +49,6 @@ public partial class AccountController
                 }
             }
         }
-        string picUrl = this.GetProfilPicUrl(fileBytes, mailAddress.Trim()).Result;
 
         Account account = new Account()
         {
@@ -55,7 +59,7 @@ public partial class AccountController
             Firstname = firstname ?? "Unknown",
             Lastname = lastname ?? "Unknown",
             Pseudonym = pseudonym ?? "Anonymous",
-            PicUrl = picUrl,
+            PicUrl = this.blob.GetProfilPicUrl(fileBytes, mailAddress.Trim()).Result,
             CreatedAt = DateTime.Now,
         };
 
@@ -64,5 +68,11 @@ public partial class AccountController
         await this.context.SaveChangesAsync();
         
         return Created(nameof(Create), this.mapper.Account_ToResource(account));
+    }
+
+    private bool IsFileExtensionSupported(string fileName)
+    {
+        string extension = Path.GetExtension(fileName);
+        return extension == ".jpg" || extension == ".jpeg" || extension == ".png" || extension == ".bmp";
     }
 }
