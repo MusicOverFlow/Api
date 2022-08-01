@@ -33,6 +33,7 @@ try
     builder.Services.AddSingleton(new Mapper());
     builder.Services.AddSingleton(new LevenshteinDistance());
     builder.Services.AddSingleton(new ExceptionHandler(new DirectoryInfo(Directory.GetCurrentDirectory()) + "/exceptions.json"));
+    builder.Services.AddSingleton(new Blob(builder.Configuration));
 }
 catch (Exception e)
 {

@@ -38,13 +38,14 @@ public partial class GroupController
                 }
             }
         }
-        string picUrl = this.GetGroupPicUrl(fileBytes).Result;
         
+        Guid id = Guid.NewGuid();
         Group group = new Group()
         {
+            Id = id,
             Name = name,
             Description = description,
-            PicUrl = picUrl,
+            PicUrl = this.blob.GetGroupPicUrl(fileBytes, id).Result,
             CreatedAt = DateTime.Now,
             
             Owner = account,

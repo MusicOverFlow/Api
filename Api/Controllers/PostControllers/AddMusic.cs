@@ -30,7 +30,7 @@ public partial class PostController
             file.CopyTo(ms);
             byte[] fileBytes = ms.ToArray();
 
-            post.MusicUrl = this.GetMusicUrl(fileBytes, post.Id, file.FileName).Result;
+            post.MusicUrl = this.blob.GetMusicUrl(fileBytes, post.Id, file.FileName).Result;
         }
 
         await this.context.SaveChangesAsync();

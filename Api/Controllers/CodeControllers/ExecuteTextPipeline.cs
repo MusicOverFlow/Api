@@ -27,7 +27,7 @@ public partial class CodeController
         }
         
         Guid fileGuid = Guid.NewGuid();
-        string filepath = new DirectoryInfo(Directory.GetCurrentDirectory()).Parent + $@"/Api/Files/TextPipeline_{fileGuid}";
+        string filepath = new DirectoryInfo(Directory.GetCurrentDirectory()) + $@"/Files/TextPipeline_{fileGuid}";
         string result = Encoding.Default.GetString(fileBytes);
         
         foreach (string script in scripts.Split("."))

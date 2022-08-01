@@ -10,17 +10,20 @@ public partial class PostController : ControllerBase
     private readonly Mapper mapper;
     private readonly IConfiguration configuration;
     private readonly ExceptionHandler exceptionHandler;
+    private readonly Blob blob;
 
     public PostController(
         ModelsContext context,
         Mapper mapper,
         IConfiguration configuration,
-        ExceptionHandler exceptionHandler)
+        ExceptionHandler exceptionHandler,
+        Blob blob)
     {
         this.context = context;
         this.mapper = mapper;
         this.configuration = configuration;
         this.exceptionHandler = exceptionHandler;
+        this.blob = blob;
     }
 
     private bool Contains(List<PostResource> posts, Guid id)
@@ -31,18 +34,5 @@ public partial class PostController : ControllerBase
             if (p.Id.Equals(id)) result = true;
         });
         return result;
-    }
-
-    private async Task<string> GetMusicUrl(byte[] music, Guid postId, string filename)
-    {
-        BlobContainerClient blobContainer = new BlobContainerClient(
-                this.configuration.GetSection("ConnectionStrings:MusicOverflowStorageAccount").Value,
-                "music-storage"
-            );
-
-        BlobClient blobClient = blobContainer.GetBlobClient($"post.{postId}.{filename}");
-        await blobClient.UploadAsync(new BinaryData(music), overwrite: true);
-
-        return blobClient.Uri.AbsoluteUri;
     }
 }

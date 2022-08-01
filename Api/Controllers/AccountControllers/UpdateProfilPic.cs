@@ -30,7 +30,7 @@ public partial class AccountController
                 file.CopyTo(ms);
                 byte[] fileBytes = ms.ToArray();
                 
-                account.PicUrl = this.GetProfilPicUrl(fileBytes, account.MailAddress).Result;
+                account.PicUrl = this.blob.GetProfilPicUrl(fileBytes, account.MailAddress).Result;
             }
         }
         
