@@ -52,7 +52,7 @@ public class Blob
         return blobClient.Uri.AbsoluteUri;
     }
     
-    // TODO: expiration du fichier pour nettoyage automatique
+    // TODO: expiration du fichier pour nettoyage automatique -> visiblement impossible
     public async Task<string> GetPipelineImageUrl(byte[] image, string filename)
     {
         BlobContainerClient blobContainer = new BlobContainerClient(this.azureContainerBaseUrl, PIPELINE_IMAGES);
