@@ -35,13 +35,13 @@ public partial class AccountController
         if (Request != null)
         {
             IFormFile file = Request.Form.Files.GetFile(nameof(profilPic));
-            if (!this.IsFileExtensionSupported(file.FileName))
-            {
-                return BadRequest(new { error = "Profil pic format not supported" });
-            }
-            
             if (file != null && file.Length > 0)
             {
+                if (!this.IsFileExtensionSupported(file.FileName))
+                {
+                    return BadRequest(new { error = "Profil pic format not supported" });
+                }
+                
                 using (MemoryStream ms = new MemoryStream())
                 {
                     file.CopyTo(ms);
