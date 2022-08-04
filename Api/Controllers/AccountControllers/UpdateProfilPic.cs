@@ -23,7 +23,12 @@ public partial class AccountController
         }
 
         IFormFile file = Request.Form.Files[0];
-        if (file.Length > 0)
+        if (!this.dataValidator.IsImageFormatSupported(file.FileName))
+        {
+            return BadRequest(this.exceptionHandler.GetError(ErrorType.WrongFormatFile));
+        }
+        
+        if (file != null && file.Length > 0)
         {
             using (var ms = new MemoryStream())
             {

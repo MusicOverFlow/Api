@@ -19,8 +19,7 @@ public partial class PostController
         }
 
         IFormFile file = Request.Form.Files[0];
-        if (!Path.GetExtension(file.FileName).Equals(".mp3") &&
-            !Path.GetExtension(file.FileName).Equals(".wav"))
+        if (!this.dataValidator.IsSoundFormatSupported(file.FileName))
         {
             return BadRequest(this.exceptionHandler.GetError(ErrorType.WrongFormatFile));
         }

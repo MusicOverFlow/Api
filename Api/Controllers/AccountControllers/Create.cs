@@ -37,9 +37,9 @@ public partial class AccountController
             IFormFile file = Request.Form.Files.GetFile(nameof(profilPic));
             if (file != null && file.Length > 0)
             {
-                if (!this.IsFileExtensionSupported(file.FileName))
+                if (!this.dataValidator.IsImageFormatSupported(file.FileName))
                 {
-                    return BadRequest(new { error = "Profil pic format not supported" });
+                    return BadRequest(this.exceptionHandler.GetError(ErrorType.WrongFormatFile));
                 }
                 
                 using (MemoryStream ms = new MemoryStream())
@@ -68,11 +68,5 @@ public partial class AccountController
         await this.context.SaveChangesAsync();
         
         return Created(nameof(Create), this.mapper.Account_ToResource(account));
-    }
-
-    private bool IsFileExtensionSupported(string fileName)
-    {
-        string extension = Path.GetExtension(fileName);
-        return extension == ".jpg" || extension == ".jpeg" || extension == ".png" || extension == ".bmp";
     }
 }

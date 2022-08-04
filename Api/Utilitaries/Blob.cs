@@ -10,6 +10,7 @@ public class Blob
     private const string PIPELINE_IMAGES = "pipeline-images";
     private const string PIPELINE_SOUNDS = "pipeline-sounds";
     private const string POST_SCRIPTS = "post-scripts";
+    private const string CONVERTER_SOUNDS = "converter-sounds";
 
     private readonly string azureContainerBaseUrl;
 
@@ -52,20 +53,27 @@ public class Blob
         return blobClient.Uri.AbsoluteUri;
     }
     
-    // TODO: expiration du fichier pour nettoyage automatique -> visiblement impossible
     public async Task<string> GetPipelineImageUrl(byte[] image, string filename)
     {
         BlobContainerClient blobContainer = new BlobContainerClient(this.azureContainerBaseUrl, PIPELINE_IMAGES);
-        BlobClient blobClient = blobContainer.GetBlobClient($"{Guid.NewGuid()}.{filename}");
-        await blobClient.UploadAsync(new BinaryData(image));
+        BlobClient blobClient = blobContainer.GetBlobClient(filename);
+        await blobClient.UploadAsync(new BinaryData(image), overwrite: true);
         return blobClient.Uri.AbsoluteUri;
     }
 
     public async Task<string> GetPipelineSoundUrl(byte[] sound, string filename)
     {
         BlobContainerClient blobContainer = new BlobContainerClient(this.azureContainerBaseUrl, PIPELINE_SOUNDS);
-        BlobClient blobClient = blobContainer.GetBlobClient($"{Guid.NewGuid()}.{filename}");
-        await blobClient.UploadAsync(new BinaryData(sound));
+        BlobClient blobClient = blobContainer.GetBlobClient(filename);
+        await blobClient.UploadAsync(new BinaryData(sound), overwrite: true);
+        return blobClient.Uri.AbsoluteUri;
+    }
+
+    public async Task<string> GetConverterSoundUrl(byte[] sound, string filename)
+    {
+        BlobContainerClient blobContainer = new BlobContainerClient(this.azureContainerBaseUrl, CONVERTER_SOUNDS);
+        BlobClient blobClient = blobContainer.GetBlobClient(filename);
+        await blobClient.UploadAsync(new BinaryData(sound), overwrite: true);
         return blobClient.Uri.AbsoluteUri;
     }
 }
