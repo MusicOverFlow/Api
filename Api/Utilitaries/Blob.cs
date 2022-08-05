@@ -69,6 +69,14 @@ public class Blob
         return blobClient.Uri.AbsoluteUri;
     }
 
+    public async Task<string> GetPostScriptUrl(string script, Guid postId)
+    {
+        BlobContainerClient blobContainer = new BlobContainerClient(this.azureContainerBaseUrl, POST_SCRIPTS);
+        BlobClient blobClient = blobContainer.GetBlobClient(postId.ToString());
+        await blobClient.UploadAsync(new BinaryData(script), overwrite: true);
+        return blobClient.Uri.AbsoluteUri;
+    }
+
     public async Task<string> GetConverterSoundUrl(byte[] sound, string filename)
     {
         BlobContainerClient blobContainer = new BlobContainerClient(this.azureContainerBaseUrl, CONVERTER_SOUNDS);

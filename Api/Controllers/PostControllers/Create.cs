@@ -22,6 +22,12 @@ public partial class PostController
             return BadRequest(this.exceptionHandler.GetError(ErrorType.PostTitleOrContentEmpty));
         }
 
+        request.ScriptLanguage = request.ScriptLanguage.ToLower();
+        if (!this.IsScriptLanguageSupported(request.ScriptLanguage))
+        {
+            return BadRequest(new { error = $"Unsupported language {request.ScriptLanguage}" });
+        }
+
         Group group = null;
         if (groupId != null)
         {
@@ -40,16 +46,23 @@ public partial class PostController
             Content = request.Content,
             CreatedAt = DateTime.Now,
 
+            ScriptLanguage = request.ScriptLanguage,
+            
             Owner = account,
             Group = group,
 
             MusicUrl = null,
         };
+        post.ScriptUrl = this.blob.GetPostScriptUrl(request.Script, post.Id).Result;
 
         this.context.Posts.Add(post);
-
         await this.context.SaveChangesAsync();
 
         return Created(nameof(Create), this.mapper.Post_ToResource(post));
+    }
+
+    private bool IsScriptLanguageSupported(string language)
+    {
+        return language == "python" || language == "c";
     }
 }
