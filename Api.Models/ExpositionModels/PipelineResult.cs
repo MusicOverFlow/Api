@@ -1,7 +1,6 @@
-﻿namespace Api.ExpositionModels
+﻿namespace Api.ExpositionModels;
+
+public class PipelineResult
 {
-    public class PipelineResult
-    {
-        public byte[] Output { get; set; }
-    }
+    public byte[] Output { get; set; }
 }

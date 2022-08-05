@@ -47,7 +47,7 @@ public class TestBase
     {
         this.blob = new Blob(this.configuration);
         this.accountsController = new AccountController(dbContext, mapper, dataValidator, configuration, stringComparer, exceptionHandler, blob);
-        this.postController = new PostController(dbContext, mapper, configuration, exceptionHandler, blob);
+        this.postController = new PostController(dbContext, dataValidator, mapper, configuration, exceptionHandler, blob);
         this.commentaryController = new CommentaryController(dbContext, mapper, exceptionHandler);
         this.groupController = new GroupController(dbContext, mapper, configuration, stringComparer, exceptionHandler, blob);
         this.authenticationController = new AuthenticationController(dbContext, configuration, exceptionHandler);

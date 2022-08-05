@@ -9,6 +9,7 @@ public class GroupResource
     public string Description { get; set; }
     public string PicUrl { get; set; }
     public DateTime CreatedAt { get; set; }
+    
     public AccountResource Owner { get; set; }
 }
 
