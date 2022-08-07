@@ -22,10 +22,17 @@ public partial class PostController
             return BadRequest(this.exceptionHandler.GetError(ErrorType.PostTitleOrContentEmpty));
         }
 
-        request.ScriptLanguage = request.ScriptLanguage.ToLower();
-        if (!this.IsScriptLanguageSupported(request.ScriptLanguage))
+        if (!string.IsNullOrWhiteSpace(request.ScriptLanguage))
         {
-            return BadRequest(new { error = $"Unsupported language {request.ScriptLanguage}" });
+            request.ScriptLanguage = request.ScriptLanguage.ToLower();
+            if (!this.IsScriptLanguageSupported(request.ScriptLanguage))
+            {
+                return BadRequest(new { error = $"Unsupported language {request.ScriptLanguage}" });
+            }
+        }
+        else
+        {
+            request.ScriptLanguage = null;
         }
 
         Group group = null;
@@ -53,9 +60,9 @@ public partial class PostController
 
             MusicUrl = null,
         };
-        post.ScriptUrl = this.blob.GetPostScriptUrl(request.Script, post.Id).Result;
 
         this.context.Posts.Add(post);
+        post.ScriptUrl = this.blob.GetPostScriptUrl(request.Script, post.Id).Result;
         await this.context.SaveChangesAsync();
 
         return Created(nameof(Create), this.mapper.Post_ToResource(post));
@@ -63,6 +70,16 @@ public partial class PostController
 
     private bool IsScriptLanguageSupported(string language)
     {
-        return language == "python" || language == "c";
+        foreach (int lInt in Enum.GetValues(typeof(Language)))
+        {
+            Language lEnum = (Language)lInt;
+            string lString = lEnum.ToString().ToLower();
+
+            if (lString.Equals(language))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }
