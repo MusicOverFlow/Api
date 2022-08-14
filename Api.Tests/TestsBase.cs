@@ -34,7 +34,6 @@ public class TestBase
     private readonly LevenshteinDistance stringComparer = new LevenshteinDistance();
     private readonly IConfiguration configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
     private readonly ExceptionHandler exceptionHandler = new ExceptionHandler(new DirectoryInfo(Directory.GetCurrentDirectory()) + "/exceptions.json");
-    protected readonly Blob blob;
 
     protected readonly AccountController accountsController;
     protected readonly PostController postController;
@@ -42,14 +41,12 @@ public class TestBase
     protected readonly GroupController groupController;
     protected readonly AuthenticationController authenticationController;
 
-
     protected TestBase()
     {
-        this.blob = new Blob(this.configuration);
-        this.accountsController = new AccountController(dbContext, mapper, dataValidator, configuration, stringComparer, exceptionHandler, blob);
-        this.postController = new PostController(dbContext, dataValidator, mapper, configuration, exceptionHandler, blob);
+        this.accountsController = new AccountController(dbContext, mapper, dataValidator, configuration, stringComparer, exceptionHandler, null);
+        this.postController = new PostController(dbContext, dataValidator, mapper, configuration, exceptionHandler, null);
         this.commentaryController = new CommentaryController(dbContext, mapper, exceptionHandler);
-        this.groupController = new GroupController(dbContext, mapper, configuration, stringComparer, exceptionHandler, blob);
+        this.groupController = new GroupController(dbContext, mapper, configuration, stringComparer, exceptionHandler, null);
         this.authenticationController = new AuthenticationController(dbContext, configuration, exceptionHandler);
     }
     

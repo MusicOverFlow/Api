@@ -66,6 +66,7 @@ public class Blob
         return $"https://{POST_SOUNDS}.s3.eu-west-3.amazonaws.com/{postId}.{filename}";
     }
     
+    // Unused atm, maybe usefull later
     public async Task<string> GetPipelineImageUrl(byte[] image, string filename)
     {
         var request = new PutObjectRequest()
@@ -102,7 +103,7 @@ public class Blob
         return $"https://{POST_SCRIPTS}.s3.eu-west-3.amazonaws.com/{postId}";
     }
 
-    public async Task<string> GetConverterSoundUrl(byte[] sound, string filename)
+    public async Task<string> GetConvertedSoundUrl(byte[] sound, string filename)
     {
         var request = new PutObjectRequest()
         {

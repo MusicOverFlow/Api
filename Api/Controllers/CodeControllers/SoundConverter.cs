@@ -69,7 +69,7 @@ public class Converter : ControllerBase
                 break;
         }
 
-        return Ok(new { Output = this.blob.GetConverterSoundUrl(
+        return Ok(new { Output = this.blob.GetConvertedSoundUrl(
             sound: this.ReadBytes(fileStream),
             filename: Path.GetFileNameWithoutExtension(file.FileName) + format).Result });
     }
