@@ -1,4 +1,5 @@
-﻿using Azure.Storage.Blobs;
+﻿using Amazon.S3.Model;
+using System.Text;
 
 namespace Api.Utilitaries;
 
@@ -6,82 +7,110 @@ public class Blob
 {
     private const string PROFIL_PICS = "profil-pics";
     private const string GROUP_PICS = "group-pics";
-    private const string POST_SOUNDS = "music-storage";
-    private const string PIPELINE_IMAGES = "pipeline-images";
+    private const string POST_SOUNDS = "post-sounds";
+    private const string PIPELINE_IMAGES = "pipeline-images-mo";
     private const string PIPELINE_SOUNDS = "pipeline-sounds";
     private const string POST_SCRIPTS = "post-scripts";
-    private const string CONVERTER_SOUNDS = "converter-sounds";
+    private const string CONVERTED_SOUNDS = "converted-sounds-mo";
 
-    private readonly string azureContainerBaseUrl;
-
-    public Blob(IConfiguration configuration)
+    private readonly IAmazonS3 s3Client;
+    
+    public Blob(IAmazonS3 s3Client)
     {
-        this.azureContainerBaseUrl = configuration.GetSection("ConnectionStrings:MusicOverflowStorageAccount").Value;
+        this.s3Client = s3Client;
     }
     
     public async Task<string> GetProfilPicUrl(byte[] profilPic, string mailAddress)
     {
         if (profilPic == null)
         {
-            return $"https://musicoverflowstorage.blob.core.windows.net/{PROFIL_PICS}/placeholder.png";
+            return $"https://{PROFIL_PICS}.s3.eu-west-3.amazonaws.com/profil.placeholder.png";
         }
-        
-        BlobContainerClient blobContainer = new BlobContainerClient(this.azureContainerBaseUrl, PROFIL_PICS);
-        BlobClient blobClient = blobContainer.GetBlobClient($"{mailAddress}.png");
-        await blobClient.UploadAsync(new BinaryData(profilPic), overwrite: true);
-        return blobClient.Uri.AbsoluteUri.Replace("%40", "@");
+
+        var request = new PutObjectRequest()
+        {
+            BucketName = PROFIL_PICS,
+            Key = $"{mailAddress}.png",
+            InputStream = new MemoryStream(profilPic),
+        };
+        await this.s3Client.PutObjectAsync(request);
+        return $"https://{PROFIL_PICS}.s3.eu-west-3.amazonaws.com/{mailAddress}.png";
     }
 
     public async Task<string> GetGroupPicUrl(byte[] groupPic, Guid groupId)
     {
         if (groupPic == null)
         {
-            return $"https://musicoverflowstorage.blob.core.windows.net/{GROUP_PICS}/placeholder.png";
+            return $"https://{GROUP_PICS}.s3.eu-west-3.amazonaws.com/group.placeholder.png";
         }
-        
-        BlobContainerClient blobContainer = new BlobContainerClient(this.azureContainerBaseUrl, GROUP_PICS);
-        BlobClient blobClient = blobContainer.GetBlobClient($"{groupId}.png");
-        await blobClient.UploadAsync(new BinaryData(groupPic), overwrite: true);
-        return blobClient.Uri.AbsoluteUri;
+
+        var request = new PutObjectRequest()
+        {
+            BucketName = GROUP_PICS,
+            Key = $"{groupId}.png",
+            InputStream = new MemoryStream(groupPic),
+        };
+        await this.s3Client.PutObjectAsync(request);
+        return $"https://{PROFIL_PICS}.s3.eu-west-3.amazonaws.com/{groupId}.png";
     }
 
     public async Task<string> GetMusicUrl(byte[] sound, Guid postId, string filename)
     {
-        BlobContainerClient blobContainer = new BlobContainerClient(this.azureContainerBaseUrl, POST_SOUNDS);
-        BlobClient blobClient = blobContainer.GetBlobClient($"{postId}.{filename}");
-        await blobClient.UploadAsync(new BinaryData(sound), overwrite: true);
-        return blobClient.Uri.AbsoluteUri;
+        var request = new PutObjectRequest()
+        {
+            BucketName = POST_SOUNDS,
+            Key = $"{postId}.{filename}",
+            InputStream = new MemoryStream(sound),
+        };
+        await this.s3Client.PutObjectAsync(request);
+        return $"https://{POST_SOUNDS}.s3.eu-west-3.amazonaws.com/{postId}.{filename}";
     }
     
     public async Task<string> GetPipelineImageUrl(byte[] image, string filename)
     {
-        BlobContainerClient blobContainer = new BlobContainerClient(this.azureContainerBaseUrl, PIPELINE_IMAGES);
-        BlobClient blobClient = blobContainer.GetBlobClient(filename);
-        await blobClient.UploadAsync(new BinaryData(image), overwrite: true);
-        return blobClient.Uri.AbsoluteUri;
+        var request = new PutObjectRequest()
+        {
+            BucketName = PIPELINE_IMAGES,
+            Key = $"{filename}",
+            InputStream = new MemoryStream(image),
+        };
+        await this.s3Client.PutObjectAsync(request);
+        return $"https://{PIPELINE_IMAGES}.s3.eu-west-3.amazonaws.com/{filename}";
     }
 
     public async Task<string> GetPipelineSoundUrl(byte[] sound, string filename)
     {
-        BlobContainerClient blobContainer = new BlobContainerClient(this.azureContainerBaseUrl, PIPELINE_SOUNDS);
-        BlobClient blobClient = blobContainer.GetBlobClient(filename);
-        await blobClient.UploadAsync(new BinaryData(sound), overwrite: true);
-        return blobClient.Uri.AbsoluteUri;
+        var request = new PutObjectRequest()
+        {
+            BucketName = PIPELINE_SOUNDS,
+            Key = $"{filename}",
+            InputStream = new MemoryStream(sound),
+        };
+        await this.s3Client.PutObjectAsync(request);
+        return $"https://{PIPELINE_SOUNDS}.s3.eu-west-3.amazonaws.com/{filename}";
     }
 
     public async Task<string> GetPostScriptUrl(string script, Guid postId)
     {
-        BlobContainerClient blobContainer = new BlobContainerClient(this.azureContainerBaseUrl, POST_SCRIPTS);
-        BlobClient blobClient = blobContainer.GetBlobClient(postId.ToString());
-        await blobClient.UploadAsync(new BinaryData(script), overwrite: true);
-        return blobClient.Uri.AbsoluteUri;
+        var request = new PutObjectRequest()
+        {
+            BucketName = POST_SCRIPTS,
+            Key = $"{postId}",
+            InputStream = new MemoryStream(Encoding.UTF8.GetBytes(script)),
+        };
+        await this.s3Client.PutObjectAsync(request);
+        return $"https://{POST_SCRIPTS}.s3.eu-west-3.amazonaws.com/{postId}";
     }
 
     public async Task<string> GetConverterSoundUrl(byte[] sound, string filename)
     {
-        BlobContainerClient blobContainer = new BlobContainerClient(this.azureContainerBaseUrl, CONVERTER_SOUNDS);
-        BlobClient blobClient = blobContainer.GetBlobClient(filename);
-        await blobClient.UploadAsync(new BinaryData(sound), overwrite: true);
-        return blobClient.Uri.AbsoluteUri;
+        var request = new PutObjectRequest()
+        {
+            BucketName = CONVERTED_SOUNDS,
+            Key = $"{filename}",
+            InputStream = new MemoryStream(sound),
+        };
+        await this.s3Client.PutObjectAsync(request);
+        return $"https://{CONVERTED_SOUNDS}.s3.eu-west-3.amazonaws.com/{filename}";
     }
 }
