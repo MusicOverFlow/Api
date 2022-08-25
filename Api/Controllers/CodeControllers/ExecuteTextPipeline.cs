@@ -39,7 +39,7 @@ public partial class CodeController
                 FileName = "python",
                 Arguments =
                     $"{new DirectoryInfo(Directory.GetCurrentDirectory()).Parent}" +
-                    $"/PipelineScripts/Text/{script}.py " +
+                    $"/PipelineScripts/{script}.py " +
                     $"{filepath}",
                 RedirectStandardError = true,
                 RedirectStandardOutput = true,
