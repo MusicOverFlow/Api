@@ -20,4 +20,6 @@ public class CommentaryResource_WithPost : CommentaryResource
 public class CreateCommentary
 {
     [Required] public string Content { get; set; }
+    public string Script { get; set; }
+    public string ScriptLanguage { get; set; }
 }

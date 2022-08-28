@@ -8,6 +8,9 @@ public class Commentary
     [Required] public string Content { get; set; }
     [Required] public DateTime CreatedAt { get; set; }
 
+    public string ScriptUrl { get; set; }
+    public string ScriptLanguage { get; set; }
+
     public virtual Account Owner { get; set; }
     public virtual Post Post { get; set; }
     public virtual ICollection<Account> Likes { get; set; }

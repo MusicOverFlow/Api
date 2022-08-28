@@ -17,7 +17,7 @@ public partial class PostController
             return NotFound(this.exceptionHandler.GetError(ErrorType.AccountNotFound));
         }
 
-        if (string.IsNullOrWhiteSpace(request.Title) || string.IsNullOrWhiteSpace(request.Content))
+        if (string.IsNullOrWhiteSpace(request.Content))
         {
             return BadRequest(this.exceptionHandler.GetError(ErrorType.PostTitleOrContentEmpty));
         }
@@ -49,7 +49,7 @@ public partial class PostController
 
         Post post = new Post()
         {
-            Title = request.Title,
+            Title = request.Title ?? "No title",
             Content = request.Content,
             CreatedAt = DateTime.Now,
 
@@ -62,7 +62,7 @@ public partial class PostController
         };
 
         this.context.Posts.Add(post);
-        post.ScriptUrl = this.blob.GetPostScriptUrl(request.Script, post.Id).Result;
+        post.ScriptUrl = request.Script != null ? this.blob.GetPostScriptUrl(request.Script, post.Id).Result : null;
         await this.context.SaveChangesAsync();
 
         return Created(nameof(Create), this.mapper.Post_ToResource(post));
