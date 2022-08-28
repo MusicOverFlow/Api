@@ -19,8 +19,7 @@ public partial class PostController
         }
 
         IFormFile file = Request.Form.Files[0];
-        if (!Path.GetExtension(file.FileName).Equals(".mp3") &&
-            !Path.GetExtension(file.FileName).Equals(".wav"))
+        if (!this.dataValidator.IsSoundFormatSupported(file.FileName))
         {
             return BadRequest(this.exceptionHandler.GetError(ErrorType.WrongFormatFile));
         }
@@ -30,7 +29,7 @@ public partial class PostController
             file.CopyTo(ms);
             byte[] fileBytes = ms.ToArray();
 
-            post.MusicUrl = this.GetMusicUrl(fileBytes, post.Id, file.FileName).Result;
+            post.MusicUrl = this.blob.GetMusicUrl(fileBytes, post.Id, file.FileName).Result;
         }
 
         await this.context.SaveChangesAsync();

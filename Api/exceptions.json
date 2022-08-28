@@ -82,8 +82,6 @@
     "message": "This is bad, this is not supposed to happen ! RUN !"
   },
   "WrongFormatFile": {
-    "error": "Wrong format for file",
-    "message": "You can only upload .mp3 or .wav files",
-    "example": "REEEEEEEE.wav"
+    "error": "Wrong format for uploaded file"
   }
 }

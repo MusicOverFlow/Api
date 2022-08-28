@@ -12,14 +12,14 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Api.Migrations
 {
     [DbContext(typeof(ModelsContext))]
-    [Migration("20220724122938_reset")]
-    partial class reset
+    [Migration("20220805144113_postScriptLanguage")]
+    partial class postScriptLanguage
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.5")
+                .HasAnnotation("ProductVersion", "6.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -204,8 +204,17 @@ namespace Api.Migrations
                     b.Property<int>("LikesCount")
                         .HasColumnType("integer");
 
+                    b.Property<string>("MusicUrl")
+                        .HasColumnType("text");
+
                     b.Property<Guid?>("OwnerId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("ScriptLanguage")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ScriptUrl")
+                        .HasColumnType("text");
 
                     b.Property<string>("Title")
                         .IsRequired()

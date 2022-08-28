@@ -17,7 +17,7 @@ public partial class AuthenticationController
         {
             return BadRequest(this.exceptionHandler.GetError(ErrorType.WrongCredentials));
         }
-
+        
         string jwt = this.CreateJwt(account);
 
         return Ok(new { jwt });

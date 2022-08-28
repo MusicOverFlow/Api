@@ -2,9 +2,6 @@
 
 namespace Api.ExpositionModels;
 
-/**
- * Resource classes
- */
 public class AccountResource
 {
     public string MailAddress { get; set; }
@@ -33,9 +30,6 @@ public class AccountResource_WithPosts_AndGroups_AndFollows : AccountResource_Wi
     public ICollection<AccountResource> Follows { get; set; }
 }
 
-/**
- * Request classes
- */
 public class CreateAccountRequest
 {
     [Required] public string MailAddress { get; set; }

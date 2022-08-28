@@ -90,7 +90,8 @@ namespace Api.Migrations
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     OwnerId = table.Column<Guid>(type: "uuid", nullable: true),
                     GroupId = table.Column<Guid>(type: "uuid", nullable: true),
-                    LikesCount = table.Column<int>(type: "integer", nullable: false)
+                    LikesCount = table.Column<int>(type: "integer", nullable: false),
+                    MusicUrl = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {

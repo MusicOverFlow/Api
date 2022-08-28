@@ -43,11 +43,11 @@ public class TestBase
 
     protected TestBase()
     {
-        this.accountsController = new AccountController(this.dbContext, this.mapper, this.dataValidator, this.configuration, this.stringComparer, this.exceptionHandler);
-        this.postController = new PostController(this.dbContext, this.mapper, this.configuration, this.exceptionHandler);
-        this.commentaryController = new CommentaryController(this.dbContext, this.mapper, this.exceptionHandler);
-        this.groupController = new GroupController(this.dbContext, this.mapper, this.configuration, this.stringComparer, this.exceptionHandler);
-        this.authenticationController = new AuthenticationController(this.dbContext, this.configuration, this.exceptionHandler);
+        this.accountsController = new AccountController(dbContext, mapper, dataValidator, configuration, stringComparer, exceptionHandler, null);
+        this.postController = new PostController(dbContext, dataValidator, mapper, configuration, exceptionHandler, null);
+        this.commentaryController = new CommentaryController(dbContext, mapper, exceptionHandler, null);
+        this.groupController = new GroupController(dbContext, mapper, configuration, stringComparer, exceptionHandler, null);
+        this.authenticationController = new AuthenticationController(dbContext, configuration, exceptionHandler);
     }
     
     protected void MockJwtAuthentication(AccountResource account)

@@ -6,20 +6,22 @@ global using Api.Utilitaries;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
 global using static Api.Utilitaries.AuthorizeRolesAttribute;
-
+global using Amazon.S3;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Text.Json.Serialization;
-
+using Amazon;
 
 bool dev = true;
 
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
+builder.Services.AddAWSService<IAmazonS3>();
 builder.Services.Configure<FormOptions>(o => {
     o.ValueLengthLimit = int.MaxValue;
     o.MultipartBodyLengthLimit = int.MaxValue;
@@ -33,6 +35,11 @@ try
     builder.Services.AddSingleton(new Mapper());
     builder.Services.AddSingleton(new LevenshteinDistance());
     builder.Services.AddSingleton(new ExceptionHandler(new DirectoryInfo(Directory.GetCurrentDirectory()) + "/exceptions.json"));
+    builder.Services.AddSingleton(new Blob(
+        new AmazonS3Client(
+            builder.Configuration.GetSection("AWSClientCredentials:awsAccessKeyId").Value,
+            builder.Configuration.GetSection("AWSClientCredentials:awsSecretAccessKey").Value,
+            RegionEndpoint.EUWest3)));
 }
 catch (Exception e)
 {

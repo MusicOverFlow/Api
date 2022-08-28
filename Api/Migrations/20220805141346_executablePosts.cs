@@ -4,12 +4,12 @@
 
 namespace Api.Migrations
 {
-    public partial class music : Migration
+    public partial class executablePosts : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "MusicUrl",
+                name: "ScriptUrl",
                 table: "Posts",
                 type: "text",
                 nullable: true);
@@ -18,7 +18,7 @@ namespace Api.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "MusicUrl",
+                name: "ScriptUrl",
                 table: "Posts");
         }
     }

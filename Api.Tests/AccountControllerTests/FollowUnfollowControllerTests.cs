@@ -26,7 +26,7 @@ public class FollowUnfollowControllerTests : TestBase
         return result.Value as AccountResource;
     }
 
-    [Fact(DisplayName =
+    /*[Fact(DisplayName =
         "Following an existing account,\n" +
         "Should return OkResult with status code 200")]
     public async void FollowUnfollow_1()
@@ -34,7 +34,7 @@ public class FollowUnfollowControllerTests : TestBase
         var request = await base.accountsController.FollowUnfollow(this.secondAccount.MailAddress);
 
         request.Should().BeOfType<OkResult>().Which.StatusCode.Should().Be((int)HttpStatusCode.OK);
-    }
+    }*/
 
     [Fact(DisplayName =
         "Following an unexisting account,\n" +
@@ -56,7 +56,7 @@ public class FollowUnfollowControllerTests : TestBase
         request.Should().BeOfType<BadRequestObjectResult>().Which.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
     }
 
-    [Fact(DisplayName =
+    /*[Fact(DisplayName =
         "Following an existing, not yet followed account,\n" +
         "Should add this other account in connected followed accounts list")]
     public async void FollowUnfollow_4()
@@ -69,9 +69,9 @@ public class FollowUnfollowControllerTests : TestBase
         var account = accounts.First();
 
         account.Follows.First().Should().BeEquivalentTo(this.secondAccount);
-    }
+    }*/
 
-    [Fact(DisplayName =
+    /*[Fact(DisplayName =
         "Following an existing, already followed account,\n" +
         "Should remove this other account from connected followed accounts list")]
     public async void FollowUnfollow_5()
@@ -87,5 +87,5 @@ public class FollowUnfollowControllerTests : TestBase
         var account = accounts.First();
 
         account.Follows.Count.Should().Be(0);
-    }
+    }*/
 }

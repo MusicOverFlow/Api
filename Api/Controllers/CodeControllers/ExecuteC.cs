@@ -17,7 +17,7 @@ public partial class CodeController
         // TODO: replace by a path in azure when deployed
         Guid guid = Guid.NewGuid();
         string scriptFilepath = new DirectoryInfo(Directory.GetCurrentDirectory()) + $@"/Files";
-        await System.IO.File.WriteAllTextAsync(scriptFilepath + $@"/codeSample_{ guid}.c", script);
+        await System.IO.File.WriteAllTextAsync(scriptFilepath + $@"/codeSample_{guid}.c", script);
 
         Process process = Process.Start(new ProcessStartInfo()
         {

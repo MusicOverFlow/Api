@@ -4,8 +4,10 @@
 [Route("api/execute")]
 public partial class CodeController : ControllerBase
 {
-    public CodeController()
-    {
+    private readonly Blob blob;
 
+    public CodeController(Blob blob)
+    {
+        this.blob = blob;
     }
 }

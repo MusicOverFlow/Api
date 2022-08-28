@@ -37,6 +37,11 @@ public partial class AccountController
             IFormFile file = Request.Form.Files.GetFile(nameof(profilPic));
             if (file != null && file.Length > 0)
             {
+                if (!this.dataValidator.IsImageFormatSupported(file.FileName))
+                {
+                    return BadRequest(this.exceptionHandler.GetError(ErrorType.WrongFormatFile));
+                }
+                
                 using (MemoryStream ms = new MemoryStream())
                 {
                     file.CopyTo(ms);
@@ -44,7 +49,6 @@ public partial class AccountController
                 }
             }
         }
-        string picUrl = this.GetProfilPicUrl(fileBytes, mailAddress.Trim()).Result;
 
         Account account = new Account()
         {
@@ -55,7 +59,7 @@ public partial class AccountController
             Firstname = firstname ?? "Unknown",
             Lastname = lastname ?? "Unknown",
             Pseudonym = pseudonym ?? "Anonymous",
-            PicUrl = picUrl,
+            PicUrl = this.blob.GetProfilPicUrl(fileBytes, mailAddress.Trim()).Result,
             CreatedAt = DateTime.Now,
         };
 
