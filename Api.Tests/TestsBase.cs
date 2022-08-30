@@ -1,6 +1,5 @@
 ﻿global using FluentAssertions;
 global using Xunit;
-global using Api.ExpositionModels;
 global using Microsoft.AspNetCore.Mvc;
 global using System.Collections.Generic;
 global using System.Net;
@@ -8,7 +7,6 @@ global using System;
 global using System.Threading.Tasks;
 global using System.Linq;
 using Api.Models;
-using Api.Utilitaries;
 using Microsoft.EntityFrameworkCore;
 using Api.Controllers.AccountControllers;
 using Api.Controllers.PostControllers;
@@ -19,8 +17,8 @@ using Microsoft.Extensions.Configuration;
 using Moq;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
-using System.IO;
 using Api.Models.ExpositionModels.Resources;
+using Api.Handlers;
 
 public class TestBase
 {
@@ -30,9 +28,8 @@ public class TestBase
             .UseLazyLoadingProxies()
             .UseInMemoryDatabase(Guid.NewGuid().ToString())
             .Options);
-    protected readonly Mapper mapper = new Mapper();
+    private readonly HandlersContainer handlers;
     private readonly IConfiguration configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
-    private readonly ExceptionHandler exceptionHandler = new ExceptionHandler(new DirectoryInfo(Directory.GetCurrentDirectory()) + "/exceptions.json");
 
     protected readonly AccountController accountsController;
     protected readonly PostController postController;
@@ -42,11 +39,12 @@ public class TestBase
 
     protected TestBase()
     {
-        this.accountsController = new AccountController(dbContext, mapper, configuration, exceptionHandler, null);
-        this.postController = new PostController(dbContext, mapper, configuration, exceptionHandler, null);
-        this.commentaryController = new CommentaryController(dbContext, mapper, exceptionHandler, null);
-        this.groupController = new GroupController(dbContext, mapper, configuration, exceptionHandler, null);
-        this.authenticationController = new AuthenticationController(dbContext, configuration, exceptionHandler);
+        this.handlers = new HandlersContainer(this.dbContext);
+        this.accountsController = new AccountController(this.handlers);
+        this.postController = new PostController(this.handlers);
+        this.commentaryController = new CommentaryController(this.handlers);
+        this.groupController = new GroupController(this.handlers);
+        this.authenticationController = new AuthenticationController(this.handlers, configuration);
     }
     
     protected void MockJwtAuthentication(AccountResource account)

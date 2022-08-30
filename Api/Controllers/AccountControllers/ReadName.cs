@@ -1,4 +1,5 @@
-﻿using Api.Handlers.Kernel;
+﻿using Api.Handlers.Dtos;
+using Api.Handlers.Kernel;
 using Api.Handlers.Queries;
 using Api.Models.ExpositionModels.Requests;
 
@@ -11,7 +12,11 @@ public partial class AccountController
     {
         try
         {
-            List<Account> accounts = await this.handlers.Get<ReadAccountsByNameQuery>().Handle(request);
+            List<Account> accounts = await this.handlers.Get<ReadAccountsByNameQuery>().Handle(new ReadByNamesDto()
+            {
+                Firstname = request.Firstname,
+                Lastname = request.Lastname,
+            });
 
             return Ok(accounts
                 .Select(a => Mapper.Account_ToResource(a))

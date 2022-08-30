@@ -1,22 +1,22 @@
-﻿using Api.Handlers.Kernel;
-using Api.Models.ExpositionModels.Requests;
+﻿using Api.Handlers.Dtos;
+using Api.Handlers.Kernel;
 
 namespace Api.Handlers.Commands;
 
-public class FollowAccountCommand : HandlerBase, Command<Task, FollowRequest>
+public class FollowAccountCommand : HandlerBase, Command<Task, FollowDto>
 {
     public FollowAccountCommand(ModelsContext context) : base(context)
     {
 
     }
 
-    public async Task Handle(FollowRequest followRequest)
+    public async Task Handle(FollowDto follow)
     {
         Account callerAccount = await this.context.Accounts
-            .FirstOrDefaultAsync(a => a.MailAddress.Equals(followRequest.CallerMail));
+            .FirstOrDefaultAsync(a => a.MailAddress.Equals(follow.CallerMail));
 
         Account targetAccount = await this.context.Accounts
-            .FirstOrDefaultAsync(a => a.MailAddress.Equals(followRequest.TargetMail));
+            .FirstOrDefaultAsync(a => a.MailAddress.Equals(follow.TargetMail));
 
         if (callerAccount == null || targetAccount == null)
         {

@@ -1,19 +1,19 @@
-﻿using Api.Handlers.Kernel;
-using Api.Models.ExpositionModels.Requests;
+﻿using Api.Handlers.Dtos;
+using Api.Handlers.Kernel;
 
 namespace Api.Handlers.Commands;
 
-public class LikeDislikeCommand : HandlerBase, Command<Task, LikeDislikeRequest>
+public class LikeDislikeCommand : HandlerBase, Command<Task, LikeDislikeDto>
 {
     public LikeDislikeCommand(ModelsContext context) : base(context)
     {
         
     }
 
-    public async Task Handle(LikeDislikeRequest likeRequest)
+    public async Task Handle(LikeDislikeDto likeDislike)
     {
         Account account = await this.context.Accounts
-            .FirstOrDefaultAsync(a => a.MailAddress.Equals(likeRequest.CallerMail));
+            .FirstOrDefaultAsync(a => a.MailAddress.Equals(likeDislike.CallerMail));
 
         if (account == null)
         {
@@ -21,7 +21,7 @@ public class LikeDislikeCommand : HandlerBase, Command<Task, LikeDislikeRequest>
         }
 
         Post post = await this.context.Posts
-            .FirstOrDefaultAsync(p => p.Id.Equals(likeRequest.PostId));
+            .FirstOrDefaultAsync(p => p.Id.Equals(likeDislike.PostId));
 
         if (post != null)
         {
@@ -40,7 +40,7 @@ public class LikeDislikeCommand : HandlerBase, Command<Task, LikeDislikeRequest>
         else
         {
             Commentary commentary = await this.context.Commentaries
-                .FirstOrDefaultAsync(c => c.Id.Equals(likeRequest.PostId));
+                .FirstOrDefaultAsync(c => c.Id.Equals(likeDislike.PostId));
 
             if (commentary == null)
             {

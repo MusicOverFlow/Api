@@ -1,6 +1,6 @@
 ﻿using Api.Handlers.Commands;
+using Api.Handlers.Dtos;
 using Api.Handlers.Kernel;
-using Api.Models.ExpositionModels.Requests;
 using System.Security.Claims;
 
 namespace Api.Controllers.AccountControllers;
@@ -14,7 +14,7 @@ public partial class AccountController
 
         try
         {
-            await this.handlers.Get<FollowAccountCommand>().Handle(new FollowRequest()
+            await this.handlers.Get<FollowAccountCommand>().Handle(new FollowDto()
             {
                 CallerMail = callerMail,
                 TargetMail = mailAddress,

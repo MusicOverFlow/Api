@@ -1,6 +1,6 @@
 ﻿using Api.Handlers.Commands;
+using Api.Handlers.Dtos;
 using Api.Handlers.Kernel;
-using Api.Models.ExpositionModels.Requests;
 using System.Security.Claims;
 
 namespace Api.Controllers.AccountControllers;
@@ -14,7 +14,7 @@ public partial class AccountController
 
         try
         {
-            await this.handlers.Get<LikeDislikeCommand>().Handle(new LikeDislikeRequest()
+            await this.handlers.Get<LikeDislikeCommand>().Handle(new LikeDislikeDto()
             {
                 CallerMail = callerAddress,
                 PostId = id,

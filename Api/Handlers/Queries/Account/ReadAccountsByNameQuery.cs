@@ -1,9 +1,9 @@
-﻿using Api.Handlers.Kernel;
-using Api.Models.ExpositionModels.Requests;
+﻿using Api.Handlers.Dtos;
+using Api.Handlers.Kernel;
 
 namespace Api.Handlers.Queries;
 
-public class ReadAccountsByNameQuery : HandlerBase, Query<Task<List<Account>>, ReadByNamesRequest>
+public class ReadAccountsByNameQuery : HandlerBase, Query<Task<List<Account>>, ReadByNamesDto>
 {
     private const int MAX_ACCOUNTS_IN_SEARCHES = 20;
 
@@ -12,9 +12,9 @@ public class ReadAccountsByNameQuery : HandlerBase, Query<Task<List<Account>>, R
 
     }
 
-    public async Task<List<Account>> Handle(ReadByNamesRequest namesRequest)
+    public async Task<List<Account>> Handle(ReadByNamesDto names)
     {
-        if (string.IsNullOrWhiteSpace(namesRequest.Firstname) && string.IsNullOrWhiteSpace(namesRequest.Lastname))
+        if (string.IsNullOrWhiteSpace(names.Firstname) && string.IsNullOrWhiteSpace(names.Lastname))
         {
             throw new HandlerException(ErrorType.InvalidName);
         }
@@ -30,15 +30,15 @@ public class ReadAccountsByNameQuery : HandlerBase, Query<Task<List<Account>>, R
                     return;
                 }
 
-                double lastnameScore = LevenshteinDistance.Compare(namesRequest.Lastname, a.Lastname);
+                double lastnameScore = LevenshteinDistance.Compare(names.Lastname, a.Lastname);
 
                 if (lastnameScore >= 0.6)
                 {
                     accounts.Add(a);
                 }
-                else if (!string.IsNullOrWhiteSpace(namesRequest.Firstname))
+                else if (!string.IsNullOrWhiteSpace(names.Firstname))
                 {
-                    double firstnameScore = LevenshteinDistance.Compare(namesRequest.Firstname, a.Firstname);
+                    double firstnameScore = LevenshteinDistance.Compare(names.Firstname, a.Firstname);
 
                     if ((lastnameScore + firstnameScore) >= 1.1)
                     {

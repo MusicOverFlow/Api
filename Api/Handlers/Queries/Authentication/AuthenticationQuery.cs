@@ -1,5 +1,5 @@
-﻿using Api.Handlers.Kernel;
-using Api.Models.ExpositionModels.Requests;
+﻿using Api.Handlers.Dtos;
+using Api.Handlers.Kernel;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -7,7 +7,7 @@ using System.Security.Cryptography;
 
 namespace Api.Handlers.Queries;
 
-public class AuthenticationQuery : HandlerBase, Query<Task<string>, AuthenticationRequest>
+public class AuthenticationQuery : HandlerBase, Query<Task<string>, AuthenticationDto>
 {
     public IConfiguration Configuration { get; set; }
 
@@ -16,7 +16,7 @@ public class AuthenticationQuery : HandlerBase, Query<Task<string>, Authenticati
 
     }
 
-    public async Task<string> Handle(AuthenticationRequest authenticationRequest)
+    public async Task<string> Handle(AuthenticationDto authenticationRequest)
     {
         Account account = await this.context.Accounts
             .FirstOrDefaultAsync(a => a.MailAddress.Equals(authenticationRequest.MailAddress));

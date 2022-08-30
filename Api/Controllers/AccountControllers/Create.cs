@@ -1,6 +1,6 @@
 ﻿using Api.Handlers.Commands;
+using Api.Handlers.Dtos;
 using Api.Handlers.Kernel;
-using Api.Models.ExpositionModels.Requests;
 
 namespace Api.Controllers.AccountControllers;
 
@@ -17,7 +17,7 @@ public partial class AccountController
     {
         try
         {
-            Account account = await this.handlers.Get<CreateAccountCommand>().Handle(new CreateAccountRequest()
+            Account account = await this.handlers.Get<CreateAccountCommand>().Handle(new CreateAccountDto()
             {
                 MailAddress = mailAddress != null ? mailAddress.Trim() : string.Empty,
                 Password = password,
