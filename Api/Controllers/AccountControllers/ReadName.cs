@@ -1,43 +1,25 @@
-﻿namespace Api.Controllers.AccountControllers;
+﻿using Api.Handlers.Kernel;
+using Api.Handlers.Queries;
+using Api.Models.ExpositionModels.Requests;
+
+namespace Api.Controllers.AccountControllers;
 
 public partial class AccountController
 {
     [HttpGet("name"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
-    public async Task<ActionResult<List<AccountResource>>> ReadName(ReadByNames request)
+    public async Task<ActionResult> ReadName(ReadByNamesRequest request)
     {
-        if (string.IsNullOrWhiteSpace(request.Firstname) && string.IsNullOrWhiteSpace(request.Lastname))
+        try
         {
-            return BadRequest(this.exceptionHandler.GetError(ErrorType.InvalidName));
+            List<Account> accounts = await this.handlers.Get<ReadAccountsByNameQuery>().Handle(request);
+
+            return Ok(accounts
+                .Select(a => Mapper.Account_ToResource(a))
+                .ToList());
         }
-
-        List<AccountResource> accounts = new List<AccountResource>();
-
-        await this.context.Accounts
-            .Include(a => a.Follows)
-            .ForEachAsync(a =>
-            {
-                if (accounts.Count >= this.MAX_ACCOUNTS_IN_SEARCHES)
-                {
-                    return;
-                }
-
-                double lastnameScore = this.stringComparer.Compare(request.Lastname, a.Lastname);
-
-                if (lastnameScore >= 0.6)
-                {
-                    accounts.Add(this.mapper.Account_ToResource(a));
-                }
-                else if (!string.IsNullOrWhiteSpace(request.Firstname))
-                {
-                    double firstnameScore = this.stringComparer.Compare(request.Firstname, a.Firstname);
-
-                    if ((lastnameScore + firstnameScore) >= 1.1)
-                    {
-                        accounts.Add(this.mapper.Account_ToResource(a));
-                    }
-                }
-            });
-
-        return Ok(accounts);
+        catch (HandlerException exception)
+        {
+            return exception.Content;
+        }
     }
 }

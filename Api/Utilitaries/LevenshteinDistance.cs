@@ -1,8 +1,8 @@
 ﻿namespace Api.Utilitaries;
 
-public class LevenshteinDistance
+public abstract class LevenshteinDistance
 {
-    public double Compare(string source, string target)
+    public static double Compare(string source, string target)
     {
         if (string.IsNullOrWhiteSpace(source.Trim()) || string.IsNullOrWhiteSpace(target.Trim()))
         {
@@ -16,10 +16,10 @@ public class LevenshteinDistance
         source = source.ToUpper();
         target = target.ToUpper();
 
-        return 1.0 - (this.ComputeLevenshteinDistance(source, target) / (double)Math.Max(source.Length, target.Length));
+        return 1.0 - (ComputeLevenshteinDistance(source, target) / (double)Math.Max(source.Length, target.Length));
     }
 
-    private int ComputeLevenshteinDistance(string source, string target)
+    private static int ComputeLevenshteinDistance(string source, string target)
     {
         int sourceWordCount = source.Length;
         int targetWordCount = target.Length;

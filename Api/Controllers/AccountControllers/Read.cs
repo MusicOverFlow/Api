@@ -1,26 +1,24 @@
-﻿namespace Api.Controllers.AccountControllers;
+﻿using Api.Handlers.Kernel;
+using Api.Handlers.Queries;
+
+namespace Api.Controllers.AccountControllers;
 
 public partial class AccountController
 {
     [HttpGet, AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
-    public async Task<ActionResult<List<AccountResource>>> Read(string mailAddress = null)
+    public async Task<ActionResult> Read(string mailAddress = null)
     {
-        IQueryable<Account> query = this.context.Accounts;
-
-        if (!string.IsNullOrWhiteSpace(mailAddress))
+        try
         {
-            query = query.Where(a => a.MailAddress.Equals(mailAddress));
+            List<Account> accounts = await this.handlers.Get<ReadAccountByMailQuery>().Handle(mailAddress);
+
+            return Ok(accounts
+                .Select(a => Mapper.Account_ToResource_WithPosts_AndGroups_AndFollows(a))
+                .ToList());
         }
-
-        List<AccountResource_WithPosts_AndGroups_AndFollows> accounts = await query
-            .Select(a => this.mapper.Account_ToResource_WithPosts_AndGroups_AndFollows(a))
-            .ToListAsync();
-
-        if (!string.IsNullOrWhiteSpace(mailAddress) && accounts.Count == 0)
+        catch (HandlerException exception)
         {
-            return NotFound(this.exceptionHandler.GetError(ErrorType.AccountNotFound));
+            return exception.Content;
         }
-
-        return Ok(accounts);
     }
 }

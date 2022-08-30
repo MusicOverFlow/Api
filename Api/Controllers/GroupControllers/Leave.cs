@@ -7,6 +7,7 @@ public partial class GroupController
     [HttpPost("leave"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
     public async Task<ActionResult> Leave(Guid groupId)
     {
+        /*
         string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
         Account account = await this.context.Accounts
@@ -35,6 +36,8 @@ public partial class GroupController
 
         await this.context.SaveChangesAsync();
 
+        return Ok();
+        */
         return Ok();
     }
 }

@@ -6,7 +6,7 @@ namespace Api.Controllers.CodeControllers;
 public partial class CodeController
 {
     [HttpPost("c")]
-    public async Task<ActionResult<string>> HandleC()
+    public async Task<ActionResult> HandleC()
     {
         string script = string.Empty;
         using (StreamReader reader = new StreamReader(Request.Body, Encoding.UTF8))

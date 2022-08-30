@@ -1,22 +1,22 @@
-﻿namespace Api.Controllers.AccountControllers;
+﻿using Api.Handlers.Commands;
+using Api.Handlers.Kernel;
+
+namespace Api.Controllers.AccountControllers;
 
 public partial class AccountController
 {
     [HttpDelete, AuthorizeEnum(Role.Admin)]
     public async Task<ActionResult> Delete(string mailAddress)
     {
-        Account account = await this.context.Accounts
-            .FirstOrDefaultAsync(a => a.MailAddress.Equals(mailAddress));
-
-        if (account == null)
+        try
         {
-            return NotFound(this.exceptionHandler.GetError(ErrorType.AccountNotFound));
+            await this.handlers.Get<DeleteAccountCommand>().Handle(mailAddress);
+
+            return Ok();
         }
-
-        this.context.Accounts.Remove(account);
-
-        await this.context.SaveChangesAsync();
-
-        return Ok();
+        catch (HandlerException exception)
+        {
+            return exception.Content;
+        }
     }
 }

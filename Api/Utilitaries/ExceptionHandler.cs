@@ -2,33 +2,39 @@
 
 namespace Api.Utilitaries;
 
-public class ExceptionHandler
+public abstract class ExceptionHandler
 {
-    private Dictionary<ErrorType, ErrorDto> errors;
-
-    public ExceptionHandler(string errorsFilepath)
-    {
-        this.errors = this.GetErrorsFromFile(errorsFilepath);
-    }
+    private static readonly Dictionary<ErrorType, ExceptionDto> exceptions = GetErrorsFromFile(new DirectoryInfo(Directory.GetCurrentDirectory()) + "/exceptions.json");
     
-    private Dictionary<ErrorType, ErrorDto> GetErrorsFromFile(string errorsFilepath)
+    private static Dictionary<ErrorType, ExceptionDto> GetErrorsFromFile(string errorsFilepath)
     {
         string fileContent = File.ReadAllText(errorsFilepath);
         
-        return JsonSerializer.Deserialize<Dictionary<ErrorType, ErrorDto>>(fileContent, new JsonSerializerOptions()
+        return JsonSerializer.Deserialize<Dictionary<ErrorType, ExceptionDto>>(fileContent, new JsonSerializerOptions()
         {
             PropertyNameCaseInsensitive = true,
         });
     }
 
-    public ErrorDto GetError(ErrorType errorType)
+    public static ExceptionDto Get(ErrorType errorType)
     {
-        return this.errors.TryGetValue(errorType, out ErrorDto errorDto) ? errorDto : new ErrorDto();
+        return exceptions.TryGetValue(errorType, out ExceptionDto errorDto) ? new ExceptionDto()
+        {
+            Error = errorDto.Error,
+            Message = errorDto.Message,
+            Example = errorDto.Example,
+        } : new ExceptionDto();
+    }
+
+    public static int GetCode(ErrorType errorType)
+    {
+        return exceptions.TryGetValue(errorType, out ExceptionDto errorDto) ? errorDto.Code : 500;
     }
 }
 
-public class ErrorDto
+public class ExceptionDto
 {
+    public int Code { get; init; }
     public string Error { get; init; } = "Error";
     public string Message { get; init; } = "An error occured";
     public string Example { get; init; } = string.Empty;
@@ -52,7 +58,6 @@ public enum ErrorType
     AccountAlreadyInGroup,
     LeaveWhileOwner,
     NotOwnerOfGroup,
-    AccountNotInGroup,
     PostTitleOrContentEmpty,
     PostNotFound,
     WrongFormatFile,

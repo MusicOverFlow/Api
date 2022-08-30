@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Api.Models.ExpositionModels.Resources;
+using Microsoft.AspNetCore.Http;
 
 namespace Api.Tests.PostControllerTests;
 

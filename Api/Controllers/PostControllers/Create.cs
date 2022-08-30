@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using Api.Models.ExpositionModels.Resources;
+using System.Security.Claims;
 
 namespace Api.Controllers.PostControllers;
 
@@ -7,6 +8,7 @@ public partial class PostController
     [HttpPost, AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
     public async Task<ActionResult<PostResource>> Create(CreatePost request, Guid? groupId)
     {
+        /*
         string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
         Account account = await this.context.Accounts
@@ -66,6 +68,8 @@ public partial class PostController
         await this.context.SaveChangesAsync();
 
         return Created(nameof(Create), this.mapper.Post_ToResource(post));
+        */
+        return Ok();
     }
 
     private bool IsScriptLanguageSupported(string language)

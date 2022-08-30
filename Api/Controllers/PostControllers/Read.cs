@@ -1,10 +1,13 @@
-﻿namespace Api.Controllers.PostControllers;
+﻿using Api.Models.ExpositionModels.Resources;
+
+namespace Api.Controllers.PostControllers;
 
 public partial class PostController
 {
     [HttpGet, AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
     public async Task<ActionResult<List<PostResource>>> Read(Guid? id = null)
     {
+        /*
         IQueryable<Post> query = this.context.Posts;
         
         if (id != null)
@@ -22,5 +25,7 @@ public partial class PostController
         }
 
         return Ok(posts);
+        */
+        return Ok();
     }
 }

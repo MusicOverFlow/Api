@@ -1,4 +1,3 @@
-global using Api.ExpositionModels;
 global using Api.Models;
 global using Api.Models.Entities;
 global using Api.Models.Enums;
@@ -13,7 +12,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Text.Json.Serialization;
-using Amazon;
+using Api.Handlers;
+
 
 bool dev = true;
 
@@ -27,25 +27,6 @@ builder.Services.Configure<FormOptions>(o => {
     o.MultipartBodyLengthLimit = int.MaxValue;
     o.MemoryBufferThreshold = int.MaxValue;
 });
-
-// Singletons
-try
-{
-    builder.Services.AddSingleton(new DataValidator());
-    builder.Services.AddSingleton(new Mapper());
-    builder.Services.AddSingleton(new LevenshteinDistance());
-    builder.Services.AddSingleton(new ExceptionHandler(new DirectoryInfo(Directory.GetCurrentDirectory()) + "/exceptions.json"));
-    builder.Services.AddSingleton(new Blob(
-        new AmazonS3Client(
-            builder.Configuration.GetSection("AWSClientCredentials:awsAccessKeyId").Value,
-            builder.Configuration.GetSection("AWSClientCredentials:awsSecretAccessKey").Value,
-            RegionEndpoint.EUWest3)));
-}
-catch (Exception e)
-{
-    Console.WriteLine(e.Message);
-    return;
-}
 
 builder.Services.AddControllers()
     .AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
@@ -94,27 +75,49 @@ builder.Services
         };
     });
 
-builder.Services.AddDbContext<ModelsContext>(options =>
-{
-    if (dev)
-    {
-        options.UseLazyLoadingProxies();
-        options.UseNpgsql(
+
+
+
+
+/**
+ * Database context
+ */
+DbContextOptionsBuilder dbContextOptions = new DbContextOptionsBuilder();
+dbContextOptions.UseLazyLoadingProxies();
+dbContextOptions.UseNpgsql(
             builder.Configuration.GetConnectionString("MusicOverflowHeroku"),
             optionBuilder =>
             {
                 optionBuilder.MigrationsAssembly("Api");
                 optionBuilder.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
             });
-    }
-    else
-    {
-        options.UseSqlServer(
-        builder.Configuration.GetConnectionString("MusicOverflowAzure"),
-        optionBuilder => optionBuilder.MigrationsAssembly("Api"));
-    }
-});
 
+ModelsContext context = new ModelsContext(dbContextOptions.Options);
+
+
+
+
+
+/**
+ * Handlers container singleton
+ */
+try
+{
+    builder.Services.AddSingleton(new HandlersContainer(context));
+}
+catch (HandlerNotFoundException exception)
+{
+    Console.WriteLine(exception.Message);
+    return;
+}
+
+
+
+
+
+/**
+ * Launch app
+ */
 builder.Services.AddCors();
 
 WebApplication app = builder.Build();
@@ -130,7 +133,6 @@ app.UseCors(policy => policy
     .AllowAnyMethod()
 );
 
-// Swagger configs
 app.UseSwagger();
 app.UseSwaggerUI();
 

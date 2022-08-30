@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Api.ExpositionModels;
+﻿namespace Api.Models.ExpositionModels.Resources;
 
 public class AccountResource
 {
@@ -28,38 +26,4 @@ public class AccountResource_WithPosts_AndGroups : AccountResource_WithPosts
 public class AccountResource_WithPosts_AndGroups_AndFollows : AccountResource_WithPosts_AndGroups
 {
     public ICollection<AccountResource> Follows { get; set; }
-}
-
-public class CreateAccountRequest
-{
-    [Required] public string MailAddress { get; set; }
-    [Required] public string Password { get; set; }
-    public string Firstname { get; set; }
-    public string Lastname { get; set; }
-    public string Pseudonym { get; set; }
-    public byte[] ProfilPic { get; set; }
-}
-
-public class ReadByNames
-{
-    public string Firstname { get; set; }
-    public string Lastname { get; set; }
-}
-
-public class Authentication
-{
-    [Required] public string MailAddress { get; set; }
-    [Required] public string Password { get; set; }
-}
-
-public class UpdateProfil
-{
-    public string Firstname { get; set; }
-    public string Lastname { get; set; }
-    public string Pseudonym { get; set; }
-}
-
-public class UpdateProfilPic
-{
-    public byte[] ProfilPic { get; set; }
 }

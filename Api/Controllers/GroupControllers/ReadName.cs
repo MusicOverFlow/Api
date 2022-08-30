@@ -1,10 +1,13 @@
-﻿namespace Api.Controllers.GroupControllers;
+﻿using Api.Models.ExpositionModels.Resources;
+
+namespace Api.Controllers.GroupControllers;
 
 public partial class GroupController
 {
     [HttpGet("name"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
     public async Task<ActionResult<List<GroupResource>>> ReadName(string name)
     {
+        /*
         if (string.IsNullOrWhiteSpace(name))
         {
             return BadRequest();
@@ -20,12 +23,14 @@ public partial class GroupController
                     return;
                 }
 
-                if (this.stringComparer.Compare(name, g.Name) >= 0.5)
+                if (LevenshteinDistance.Compare(name, g.Name) >= 0.5)
                 {
                     groups.Add(this.mapper.Group_ToResource_WithMembers(g));
                 }
             });
 
         return Ok(groups);
+        */
+        return Ok();
     }
 }

@@ -1,4 +1,7 @@
-﻿using System.Security.Claims;
+﻿using Api.Handlers.Commands;
+using Api.Handlers.Kernel;
+using Api.Models.ExpositionModels.Requests;
+using System.Security.Claims;
 
 namespace Api.Controllers.AccountControllers;
 
@@ -7,58 +10,21 @@ public partial class AccountController
     [HttpPut("like"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
     public async Task<ActionResult> LikeDislike(Guid? id = null)
     {
-        string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
+        string callerAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
-        Account account = await this.context.Accounts
-            .FirstOrDefaultAsync(a => a.MailAddress.Equals(mailAddress));
-
-        if (account == null)
+        try
         {
-            return NotFound(this.exceptionHandler.GetError(ErrorType.AccountNotFound));
+            await this.handlers.Get<LikeDislikeCommand>().Handle(new LikeDislikeRequest()
+            {
+                CallerMail = callerAddress,
+                PostId = id,
+            });
+
+            return Ok();
         }
-
-        Post post = await this.context.Posts
-            .FirstOrDefaultAsync(p => p.Id.Equals(id));
-
-        if (post != null)
+        catch (HandlerException exception)
         {
-            if (post.Likes.Contains(account))
-            {
-                post.Likes.Remove(account);
-                account.LikedPosts.Remove(post);
-            }
-            else
-            {
-                post.Likes.Add(account);
-                account.LikedPosts.Add(post);
-            }
-            post.LikesCount = post.Likes.Count;
+            return exception.Content;
         }
-        else
-        {
-            Commentary commentary = await this.context.Commentaries
-                .FirstOrDefaultAsync(c => c.Id.Equals(id));
-
-            if (commentary == null)
-            {
-                return NotFound(this.exceptionHandler.GetError(ErrorType.PostOrCommentaryNotFound));
-            }
-
-            if (commentary.Likes.Contains(account))
-            {
-                commentary.Likes.Remove(account);
-                account.LikedCommentaries.Remove(commentary);
-            }
-            else
-            {
-                commentary.Likes.Add(account);
-                account.LikedCommentaries.Add(commentary);
-            }
-            commentary.LikesCount = post.Likes.Count;
-        }
-
-        await this.context.SaveChangesAsync();
-
-        return Ok();
     }
 }

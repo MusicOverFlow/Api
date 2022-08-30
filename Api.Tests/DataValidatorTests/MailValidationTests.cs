@@ -4,14 +4,12 @@ namespace Api.Tests.DataValidatorTests;
 
 public class MailValidationTests
 {
-    private readonly DataValidator dataValidator = new DataValidator();
-
     [Fact(DisplayName =
         "Mail 'gtouchet@myges.fr'\n" +
         "Should be valid")]
     public void MailValidation_1()
     {
-        this.dataValidator.IsMailAddressValid("gtouchet@myges.fr").Should().BeTrue();
+        DataValidator.IsMailAddressValid("gtouchet@myges.fr").Should().BeTrue();
     }
 
     [Fact(DisplayName =
@@ -20,7 +18,7 @@ public class MailValidationTests
         "Because it is missing the '@'")]
     public void MailValidation_2()
     {
-        this.dataValidator.IsPasswordValid("gtouchesmyges.fr").Should().BeFalse();
+        DataValidator.IsPasswordValid("gtouchesmyges.fr").Should().BeFalse();
     }
 
     [Fact(DisplayName =
@@ -29,7 +27,7 @@ public class MailValidationTests
         "Because it is missing the '.'")]
     public void MailValidation_3()
     {
-        this.dataValidator.IsPasswordValid("gtouches@mygesfr").Should().BeFalse();
+        DataValidator.IsPasswordValid("gtouches@mygesfr").Should().BeFalse();
     }
 
     [Fact(DisplayName =
@@ -38,7 +36,7 @@ public class MailValidationTests
         "Because it is missing the domain")]
     public void MailValidation_4()
     {
-        this.dataValidator.IsPasswordValid("gtouches@").Should().BeFalse();
+        DataValidator.IsPasswordValid("gtouches@").Should().BeFalse();
     }
 
     [Fact(DisplayName =
@@ -47,7 +45,7 @@ public class MailValidationTests
         "Because it is missing the address's name")]
     public void MailValidation_5()
     {
-        this.dataValidator.IsPasswordValid("@myges.fr").Should().BeFalse();
+        DataValidator.IsPasswordValid("@myges.fr").Should().BeFalse();
     }
 
     [Fact(DisplayName =
@@ -55,7 +53,7 @@ public class MailValidationTests
         "Should not be valid")]
     public void MailValidation_6()
     {
-        this.dataValidator.IsPasswordValid("").Should().BeFalse();
+        DataValidator.IsPasswordValid("").Should().BeFalse();
     }
 
     [Fact(DisplayName =
@@ -63,6 +61,6 @@ public class MailValidationTests
         "Should not be valid")]
     public void MailValidation_7()
     {
-        this.dataValidator.IsPasswordValid(null).Should().BeFalse();
+        DataValidator.IsPasswordValid(null).Should().BeFalse();
     }
 }

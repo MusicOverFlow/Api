@@ -1,10 +1,13 @@
-﻿namespace Api.Controllers.PostControllers;
+﻿using Api.Models.ExpositionModels.Resources;
+
+namespace Api.Controllers.PostControllers;
 
 public partial class PostController
 {
     [HttpPut("addMusic"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
     public async Task<ActionResult<PostResource>> AddMusic(Guid? id)
     {
+        /*
         Post post = await this.context.Posts
             .FirstOrDefaultAsync(p => p.Id.Equals(id));
 
@@ -19,7 +22,7 @@ public partial class PostController
         }
 
         IFormFile file = Request.Form.Files[0];
-        if (!this.dataValidator.IsSoundFormatSupported(file.FileName))
+        if (!DataValidator.IsSoundFormatSupported(file.FileName))
         {
             return BadRequest(this.exceptionHandler.GetError(ErrorType.WrongFormatFile));
         }
@@ -35,5 +38,7 @@ public partial class PostController
         await this.context.SaveChangesAsync();
 
         return Ok(this.mapper.Post_ToResource(post));
+        */
+        return Ok();
     }
 }

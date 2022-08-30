@@ -1,9 +1,13 @@
-﻿namespace Api.Controllers.AccountControllers;
+﻿using Api.Handlers.Commands;
+using Api.Handlers.Kernel;
+using Api.Models.ExpositionModels.Requests;
+
+namespace Api.Controllers.AccountControllers;
 
 public partial class AccountController
 {
     [HttpPost]
-    public async Task<ActionResult<AccountResource>> Create(
+    public async Task<ActionResult> Create(
         [FromForm] string mailAddress,
         [FromForm] string password,
         [FromForm] string firstname,
@@ -11,62 +15,23 @@ public partial class AccountController
         [FromForm] string pseudonym,
         [FromForm] byte[] profilPic)
     {
-        if (!this.dataValidator.IsMailAddressValid(mailAddress))
+        try
         {
-            return BadRequest(this.exceptionHandler.GetError(ErrorType.InvalidMail));
-        }
-
-        if (!this.dataValidator.IsPasswordValid(password))
-        {
-            return BadRequest(this.exceptionHandler.GetError(ErrorType.InvalidPassword));
-        }
-
-        bool isMailAlreadyInUse = await this.context.Accounts
-            .AnyAsync(a => a.MailAddress.Equals(mailAddress));
-
-        if (isMailAlreadyInUse)
-        {
-            return BadRequest(this.exceptionHandler.GetError(ErrorType.MailAlreadyInUse));
-        }
-        
-        this.EncryptPassword(password, out byte[] hash, out byte[] salt);
-
-        byte[] fileBytes = null;
-        if (Request != null)
-        {
-            IFormFile file = Request.Form.Files.GetFile(nameof(profilPic));
-            if (file != null && file.Length > 0)
+            Account account = await this.handlers.Get<CreateAccountCommand>().Handle(new CreateAccountRequest()
             {
-                if (!this.dataValidator.IsImageFormatSupported(file.FileName))
-                {
-                    return BadRequest(this.exceptionHandler.GetError(ErrorType.WrongFormatFile));
-                }
-                
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    file.CopyTo(ms);
-                    fileBytes = ms.ToArray();
-                }
-            }
+                MailAddress = mailAddress != null ? mailAddress.Trim() : string.Empty,
+                Password = password,
+                Firstname = firstname ?? "Unknown",
+                Lastname = lastname ?? "Unknown",
+                Pseudonym = pseudonym ?? "Anonymous",
+                ProfilPic = Request.Form.Files.GetFile(nameof(profilPic)),
+            });
+
+            return Ok(Mapper.Account_ToResource(account));
         }
-
-        Account account = new Account()
+        catch (HandlerException exception)
         {
-            MailAddress = mailAddress.Trim(),
-            PasswordHash = hash,
-            PasswordSalt = salt,
-            Role = Role.User.ToString(),
-            Firstname = firstname ?? "Unknown",
-            Lastname = lastname ?? "Unknown",
-            Pseudonym = pseudonym ?? "Anonymous",
-            PicUrl = this.blob.GetProfilPicUrl(fileBytes, mailAddress.Trim()).Result,
-            CreatedAt = DateTime.Now,
-        };
-
-        this.context.Accounts.Add(account);
-        
-        await this.context.SaveChangesAsync();
-        
-        return Created(nameof(Create), this.mapper.Account_ToResource(account));
+            return exception.Content;
+        }
     }
 }

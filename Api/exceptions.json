@@ -1,87 +1,98 @@
 ﻿{
   "InvalidMail": {
-    "error": "Invalid mail address",
-    "message": "The mail address you entered is not conform",
-    "example": "Example: do you really need an example for that ?.. duuuh@imstoopid.dumb ... Happy ?"
+    "code": 400,
+    "error": "Adresse mail invalide",
+    "message": "Veuillez entrer une adresse mail valide",
+    "example": "nomprenom@domain.com"
   },
   "InvalidPassword": {
-    "error": "Invalid password",
-    "message": "The password you entered is not valid, it should contain at least one upper and lower character, a number, a symbol, and be between 8 and 20 characters long",
-    "example": "Example: ************ oops, it's censored, sorry"
+    "code": 400,
+    "error": "Mot de passe invalide",
+    "message": "Le mot de passe entré ne répond pas aux exigences de sécurité"
   },
   "MailAlreadyInUse": {
-    "error": "Mail address already in use",
-    "message": "The mail address you entered is already in use. If you forgot your password, you can retrieve it by clicking on the 'forgot password' button, if you're trying to steal this account, please stop."
+    "code": 400,
+    "error": "Adresse mail déjà enregistrée",
+    "message": "Cette adresse mail est déjà liée à un compte"
   },
   "AccountNotFound": {
-    "error": "Account not found",
-    "message": "No account linked to this mail address found, strange"
+    "code": 404,
+    "error": "Compte introuvable",
+    "message": "Le compte recherché est introuvable"
   },
   "SelfFollow": {
-    "error": "Trying to follow yourself",
-    "message": "You cannot follow yourself, how egocentric are you ?"
+    "code": 400,
+    "error": "Tentative de self-follow",
+    "message": "Vous ne pouvez pas vous suivre vous-même"
   },
   "PostOrCommentaryNotFound": {
-    "error": "Post or commentary not found",
-    "message": "Something went wrong, veeeery wrong, please try refreshing your browser"
+    "code": 404,
+    "error": "Post ou commentaire introuvable",
+    "message": "Le post ou commentaire recherché est introuvable"
   },
   "InvalidName": {
-    "error": "Invalid first or last name",
-    "message": "wtf are you doing, how hard is it to enter a name ??",
-    "example": "Example: I'll not feed an obvious troll"
+    "code": 400,
+    "error": "Nom ou prénom invalide",
+    "message": "Les noms entrés ne sont pas valides"
   },
   "InvalidPseudonym": {
-    "error": "Invalid pseudonym",
-    "message": "Did you really know the pseudo of your friends ? Just kidding, you didn't have friends",
-    "example": "Cheh"
+    "code": 400,
+    "error": "Pseudonyme invalide",
+    "message": "Le pseudonyme renseigné est invalide"
   },
   "InvalidRole": {
-    "error": "Invalid role",
-    "message": "Invalid role, available roles are 'User', 'Moderator', 'Admin', but you should know that, since you're actually an admin. Jeez'..."
+    "code": 400,
+    "error": "Rôle invalide",
+    "message": "Le rôle renseigné est invalide",
+    "example": "User, Moderator, Admin"
   },
   "WrongCredentials": {
-    "error": "Wrong credentials",
-    "message": "lol noob"
+    "code": 401,
+    "error": "Identifiants incorrects",
+    "message": "Veuillez retenter"
   },
   "GroupeMissingName": {
-    "error": "Your group is missing a name",
-    "message": "Please give your group a name",
-    "example": "Example: 'f0r s3xy p30pl3 0nly :3 oulala'"
+    "code": 400,
+    "error": "Nom de groupe invalide",
+    "message": "Le nom de groupe renseigné est invalide"
   },
   "GroupNotFound": {
-    "error": "Group not found",
-    "message": "Could not find this group, sounds like a conspiracy to me è_é"
+    "code": 404,
+    "error": "Groupe introuvable",
+    "message": "Le groupe recherché est introuvable"
   },
   "NotMemberOfGroup": {
-    "error": "You are not a member of this group",
-    "message": "Therefore, you cannot see this group's posts, how does that feel, nerd ?"
+    "code": 403,
+    "error": "Pas un membre du groupe",
+    "message": "Vous n'êtes pas membre de ce groupe, rejoignez-le avant d'accèder au contenu'"
   },
   "AccountAlreadyInGroup": {
-    "error": "Account already in this group",
-    "message": "You already are a member of this amazing group"
+    "code": 400,
+    "error": "Déjà membre du groupe",
+    "message": "Vous êtes déjà membre de ce groupe"
   },
   "LeaveWhileOwner": {
-    "error": "Cannot leave a group while owner",
-    "message": "You cannot leave this groupe since you are the owner of said group, what will the members do whitout you, you beautiful sausage"
+    "code": 400,
+    "error": "Impossible de quitter le groupe",
+    "message": "Impossible de quitter un groupe lorsque l'on est son créateur"
   },
   "NotOwnerOfGroup": {
-    "error": "Not the owner of the group",
-    "message": "You are not the owner of this group, just a nobody. Deal with it."
-  },
-  "AccountNotInGroup": {
-    "error": "Account not in this group",
-    "message": "This account is not a member of this group, too bad for them 'cause this place's on FIRE !"
+    "code": 403,
+    "error": "Pas le créateur du groupe",
+    "message": "Vous n'êtes pas le créateur de ce groupe"
   },
   "PostTitleOrContentEmpty": {
-    "error": "Post title or content empty",
-    "message": "You have to enter a title and some content to your post",
-    "example": "Example: 'NFT's are cooool' - 'JUST KIDDING, it's trash tier, f*ck it'"
+    "code": 400,
+    "error": "Contenu du post vide",
+    "message": "Veuillez renseigner un contenu pour votre post"
   },
   "PostNotFound": {
-    "error": "Post not found",
-    "message": "This is bad, this is not supposed to happen ! RUN !"
+    "code": 404,
+    "error": "Post introuvable",
+    "message": "Le post recherché est introuvable"
   },
   "WrongFormatFile": {
-    "error": "Wrong format for uploaded file"
+    "code": 400,
+    "error": "Format de fichier invalide"
   }
 }

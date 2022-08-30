@@ -1,4 +1,4 @@
-﻿namespace Api.ExpositionModels;
+﻿namespace Api.Models.ExpositionModels.Resources;
 
 public class PostResource
 {
@@ -6,7 +6,7 @@ public class PostResource
     public string Title { get; set; }
     public string Content { get; set; }
     public DateTime CreatedAt { get; set; }
-    
+
     public int LikesCount { get; set; }
     public string MusicUrl { get; set; }
     public string ScriptUrl { get; set; }

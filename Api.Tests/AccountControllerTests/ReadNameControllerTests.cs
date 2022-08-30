@@ -1,4 +1,6 @@
-﻿namespace Api.Tests.AccountControllerTests;
+﻿using Api.Models.ExpositionModels.Resources;
+
+namespace Api.Tests.AccountControllerTests;
 
 public class ReadNameControllerTests : TestBase
 {
@@ -19,7 +21,7 @@ public class ReadNameControllerTests : TestBase
         "Because similarity score is high enough")]
     public async void ReadAccountByName_1()
     {
-        var request = await base.accountsController.ReadName(new ReadByNames()
+        var request = await base.accountsController.ReadName(new ReadByNamesRequest()
         {
             Lastname = "Touch",
         });
@@ -34,7 +36,7 @@ public class ReadNameControllerTests : TestBase
         "Because similarity score is high enough")]
     public async void ReadAccountByName_2()
     {
-        var request = await base.accountsController.ReadName(new ReadByNames()
+        var request = await base.accountsController.ReadName(new ReadByNamesRequest()
         {
             Lastname = "oucet",
         });
@@ -49,7 +51,7 @@ public class ReadNameControllerTests : TestBase
         "Because similarity score is too low")]
     public async void ReadAccountByName_3()
     {
-        var request = await base.accountsController.ReadName(new ReadByNames()
+        var request = await base.accountsController.ReadName(new ReadByNamesRequest()
         {
             Lastname = "Tou",
         });
@@ -64,7 +66,7 @@ public class ReadNameControllerTests : TestBase
         "Because names added similarity score are high enough")]
     public async void ReadAccountByName_4()
     {
-        var request = await base.accountsController.ReadName(new ReadByNames()
+        var request = await base.accountsController.ReadName(new ReadByNamesRequest()
         {
             Firstname = "Guillau",
             Lastname = "Tou",
@@ -80,7 +82,7 @@ public class ReadNameControllerTests : TestBase
         "Because names added similarity score are high enough")]
     public async void ReadAccountByName_5()
     {
-        var request = await base.accountsController.ReadName(new ReadByNames()
+        var request = await base.accountsController.ReadName(new ReadByNamesRequest()
         {
             Firstname = "Gillome",
             Lastname = "Touchai",

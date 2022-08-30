@@ -13,7 +13,7 @@ public class ModelsContext : DbContext
     public DbSet<Commentary> Commentaries { get; set; }
     public DbSet<Group> Groups { get; set; }
 
-    public ModelsContext(DbContextOptions<ModelsContext> options) : base(options) { }
+    public ModelsContext(DbContextOptions options) : base(options) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using Api.Models.ExpositionModels.Resources;
+using System.Security.Claims;
 
 namespace Api.Controllers.GroupControllers;
 
@@ -10,6 +11,7 @@ public partial class GroupController
         [FromForm] string description,
         [FromForm] byte[] groupPic)
     {
+        /*
         string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
         Account account = await this.context.Accounts
@@ -57,5 +59,7 @@ public partial class GroupController
         await this.context.SaveChangesAsync();
 
         return Created(nameof(Create), this.mapper.Group_ToResource(group));
+        */
+        return Ok();
     }
 }

@@ -1,13 +1,13 @@
-﻿namespace Api.ExpositionModels;
+﻿namespace Api.Models.ExpositionModels.Resources;
 
 public class CommentaryResource
 {
     public Guid Id { get; set; }
     public string Content { get; set; }
     public DateTime CreatedAt { get; set; }
-    
+
     public AccountResource Owner { get; set; }
-    
+
     public ICollection<AccountResource> Likes { get; set; }
     public int LikesCount { get; set; }
 }

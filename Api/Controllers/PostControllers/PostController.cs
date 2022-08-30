@@ -1,4 +1,5 @@
-﻿using Azure.Storage.Blobs;
+﻿using Api.Handlers;
+using Api.Models.ExpositionModels.Resources;
 
 namespace Api.Controllers.PostControllers;
 
@@ -6,27 +7,11 @@ namespace Api.Controllers.PostControllers;
 [Route("api/posts")]
 public partial class PostController : ControllerBase
 {
-    private readonly ModelsContext context;
-    private readonly DataValidator dataValidator;
-    private readonly Mapper mapper;
-    private readonly IConfiguration configuration;
-    private readonly ExceptionHandler exceptionHandler;
-    private readonly Blob blob;
+    private readonly HandlersContainer handlers;
 
-    public PostController(
-        ModelsContext context,
-        DataValidator dataValidator,
-        Mapper mapper,
-        IConfiguration configuration,
-        ExceptionHandler exceptionHandler,
-        Blob blob)
+    public PostController(HandlersContainer handlers)
     {
-        this.context = context;
-        this.dataValidator = dataValidator;
-        this.mapper = mapper;
-        this.configuration = configuration;
-        this.exceptionHandler = exceptionHandler;
-        this.blob = blob;
+        this.handlers = handlers;
     }
 
     private bool Contains(List<PostResource> posts, Guid id)

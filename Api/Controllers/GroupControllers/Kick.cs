@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using Api.Models.ExpositionModels.Resources;
+using System.Security.Claims;
 
 namespace Api.Controllers.GroupControllers;
 
@@ -7,6 +8,7 @@ public partial class GroupController
     [HttpPost("kick"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
     public async Task<ActionResult<GroupResource>> Kick(Guid groupId, string memberMailAddress)
     {
+        /*
         string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
         Account callerAccount = await this.context.Accounts
@@ -48,5 +50,7 @@ public partial class GroupController
         await this.context.SaveChangesAsync();
 
         return Ok(this.mapper.Group_ToResource_WithMembers(group));
+        */
+        return Ok();
     }        
 }

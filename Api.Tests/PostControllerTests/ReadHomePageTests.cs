@@ -1,4 +1,6 @@
-﻿namespace Api.Tests.PostControllerTests;
+﻿using Api.Models.ExpositionModels.Resources;
+
+namespace Api.Tests.PostControllerTests;
 
 public class ReadHomePageTests : TestBase
 {

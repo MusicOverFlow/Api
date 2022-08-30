@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using Api.Models.ExpositionModels.Resources;
+using System.Security.Claims;
 
 namespace Api.Controllers.AccountControllers;
 
@@ -7,6 +8,7 @@ public partial class AccountController
     [HttpPut("profilpic"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
     public async Task<ActionResult<AccountResource>> UpdateProfilPic()
     {
+        /*
         string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
         Account account = await this.context.Accounts
@@ -14,7 +16,7 @@ public partial class AccountController
 
         if (account == null)
         {
-            return NotFound(this.exceptionHandler.GetError(ErrorType.AccountNotFound));
+            return NotFound(ExceptionHandler.Get(ErrorType.AccountNotFound));
         }
 
         if (!Request.Form.Files.Any())
@@ -23,9 +25,9 @@ public partial class AccountController
         }
 
         IFormFile file = Request.Form.Files[0];
-        if (!this.dataValidator.IsImageFormatSupported(file.FileName))
+        if (!DataValidator.IsImageFormatSupported(file.FileName))
         {
-            return BadRequest(this.exceptionHandler.GetError(ErrorType.WrongFormatFile));
+            return BadRequest(ExceptionHandler.Get(ErrorType.WrongFormatFile));
         }
         
         if (file != null && file.Length > 0)
@@ -42,5 +44,7 @@ public partial class AccountController
         await this.context.SaveChangesAsync();
 
         return Ok(this.mapper.Account_ToResource(account));
+        */
+        return Ok();
     }
 }

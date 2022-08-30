@@ -1,4 +1,4 @@
-﻿namespace Api.ExpositionModels;
+﻿namespace Api.Models.ExpositionModels.Resources;
 
 public class PipelineResult
 {

@@ -1,10 +1,13 @@
-﻿namespace Api.Controllers.GroupControllers;
+﻿using Api.Models.ExpositionModels.Resources;
+
+namespace Api.Controllers.GroupControllers;
 
 public partial class GroupController
 {
     [HttpGet, AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
     public async Task<ActionResult<List<GroupResource>>> Read(Guid? id = null)
     {
+        /*
         IQueryable<Group> query = this.context.Groups;
 
         if (id != null)
@@ -22,5 +25,7 @@ public partial class GroupController
         }
 
         return Ok(groups);
+        */
+        return Ok();
     }
 }

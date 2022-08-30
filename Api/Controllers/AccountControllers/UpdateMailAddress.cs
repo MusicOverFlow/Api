@@ -7,6 +7,7 @@ public partial class AccountController
     [HttpPut("mail"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
     public async Task<ActionResult> UpdateMailAddress(string mailAddress)
     {
+        /*
         string actualMailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
         Account account = await this.context.Accounts
@@ -14,12 +15,12 @@ public partial class AccountController
 
         if (account == null)
         {
-            return NotFound(this.exceptionHandler.GetError(ErrorType.AccountNotFound));
+            return NotFound(ExceptionHandler.Get(ErrorType.AccountNotFound));
         }
 
-        if (!this.dataValidator.IsMailAddressValid(mailAddress))
+        if (!DataValidator.IsMailAddressValid(mailAddress))
         {
-            return BadRequest(this.exceptionHandler.GetError(ErrorType.InvalidMail));
+            return BadRequest(ExceptionHandler.Get(ErrorType.InvalidMail));
         }
 
         bool isMailAlreadyInUse = await this.context.Accounts
@@ -27,12 +28,14 @@ public partial class AccountController
 
         if (isMailAlreadyInUse)
         {
-            return BadRequest(this.exceptionHandler.GetError(ErrorType.MailAlreadyInUse));
+            return BadRequest(ExceptionHandler.Get(ErrorType.MailAlreadyInUse));
         }
 
         account.MailAddress = mailAddress;
         await this.context.SaveChangesAsync();
 
+        return Ok();
+        */
         return Ok();
     }
 }

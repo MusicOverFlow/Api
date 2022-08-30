@@ -20,6 +20,7 @@ using Moq;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using System.IO;
+using Api.Models.ExpositionModels.Resources;
 
 public class TestBase
 {
@@ -30,8 +31,6 @@ public class TestBase
             .UseInMemoryDatabase(Guid.NewGuid().ToString())
             .Options);
     protected readonly Mapper mapper = new Mapper();
-    private readonly DataValidator dataValidator = new DataValidator();
-    private readonly LevenshteinDistance stringComparer = new LevenshteinDistance();
     private readonly IConfiguration configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
     private readonly ExceptionHandler exceptionHandler = new ExceptionHandler(new DirectoryInfo(Directory.GetCurrentDirectory()) + "/exceptions.json");
 
@@ -43,10 +42,10 @@ public class TestBase
 
     protected TestBase()
     {
-        this.accountsController = new AccountController(dbContext, mapper, dataValidator, configuration, stringComparer, exceptionHandler, null);
-        this.postController = new PostController(dbContext, dataValidator, mapper, configuration, exceptionHandler, null);
+        this.accountsController = new AccountController(dbContext, mapper, configuration, exceptionHandler, null);
+        this.postController = new PostController(dbContext, mapper, configuration, exceptionHandler, null);
         this.commentaryController = new CommentaryController(dbContext, mapper, exceptionHandler, null);
-        this.groupController = new GroupController(dbContext, mapper, configuration, stringComparer, exceptionHandler, null);
+        this.groupController = new GroupController(dbContext, mapper, configuration, exceptionHandler, null);
         this.authenticationController = new AuthenticationController(dbContext, configuration, exceptionHandler);
     }
     

@@ -7,6 +7,7 @@ public partial class AccountController
     [HttpPut("password"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
     public async Task<ActionResult> UpdatePassword(string password)
     {
+        /*
         string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
         Account account = await this.context.Accounts
@@ -14,12 +15,12 @@ public partial class AccountController
 
         if (account == null)
         {
-            return NotFound(this.exceptionHandler.GetError(ErrorType.AccountNotFound));
+            return NotFound(ExceptionHandler.Get(ErrorType.AccountNotFound));
         }
 
-        if (!this.dataValidator.IsPasswordValid(password))
+        if (!DataValidator.IsPasswordValid(password))
         {
-            return BadRequest(this.exceptionHandler.GetError(ErrorType.InvalidPassword));
+            return BadRequest(ExceptionHandler.Get(ErrorType.InvalidPassword));
         }
 
         this.EncryptPassword(password, out byte[] hash, out byte[] salt);
@@ -28,6 +29,8 @@ public partial class AccountController
         account.PasswordSalt = salt;
         await this.context.SaveChangesAsync();
 
+        return Ok();
+        */
         return Ok();
     }
 }

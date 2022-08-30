@@ -1,4 +1,6 @@
-﻿namespace Api.Tests.AccountControllerTests;
+﻿using Api.Models.ExpositionModels.Resources;
+
+namespace Api.Tests.AccountControllerTests;
 
 public class FollowUnfollowControllerTests : TestBase
 {
