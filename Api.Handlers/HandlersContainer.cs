@@ -1,4 +1,5 @@
 ﻿using Api.Handlers.Kernel;
+using Api.Models;
 using System.Reflection;
 
 namespace Api.Handlers;

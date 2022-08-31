@@ -1,4 +1,4 @@
-﻿using Api.Handlers.Commands;
+﻿using Api.Handlers.Commands.AccountCommands;
 using Api.Handlers.Dtos;
 using Api.Handlers.Kernel;
 

@@ -1,8 +1,13 @@
 ﻿using Api.Handlers.Dtos;
 using Api.Handlers.Kernel;
+using Api.Handlers.Utilitaries;
+using Api.Models;
+using Api.Models.Entities;
+using Api.Models.Enums;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 
-namespace Api.Handlers.Commands;
+namespace Api.Handlers.Commands.AccountCommands;
 
 public class CreateAccountCommand : HandlerBase, Command<Task<Account>, CreateAccountDto>
 {

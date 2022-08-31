@@ -1,4 +1,7 @@
-﻿namespace Api.Handlers.Kernel;
+﻿using Api.Handlers.Utilitaries;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Api.Handlers.Kernel;
 
 public class HandlerException : Exception
 {

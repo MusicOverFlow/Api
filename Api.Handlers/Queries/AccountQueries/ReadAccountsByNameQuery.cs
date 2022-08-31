@@ -1,7 +1,11 @@
 ﻿using Api.Handlers.Dtos;
 using Api.Handlers.Kernel;
+using Api.Handlers.Utilitaries;
+using Api.Models;
+using Api.Models.Entities;
+using Microsoft.EntityFrameworkCore;
 
-namespace Api.Handlers.Queries;
+namespace Api.Handlers.Queries.AccountQueries;
 
 public class ReadAccountsByNameQuery : HandlerBase, Query<Task<List<Account>>, ReadByNamesDto>
 {
@@ -40,7 +44,7 @@ public class ReadAccountsByNameQuery : HandlerBase, Query<Task<List<Account>>, R
                 {
                     double firstnameScore = LevenshteinDistance.Compare(names.Firstname, a.Firstname);
 
-                    if ((lastnameScore + firstnameScore) >= 1.1)
+                    if (lastnameScore + firstnameScore >= 1.1)
                     {
                         accounts.Add(a);
                     }

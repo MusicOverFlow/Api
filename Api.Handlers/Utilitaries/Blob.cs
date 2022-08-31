@@ -1,8 +1,9 @@
 ﻿using Amazon;
+using Amazon.S3;
 using Amazon.S3.Model;
 using System.Text;
 
-namespace Api.Utilitaries;
+namespace Api.Handlers.Utilitaries;
 
 public abstract class Blob
 {
@@ -18,7 +19,7 @@ public abstract class Blob
                 "AKIA2MFDW34EK2KXP55V", //builder.Configuration.GetSection("AWSClientCredentials:awsAccessKeyId").Value,
                 "UMoDXGbIZ615GwF6UeIcERDze+8YC4/8Iczo+tEE", //builder.Configuration.GetSection("AWSClientCredentials:awsSecretAccessKey").Value,
                 RegionEndpoint.EUWest3);
-    
+
     public async static Task<string> GetProfilPicUrl(byte[] profilPic, string mailAddress)
     {
         if (profilPic == null)
@@ -64,7 +65,7 @@ public abstract class Blob
         await s3Client.PutObjectAsync(request);
         return $"https://{POST_SOUNDS}.s3.eu-west-3.amazonaws.com/{postId}.{filename}";
     }
-    
+
     // Unused atm, maybe usefull later
     public async static Task<string> GetPipelineImageUrl(byte[] image, string filename)
     {

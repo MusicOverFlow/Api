@@ -1,13 +1,17 @@
 ﻿using Api.Handlers.Dtos;
 using Api.Handlers.Kernel;
+using Api.Handlers.Utilitaries;
+using Api.Models;
+using Api.Models.Entities;
+using System.Data.Entity;
 
-namespace Api.Handlers.Commands;
+namespace Api.Handlers.Commands.AccountCommands;
 
 public class UpdateAccountMailAddressCommand : HandlerBase, Command<Task, UpdateMailDto>
 {
     public UpdateAccountMailAddressCommand(ModelsContext context) : base(context)
     {
-        
+
     }
 
     public async Task Handle(UpdateMailDto updateMail)

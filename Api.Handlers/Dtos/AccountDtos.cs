@@ -1,4 +1,6 @@
-﻿namespace Api.Handlers.Dtos;
+﻿using Microsoft.AspNetCore.Http;
+
+namespace Api.Handlers.Dtos;
 
 public class CreateAccountDto
 {
@@ -26,12 +28,6 @@ public class ReadByNamesDto
 {
     public string Firstname { get; set; }
     public string Lastname { get; set; }
-}
-
-public class AuthenticationDto
-{
-    public string MailAddress { get; set; }
-    public string Password { get; set; }
 }
 
 public class UpdateMailDto

@@ -1,4 +1,6 @@
-﻿namespace Api.Handlers;
+﻿using Api.Models;
+
+namespace Api.Handlers;
 
 public abstract class HandlerBase
 {

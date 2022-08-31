@@ -1,6 +1,6 @@
 ﻿using Api.Handlers.Dtos;
 using Api.Handlers.Kernel;
-using Api.Handlers.Queries;
+using Api.Handlers.Queries.AccountQueries;
 using Api.Models.ExpositionModels.Requests;
 
 namespace Api.Controllers.AccountControllers;

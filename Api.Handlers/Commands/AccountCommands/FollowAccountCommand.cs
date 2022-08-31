@@ -1,7 +1,11 @@
 ﻿using Api.Handlers.Dtos;
 using Api.Handlers.Kernel;
+using Api.Handlers.Utilitaries;
+using Api.Models;
+using Api.Models.Entities;
+using Microsoft.EntityFrameworkCore;
 
-namespace Api.Handlers.Commands;
+namespace Api.Handlers.Commands.AccountCommands;
 
 public class FollowAccountCommand : HandlerBase, Command<Task, FollowDto>
 {

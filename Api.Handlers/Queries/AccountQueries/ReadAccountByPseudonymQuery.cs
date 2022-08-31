@@ -1,6 +1,10 @@
 ﻿using Api.Handlers.Kernel;
+using Api.Handlers.Utilitaries;
+using Api.Models;
+using Api.Models.Entities;
+using Microsoft.EntityFrameworkCore;
 
-namespace Api.Handlers.Queries;
+namespace Api.Handlers.Queries.AccountQueries;
 
 public class ReadAccountByPseudonymQuery : HandlerBase, Query<Task<List<Account>>, string>
 {

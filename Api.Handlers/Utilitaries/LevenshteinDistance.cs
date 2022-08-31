@@ -1,4 +1,4 @@
-﻿namespace Api.Utilitaries;
+﻿namespace Api.Handlers.Utilitaries;
 
 public abstract class LevenshteinDistance
 {
@@ -16,7 +16,7 @@ public abstract class LevenshteinDistance
         source = source.ToUpper();
         target = target.ToUpper();
 
-        return 1.0 - (ComputeLevenshteinDistance(source, target) / (double)Math.Max(source.Length, target.Length));
+        return 1.0 - ComputeLevenshteinDistance(source, target) / (double)Math.Max(source.Length, target.Length);
     }
 
     private static int ComputeLevenshteinDistance(string source, string target)

@@ -1,4 +1,4 @@
-﻿using Api.Handlers.Commands;
+﻿using Api.Handlers.Commands.AccountCommands;
 using Api.Handlers.Kernel;
 
 namespace Api.Controllers.AccountControllers;

@@ -1,15 +1,15 @@
 ﻿using System.Text.Json;
 
-namespace Api.Utilitaries;
+namespace Api.Handlers.Utilitaries;
 
 public abstract class ExceptionHandler
 {
     private static readonly Dictionary<ErrorType, ExceptionDto> exceptions = GetErrorsFromFile(new DirectoryInfo(Directory.GetCurrentDirectory()) + "/exceptions.json");
-    
+
     private static Dictionary<ErrorType, ExceptionDto> GetErrorsFromFile(string errorsFilepath)
     {
         string fileContent = File.ReadAllText(errorsFilepath);
-        
+
         return JsonSerializer.Deserialize<Dictionary<ErrorType, ExceptionDto>>(fileContent, new JsonSerializerOptions()
         {
             PropertyNameCaseInsensitive = true,

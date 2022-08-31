@@ -1,6 +1,5 @@
 ﻿using Api.Handlers.Kernel;
-using Api.Handlers.Queries;
-using Api.Models.ExpositionModels.Resources;
+using Api.Handlers.Queries.AccountQueries;
 using System.Security.Claims;
 
 namespace Api.Controllers.AccountControllers;

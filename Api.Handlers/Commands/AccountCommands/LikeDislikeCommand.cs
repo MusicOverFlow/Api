@@ -1,13 +1,17 @@
 ﻿using Api.Handlers.Dtos;
 using Api.Handlers.Kernel;
+using Api.Handlers.Utilitaries;
+using Api.Models;
+using Api.Models.Entities;
+using Microsoft.EntityFrameworkCore;
 
-namespace Api.Handlers.Commands;
+namespace Api.Handlers.Commands.AccountCommands;
 
 public class LikeDislikeCommand : HandlerBase, Command<Task, LikeDislikeDto>
 {
     public LikeDislikeCommand(ModelsContext context) : base(context)
     {
-        
+
     }
 
     public async Task Handle(LikeDislikeDto likeDislike)

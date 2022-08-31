@@ -2,7 +2,7 @@
 using EzPasswordValidator.Checks;
 using EzPasswordValidator.Validators;
 
-namespace Api.Utilitaries;
+namespace Api.Handlers.Utilitaries;
 
 public abstract class DataValidator
 {

@@ -1,6 +1,6 @@
 ﻿namespace Api.Handlers.Kernel;
 
-internal interface Handler<R, P>
+public interface Handler
 {
-    public R Handle(P message);
+
 }

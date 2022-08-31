@@ -1,4 +1,4 @@
-﻿using Api.Utilitaries;
+﻿using Api.Handlers.Utilitaries;
 
 namespace Api.Tests.DataValidatorTests;
 
