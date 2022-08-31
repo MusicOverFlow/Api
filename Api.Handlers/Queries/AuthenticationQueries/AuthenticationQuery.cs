@@ -1,16 +1,10 @@
-﻿using Api.Handlers.Dtos;
-using Api.Handlers.Kernel;
-using Api.Handlers.Utilitaries;
-using Api.Models;
-using Api.Models.Entities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 
-namespace Api.Handlers.Queries.Authentication;
+namespace Api.Handlers.Queries.AuthenticationQueries;
 
 public class AuthenticationQuery : HandlerBase, Query<Task<string>, AuthenticationDto>
 {

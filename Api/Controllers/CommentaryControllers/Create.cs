@@ -1,4 +1,5 @@
-﻿using Api.Models.ExpositionModels.Resources;
+﻿using Api.Handlers.Commands.CommentaryCommands;
+using Api.Models.ExpositionModels.Resources;
 using System.Security.Claims;
 
 namespace Api.Controllers.CommentaryControllers;
@@ -6,80 +7,26 @@ namespace Api.Controllers.CommentaryControllers;
 public partial class CommentaryController
 {
     [HttpPost, AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
-    public async Task<ActionResult<PostResource>> Create(CreateCommentary request, Guid? postId)
+    public async Task<ActionResult> Create(CreateCommentary request, Guid? postId)
     {
-        /*
         string mailAddress = User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
-        Account account = await this.context.Accounts
-            .FirstOrDefaultAsync(a => a.MailAddress.Equals(mailAddress));
-        
-        if (account == null)
+        try
         {
-            return NotFound(this.exceptionHandler.GetError(ErrorType.AccountNotFound));
-        }
-
-        if (string.IsNullOrWhiteSpace(request.Content))
-        {
-            return BadRequest(this.exceptionHandler.GetError(ErrorType.PostTitleOrContentEmpty));
-        }
-
-        Post post = await this.context.Posts
-            .FirstOrDefaultAsync(p => p.Id.Equals(postId));
-
-        if (post == null)
-        {
-            return NotFound(this.exceptionHandler.GetError(ErrorType.PostOrCommentaryNotFound));
-        }
-
-        if (!string.IsNullOrWhiteSpace(request.ScriptLanguage))
-        {
-            request.ScriptLanguage = request.ScriptLanguage.ToLower();
-            if (!this.IsScriptLanguageSupported(request.ScriptLanguage))
+            Post post = await this.handlers.Get<CreateCommentaryCommand>().Handle(new CreateCommentaryDto()
             {
-                return BadRequest(new { error = $"Unsupported language {request.ScriptLanguage}" });
-            }
+                CreatorMailAddress = mailAddress,
+                Content = request.Content,
+                PostId = postId.Value,
+                ScriptLanguage = request.ScriptLanguage,
+                Script = request.Script,
+            });
+
+            return Created(nameof(Create), Mapper.Post_ToResource(post));
         }
-        else
+        catch (HandlerException exception)
         {
-            request.ScriptLanguage = null;
+            return exception.Content;
         }
-
-        Commentary commentary = new Commentary
-        {
-            Content = request.Content,
-            CreatedAt = DateTime.Now,
-
-            ScriptLanguage = request.ScriptLanguage,
-
-            Owner = account,
-            Post = post,
-        };
-
-        this.context.Commentaries.Add(commentary);
-        post.Commentaries.Add(commentary);
-
-        commentary.ScriptUrl = request.Script != null ? this.blob.GetPostScriptUrl(request.Script, commentary.Id).Result : null;
-
-        await this.context.SaveChangesAsync();
-
-        return Created(nameof(Create), this.mapper.Post_ToResource(post));
-        */
-        return Ok();
-    }
-
-    private bool IsScriptLanguageSupported(string language)
-    {
-        foreach (int lInt in Enum.GetValues(typeof(Language)))
-        {
-            Language lEnum = (Language)lInt;
-            string lString = lEnum.ToString().ToLower();
-
-            if (lString.Equals(language))
-            {
-                return true;
-            }
-        }
-        return false;
     }
 }

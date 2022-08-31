@@ -36,18 +36,28 @@ public class UpdateMailDto
     public string NewMailAddress { get; set; }
 }
 
-
-
-
-
-public class UpdateProfilRequest
+public class UpdatePasswordDto
 {
+    public string MailAddress { get; set; }
+    public string NewPassword { get; set; }
+}
+
+public class UpdateProfilDto
+{
+    public string MailAddress { get; set; }
     public string Firstname { get; set; }
     public string Lastname { get; set; }
     public string Pseudonym { get; set; }
 }
 
-public class UpdateProfilPicRequest
+public class UpdateProfilPicDto
 {
-    public byte[] ProfilPic { get; set; }
+    public string MailAddress { get; set; }
+    public IFormFile ProfilPic { get; set; }
+}
+
+public class UpdateAccountRoleDto
+{
+    public string MailAddress { get; set; }
+    public string Role { get; set; }
 }

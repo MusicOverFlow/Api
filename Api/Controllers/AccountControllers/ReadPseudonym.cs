@@ -1,5 +1,4 @@
-﻿using Api.Handlers.Kernel;
-using Api.Handlers.Queries.AccountQueries;
+﻿using Api.Handlers.Queries.AccountQueries;
 
 namespace Api.Controllers.AccountControllers;
 

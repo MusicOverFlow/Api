@@ -1,5 +1,4 @@
-﻿using Api.Handlers.Kernel;
-using Api.Handlers.Queries.AccountQueries;
+﻿using Api.Handlers.Queries.AccountQueries;
 using System.Security.Claims;
 
 namespace Api.Controllers.AccountControllers;

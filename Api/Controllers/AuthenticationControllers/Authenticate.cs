@@ -1,7 +1,4 @@
-﻿using Api.Handlers.Dtos;
-using Api.Handlers.Kernel;
-using Api.Handlers.Queries.Authentication;
-using Api.Models.ExpositionModels.Requests;
+﻿using Api.Handlers.Queries.AuthenticationQueries;
 
 namespace Api.Controllers.AuthenticationControllers;
 

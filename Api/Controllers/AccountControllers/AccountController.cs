@@ -1,6 +1,4 @@
-﻿using Api.Handlers;
-
-namespace Api.Controllers.AccountControllers;
+﻿namespace Api.Controllers.AccountControllers;
 
 [ApiController]
 [Route("api/accounts")]

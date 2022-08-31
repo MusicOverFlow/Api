@@ -1,5 +1,10 @@
-﻿using Api.Handlers.Kernel;
-using Api.Models;
+﻿global using Api.Handlers.Utilitaries;
+global using Api.Models;
+global using Api.Handlers.Dtos;
+global using Api.Handlers.Kernel;
+global using Api.Models.Entities;
+global using Api.Models.Enums;
+global using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
 namespace Api.Handlers;

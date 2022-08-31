@@ -1,6 +1,4 @@
 ﻿using Api.Handlers.Commands.AccountCommands;
-using Api.Handlers.Dtos;
-using Api.Handlers.Kernel;
 
 namespace Api.Controllers.AccountControllers;
 

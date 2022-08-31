@@ -1,6 +1,4 @@
-﻿using Api.Handlers;
-
-namespace Api.Controllers.CommentaryControllers;
+﻿namespace Api.Controllers.CommentaryControllers;
 
 [ApiController]
 [Route("api/commentaries")]

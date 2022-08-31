@@ -1,36 +1,29 @@
-﻿using Api.Handlers.Kernel;
-using Api.Handlers.Utilitaries;
-using Api.Models;
-using Api.Models.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿namespace Api.Handlers.Queries.AccountQueries;
 
-namespace Api.Handlers.Queries.AccountQueries
+public class ReadAccountByMailQuery : HandlerBase, Query<Task<List<Account>>, string>
 {
-    public class ReadAccountByMailQuery : HandlerBase, Query<Task<List<Account>>, string>
+    public ReadAccountByMailQuery(ModelsContext context) : base(context)
     {
-        public ReadAccountByMailQuery(ModelsContext context) : base(context)
-        {
 
+    }
+
+    public async Task<List<Account>> Handle(string mailAddress = null)
+    {
+        IQueryable<Account> query = this.context.Accounts;
+
+        if (!string.IsNullOrWhiteSpace(mailAddress))
+        {
+            query = query.Where(a => a.MailAddress.Equals(mailAddress));
         }
 
-        public async Task<List<Account>> Handle(string mailAddress = null)
+        List<Account> accounts = await query
+            .ToListAsync();
+
+        if (!string.IsNullOrWhiteSpace(mailAddress) && accounts.Count == 0)
         {
-            IQueryable<Account> query = this.context.Accounts;
-
-            if (!string.IsNullOrWhiteSpace(mailAddress))
-            {
-                query = query.Where(a => a.MailAddress.Equals(mailAddress));
-            }
-
-            List<Account> accounts = await query
-                .ToListAsync();
-
-            if (!string.IsNullOrWhiteSpace(mailAddress) && accounts.Count == 0)
-            {
-                throw new HandlerException(ErrorType.AccountNotFound);
-            }
-
-            return accounts;
+            throw new HandlerException(ErrorType.AccountNotFound);
         }
+
+        return accounts;
     }
 }
