@@ -9,45 +9,51 @@ using System.Reflection;
 
 namespace Api.Handlers;
 
-/// <summary>
-/// 
-/// </summary>
 public class HandlersContainer
 {
-    private readonly List<Handler> handlers;
-
-    public HandlersContainer(ModelsContext context)
+    private readonly Dictionary<Type, Func<Handler>> handlersFactories;
+    private readonly Func<ModelsContext> contextFactory;
+    
+    /// <summary>
+    /// The application's handlers container, inject the context factory lambda
+    /// </summary>
+    /// <param name="contextFactory"></param>
+    public HandlersContainer(Func<ModelsContext> contextFactory)
     {
-        this.handlers = this.RegisterHandlers(context);
+        this.contextFactory = contextFactory;
+        this.handlersFactories = this.RegisterHandlers();
     }
 
     /// <summary>
-    /// 
+    /// Method to retrieve a handler by its type, the handler will be instanciated with the context factory
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
+    /// <returns>The instanciated handler</returns>
     /// <exception cref="HandlerNotFoundException"></exception>
     public T Get<T>() where T : Handler
     {
-        return (T) this.handlers.FirstOrDefault(h => h.GetType().Equals(typeof(T))) ??
-            throw new HandlerNotFoundException(typeof(T).Name);
+        if (this.handlersFactories.ContainsKey(typeof(T)))
+        {
+            return (T) this.handlersFactories[typeof(T)]();
+        }
+        throw new HandlerNotFoundException(typeof(T).Name);
     }
 
     /// <summary>
-    /// 
+    /// Method reading the assembly to register all handlers, storing them in a dictionary with a lambda to instanciate them later
     /// </summary>
     /// <param name="context"></param>
-    /// <returns></returns>
-    private List<Handler> RegisterHandlers(ModelsContext context)
+    /// <returns>The handlers dictionary</returns>
+    private Dictionary<Type, Func<Handler>> RegisterHandlers()
     {
-        List<Handler> handlers = new List<Handler>();
-        Assembly.GetAssembly(typeof(HandlerBase))
+        return Assembly.GetAssembly(typeof(HandlerBase))
             .GetTypes()
             .Where(t => t.IsClass && !t.IsAbstract && t.IsSubclassOf(typeof(HandlerBase)))
-            .ToList()
-            .ForEach(t => handlers.Add((Handler)Activator.CreateInstance(t, context)));
-
-        return handlers;
+            .ToDictionary(tKey => tKey, tValue =>
+            {
+                Func<Handler> factory = () => (Handler)Activator.CreateInstance(tValue, this.contextFactory());
+                return factory;
+            });
     }
 }
 

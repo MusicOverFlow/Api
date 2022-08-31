@@ -1,6 +1,4 @@
-﻿using Api.Handlers;
-
-namespace Api.Controllers.GroupControllers;
+﻿namespace Api.Controllers.GroupControllers;
 
 [ApiController]
 [Route("api/groups")]

@@ -19,9 +19,9 @@ public partial class AccountController
             {
                 MailAddress = mailAddress != null ? mailAddress.Trim() : string.Empty,
                 Password = password,
-                Firstname = firstname ?? "Unknown",
-                Lastname = lastname ?? "Unknown",
-                Pseudonym = pseudonym ?? "Anonymous",
+                Firstname = firstname,
+                Lastname = lastname,
+                Pseudonym = pseudonym,
                 ProfilPic = Request.Form.Files.GetFile(nameof(profilPic)),
             });
 

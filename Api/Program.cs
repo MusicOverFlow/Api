@@ -34,7 +34,9 @@ builder.Services.Configure<FormOptions>(o => {
 builder.Services.AddControllers()
     .AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
-// Swagger configs
+/**
+ * 
+ */
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -65,6 +67,9 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+/**
+ * 
+ */
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -78,45 +83,34 @@ builder.Services
         };
     });
 
-
-
-
-
 /**
  * Database context
  */
 DbContextOptionsBuilder dbContextOptions = new DbContextOptionsBuilder();
 dbContextOptions.UseLazyLoadingProxies();
 dbContextOptions.UseNpgsql(
-            builder.Configuration.GetConnectionString("MusicOverflowHeroku"),
-            optionBuilder =>
-            {
-                optionBuilder.MigrationsAssembly("Api");
-                optionBuilder.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
-            });
-
-ModelsContext context = new ModelsContext(dbContextOptions.Options);
-
-
-
-
+    builder.Configuration.GetConnectionString("MusicOverflowHeroku"),
+    optionBuilder =>
+    {
+        optionBuilder.MigrationsAssembly("Api");
+        optionBuilder.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
+    });
 
 /**
  * Handlers container singleton
  */
 try
 {
-    builder.Services.AddSingleton(new HandlersContainer(context));
+    builder.Services.AddSingleton(new HandlersContainer(() =>
+    {
+        return new ModelsContext(dbContextOptions.Options);
+    }));
 }
 catch (HandlerNotFoundException exception)
 {
     Console.WriteLine(exception.Message);
     return;
 }
-
-
-
-
 
 /**
  * Launch app
