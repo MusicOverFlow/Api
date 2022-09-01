@@ -9,9 +9,9 @@ public class ReadAccountByPseudonymQuery : HandlerBase, Query<Task<List<Account>
 
     }
 
-    public async Task<List<Account>> Handle(string pseudonym)
+    public async Task<List<Account>> Handle(string message)
     {
-        if (string.IsNullOrWhiteSpace(pseudonym))
+        if (string.IsNullOrWhiteSpace(message))
         {
             throw new HandlerException(ErrorType.InvalidPseudonym);
         }
@@ -27,7 +27,7 @@ public class ReadAccountByPseudonymQuery : HandlerBase, Query<Task<List<Account>
                     return;
                 }
 
-                double pseudonymScore = LevenshteinDistance.Compare(pseudonym, a.Pseudonym);
+                double pseudonymScore = LevenshteinDistance.Compare(message, a.Pseudonym);
 
                 if (pseudonymScore >= 0.6)
                 {

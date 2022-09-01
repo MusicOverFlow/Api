@@ -15,12 +15,12 @@ public class AuthenticationQuery : HandlerBase, Query<Task<string>, Authenticati
 
     }
 
-    public async Task<string> Handle(AuthenticationDto authenticationRequest)
+    public async Task<string> Handle(AuthenticationDto message)
     {
         Account account = await this.context.Accounts
-            .FirstOrDefaultAsync(a => a.MailAddress.Equals(authenticationRequest.MailAddress));
+            .FirstOrDefaultAsync(a => a.MailAddress.Equals(message.MailAddress));
 
-        if (account == null || !IsPasswordCorrect(authenticationRequest.Password, account.PasswordHash, account.PasswordSalt))
+        if (account == null || !IsPasswordCorrect(message.Password, account.PasswordHash, account.PasswordSalt))
         {
             throw new HandlerException(ErrorType.WrongCredentials);
         }

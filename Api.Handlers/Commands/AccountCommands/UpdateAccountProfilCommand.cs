@@ -7,19 +7,19 @@ public class UpdateAccountProfilCommand : HandlerBase, Command<Task, UpdateProfi
         
     }
 
-    public async Task Handle(UpdateProfilDto updateProfil)
+    public async Task Handle(UpdateProfilDto message)
     {
         Account account = await this.context.Accounts
-            .FirstOrDefaultAsync(a => a.MailAddress.Equals(updateProfil.MailAddress));
+            .FirstOrDefaultAsync(a => a.MailAddress.Equals(message.MailAddress));
 
         if (account == null)
         {
             throw new HandlerException(ErrorType.AccountNotFound);
         }
 
-        account.Firstname = !string.IsNullOrWhiteSpace(updateProfil.Firstname) ? updateProfil.Firstname : account.Firstname;
-        account.Lastname = !string.IsNullOrWhiteSpace(updateProfil.Lastname) ? updateProfil.Lastname : account.Lastname;
-        account.Pseudonym = !string.IsNullOrWhiteSpace(updateProfil.Pseudonym) ? updateProfil.Pseudonym : account.Pseudonym;
+        account.Firstname = !string.IsNullOrWhiteSpace(message.Firstname) ? message.Firstname : account.Firstname;
+        account.Lastname = !string.IsNullOrWhiteSpace(message.Lastname) ? message.Lastname : account.Lastname;
+        account.Pseudonym = !string.IsNullOrWhiteSpace(message.Pseudonym) ? message.Pseudonym : account.Pseudonym;
         await this.context.SaveChangesAsync();
     }
 }

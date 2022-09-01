@@ -8,11 +8,9 @@ namespace Api.Controllers.CodeControllers;
 #pragma warning disable CS1998
 public class Converter : ControllerBase
 {
-    private readonly Blob blob;
-
-    public Converter(Blob blob)
+    public Converter()
     {
-        this.blob = blob;
+        
     }
 
     [HttpPost]

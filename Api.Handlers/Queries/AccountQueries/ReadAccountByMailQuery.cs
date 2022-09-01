@@ -7,19 +7,19 @@ public class ReadAccountByMailQuery : HandlerBase, Query<Task<List<Account>>, st
 
     }
 
-    public async Task<List<Account>> Handle(string mailAddress = null)
+    public async Task<List<Account>> Handle(string message = null)
     {
         IQueryable<Account> query = this.context.Accounts;
 
-        if (!string.IsNullOrWhiteSpace(mailAddress))
+        if (!string.IsNullOrWhiteSpace(message))
         {
-            query = query.Where(a => a.MailAddress.Equals(mailAddress));
+            query = query.Where(a => a.MailAddress.Equals(message));
         }
 
         List<Account> accounts = await query
             .ToListAsync();
 
-        if (!string.IsNullOrWhiteSpace(mailAddress) && accounts.Count == 0)
+        if (!string.IsNullOrWhiteSpace(message) && accounts.Count == 0)
         {
             throw new HandlerException(ErrorType.AccountNotFound);
         }

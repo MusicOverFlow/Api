@@ -35,7 +35,7 @@ builder.Services.AddControllers()
     .AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 /**
- * 
+ * Swagger configuration
  */
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -68,7 +68,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 /**
- * 
+ * JWT configuration
  */
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

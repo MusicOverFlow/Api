@@ -7,17 +7,17 @@ public class UpdateAccountRoleCommand : HandlerBase, Command<Task, UpdateAccount
         
     }
     
-    public async Task Handle(UpdateAccountRoleDto updateRole)
+    public async Task Handle(UpdateAccountRoleDto message)
     {
         Account account = await this.context.Accounts
-            .FirstOrDefaultAsync(a => a.MailAddress.Equals(updateRole.MailAddress));
+            .FirstOrDefaultAsync(a => a.MailAddress.Equals(message.MailAddress));
 
         if (account == null)
         {
             throw new HandlerException(ErrorType.AccountNotFound);
         }
 
-        string newRole = RoleParser.Handle(updateRole.Role);
+        string newRole = RoleParser.Handle(message.Role);
 
         if (string.IsNullOrWhiteSpace(newRole))
         {

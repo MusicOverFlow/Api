@@ -9,9 +9,9 @@ public class ReadAccountsByNameQuery : HandlerBase, Query<Task<List<Account>>, R
 
     }
 
-    public async Task<List<Account>> Handle(ReadByNamesDto names)
+    public async Task<List<Account>> Handle(ReadByNamesDto message)
     {
-        if (string.IsNullOrWhiteSpace(names.Firstname) && string.IsNullOrWhiteSpace(names.Lastname))
+        if (string.IsNullOrWhiteSpace(message.Firstname) && string.IsNullOrWhiteSpace(message.Lastname))
         {
             throw new HandlerException(ErrorType.InvalidName);
         }
@@ -27,15 +27,15 @@ public class ReadAccountsByNameQuery : HandlerBase, Query<Task<List<Account>>, R
                     return;
                 }
 
-                double lastnameScore = LevenshteinDistance.Compare(names.Lastname, a.Lastname);
+                double lastnameScore = LevenshteinDistance.Compare(message.Lastname, a.Lastname);
 
                 if (lastnameScore >= 0.6)
                 {
                     accounts.Add(a);
                 }
-                else if (!string.IsNullOrWhiteSpace(names.Firstname))
+                else if (!string.IsNullOrWhiteSpace(message.Firstname))
                 {
-                    double firstnameScore = LevenshteinDistance.Compare(names.Firstname, a.Firstname);
+                    double firstnameScore = LevenshteinDistance.Compare(message.Firstname, a.Firstname);
 
                     if (lastnameScore + firstnameScore >= 1.1)
                     {

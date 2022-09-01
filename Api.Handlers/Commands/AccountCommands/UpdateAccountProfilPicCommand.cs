@@ -7,25 +7,25 @@ public class UpdateAccountProfilPicCommand : HandlerBase, Command<Task<Account>,
         
     }
 
-    public async Task<Account> Handle(UpdateProfilPicDto updateProfilPic)
+    public async Task<Account> Handle(UpdateProfilPicDto message)
     {
         Account account = await this.context.Accounts
-            .FirstOrDefaultAsync(a => a.MailAddress.Equals(updateProfilPic.MailAddress));
+            .FirstOrDefaultAsync(a => a.MailAddress.Equals(message.MailAddress));
 
         if (account == null)
         {
             throw new HandlerException(ErrorType.AccountNotFound);
         }
 
-        if (updateProfilPic.ProfilPic == null || updateProfilPic.ProfilPic.Length == 0 ||
-            !DataValidator.IsImageFormatSupported(updateProfilPic.ProfilPic.FileName))
+        if (message.ProfilPic == null || message.ProfilPic.Length == 0 ||
+            !DataValidator.IsImageFormatSupported(message.ProfilPic.FileName))
         {
             throw new HandlerException(ErrorType.WrongFormatFile);
         }
         
         using (var ms = new MemoryStream())
         {
-            updateProfilPic.ProfilPic.CopyTo(ms);
+            message.ProfilPic.CopyTo(ms);
             account.PicUrl = Blob.GetProfilPicUrl(ms.ToArray(), account.MailAddress).Result;
         }
     

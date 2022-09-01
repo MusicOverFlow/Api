@@ -7,13 +7,13 @@ public class FollowAccountCommand : HandlerBase, Command<Task, FollowDto>
 
     }
 
-    public async Task Handle(FollowDto follow)
+    public async Task Handle(FollowDto message)
     {
         Account callerAccount = await this.context.Accounts
-            .FirstOrDefaultAsync(a => a.MailAddress.Equals(follow.CallerMail));
+            .FirstOrDefaultAsync(a => a.MailAddress.Equals(message.CallerMail));
 
         Account targetAccount = await this.context.Accounts
-            .FirstOrDefaultAsync(a => a.MailAddress.Equals(follow.TargetMail));
+            .FirstOrDefaultAsync(a => a.MailAddress.Equals(message.TargetMail));
 
         if (callerAccount == null || targetAccount == null)
         {

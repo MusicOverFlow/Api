@@ -7,10 +7,10 @@ public class LikeDislikeCommand : HandlerBase, Command<Task, LikeDislikeDto>
 
     }
 
-    public async Task Handle(LikeDislikeDto likeDislike)
+    public async Task Handle(LikeDislikeDto message)
     {
         Account account = await this.context.Accounts
-            .FirstOrDefaultAsync(a => a.MailAddress.Equals(likeDislike.CallerMail));
+            .FirstOrDefaultAsync(a => a.MailAddress.Equals(message.CallerMail));
 
         if (account == null)
         {
@@ -18,7 +18,7 @@ public class LikeDislikeCommand : HandlerBase, Command<Task, LikeDislikeDto>
         }
 
         Post post = await this.context.Posts
-            .FirstOrDefaultAsync(p => p.Id.Equals(likeDislike.PostId));
+            .FirstOrDefaultAsync(p => p.Id.Equals(message.PostId));
 
         if (post != null)
         {
@@ -37,7 +37,7 @@ public class LikeDislikeCommand : HandlerBase, Command<Task, LikeDislikeDto>
         else
         {
             Commentary commentary = await this.context.Commentaries
-                .FirstOrDefaultAsync(c => c.Id.Equals(likeDislike.PostId));
+                .FirstOrDefaultAsync(c => c.Id.Equals(message.PostId));
 
             if (commentary == null)
             {

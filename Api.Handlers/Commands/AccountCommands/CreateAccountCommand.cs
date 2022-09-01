@@ -9,50 +9,50 @@ public class CreateAccountCommand : HandlerBase, Command<Task<Account>, CreateAc
 
     }
 
-    public async Task<Account> Handle(CreateAccountDto createAccount)
+    public async Task<Account> Handle(CreateAccountDto message)
     {
-        if (!DataValidator.IsMailAddressValid(createAccount.MailAddress))
+        if (!DataValidator.IsMailAddressValid(message.MailAddress))
         {
             throw new HandlerException(ErrorType.InvalidMail);
         }
 
-        if (!DataValidator.IsPasswordValid(createAccount.Password))
+        if (!DataValidator.IsPasswordValid(message.Password))
         {
             throw new HandlerException(ErrorType.InvalidPassword);
         }
 
-        if (await this.context.Accounts.AnyAsync(a => a.MailAddress.Equals(createAccount.MailAddress)))
+        if (await this.context.Accounts.AnyAsync(a => a.MailAddress.Equals(message.MailAddress)))
         {
             throw new HandlerException(ErrorType.MailAlreadyInUse);
         }
 
-        this.EncryptPassword(createAccount.Password, out byte[] hash, out byte[] salt);
+        this.EncryptPassword(message.Password, out byte[] hash, out byte[] salt);
 
         byte[] fileBytes = null;
-        if (createAccount.ProfilPic != null && createAccount.ProfilPic.Length > 0)
+        if (message.ProfilPic != null && message.ProfilPic.Length > 0)
         {
-            if (!DataValidator.IsImageFormatSupported(createAccount.ProfilPic.FileName))
+            if (!DataValidator.IsImageFormatSupported(message.ProfilPic.FileName))
             {
                 throw new HandlerException(ErrorType.WrongFormatFile);
             }
 
             using (MemoryStream ms = new MemoryStream())
             {
-                createAccount.ProfilPic.CopyTo(ms);
+                message.ProfilPic.CopyTo(ms);
                 fileBytes = ms.ToArray();
             }
         }
 
         Account account = new Account()
         {
-            MailAddress = createAccount.MailAddress,
+            MailAddress = message.MailAddress,
             PasswordHash = hash,
             PasswordSalt = salt,
             Role = Role.User.ToString(),
-            Firstname = createAccount.Firstname ?? "Unknown",
-            Lastname = createAccount.Lastname ?? "Unknown",
-            Pseudonym = createAccount.Pseudonym ?? "Anonymous",
-            PicUrl = Blob.GetProfilPicUrl(fileBytes, createAccount.MailAddress).Result,
+            Firstname = message.Firstname ?? "Unknown",
+            Lastname = message.Lastname ?? "Unknown",
+            Pseudonym = message.Pseudonym ?? "Anonymous",
+            PicUrl = Blob.GetProfilPicUrl(fileBytes, message.MailAddress).Result,
             CreatedAt = DateTime.Now,
         };
 

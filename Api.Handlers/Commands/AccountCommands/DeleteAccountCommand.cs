@@ -7,10 +7,10 @@ public class DeleteAccountCommand : HandlerBase, Command<Task, string>
 
     }
 
-    public async Task Handle(string mailAddress)
+    public async Task Handle(string message)
     {
         Account account = await this.context.Accounts
-            .FirstOrDefaultAsync(a => a.MailAddress.Equals(mailAddress));
+            .FirstOrDefaultAsync(a => a.MailAddress.Equals(message));
 
         if (account == null)
         {

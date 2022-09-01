@@ -9,22 +9,22 @@ public class UpdateAccountPasswordCommand : HandlerBase, Command<Task, UpdatePas
         
     }
 
-    public async Task Handle(UpdatePasswordDto updatePassword)
+    public async Task Handle(UpdatePasswordDto message)
     {
         Account account = await this.context.Accounts
-            .FirstOrDefaultAsync(a => a.MailAddress.Equals(updatePassword.MailAddress));
+            .FirstOrDefaultAsync(a => a.MailAddress.Equals(message.MailAddress));
 
         if (account == null)
         {
             throw new HandlerException(ErrorType.AccountNotFound);
         }
 
-        if (!DataValidator.IsPasswordValid(updatePassword.NewPassword))
+        if (!DataValidator.IsPasswordValid(message.NewPassword))
         {
             throw new HandlerException(ErrorType.InvalidPassword);
         }
 
-        this.EncryptPassword(updatePassword.NewPassword, out byte[] hash, out byte[] salt);
+        this.EncryptPassword(message.NewPassword, out byte[] hash, out byte[] salt);
 
         account.PasswordHash = hash;
         account.PasswordSalt = salt;

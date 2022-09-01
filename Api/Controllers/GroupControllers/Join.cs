@@ -1,4 +1,4 @@
-﻿using Api.Models.ExpositionModels.Resources;
+﻿using Api.Handlers.Commands.GroupCommands;
 using System.Security.Claims;
 
 namespace Api.Controllers.GroupControllers;
@@ -6,38 +6,23 @@ namespace Api.Controllers.GroupControllers;
 public partial class GroupController
 {
     [HttpPost("join"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
-    public async Task<ActionResult<GroupResource>> Join(Guid groupId)
+    public async Task<ActionResult> Join(Guid groupId)
     {
-        /*
         string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
-
-        Account account = await this.context.Accounts
-            .FirstOrDefaultAsync(a => a.MailAddress.Equals(mailAddress));
-
-        if (account == null)
+        
+        try
         {
-            return NotFound(this.exceptionHandler.GetError(ErrorType.AccountNotFound));
+            Group group = await this.handlers.Get<JoinGroupCommand>().Handle(new JoinGroupDto()
+            {
+                MailAddress = mailAddress,
+                GroupId = groupId
+            });
+
+            return Ok(Mapper.Group_ToResource(group));
         }
-
-        Group group = await this.context.Groups
-            .FirstOrDefaultAsync(p => p.Id.Equals(groupId));
-
-        if (group == null)
+        catch (HandlerException exception)
         {
-            return NotFound(this.exceptionHandler.GetError(ErrorType.GroupNotFound));
+            return exception.Content;
         }
-
-        if (group.Members.Any(m => m.Id.Equals(account.Id)))
-        {
-            return BadRequest(this.exceptionHandler.GetError(ErrorType.AccountAlreadyInGroup));
-        }
-
-        group.Members.Add(account);
-
-        await this.context.SaveChangesAsync();
-
-        return Ok(this.mapper.Group_ToResource(group));
-        */
-        return Ok();
     }
 }

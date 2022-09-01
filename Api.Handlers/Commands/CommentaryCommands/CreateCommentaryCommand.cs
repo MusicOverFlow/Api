@@ -7,48 +7,48 @@ public class CreateCommentaryCommand : HandlerBase, Command<Task<Post>, CreateCo
 
     }
 
-    public async Task<Post> Handle(CreateCommentaryDto createCommentary)
+    public async Task<Post> Handle(CreateCommentaryDto message)
     {
         Account account = await this.context.Accounts
-            .FirstOrDefaultAsync(a => a.MailAddress.Equals(createCommentary.CreatorMailAddress));
+            .FirstOrDefaultAsync(a => a.MailAddress.Equals(message.CreatorMailAddress));
 
         if (account == null)
         {
             throw new HandlerException(ErrorType.AccountNotFound);
         }
 
-        if (string.IsNullOrWhiteSpace(createCommentary.Content))
+        if (string.IsNullOrWhiteSpace(message.Content))
         {
             throw new HandlerException(ErrorType.PostTitleOrContentEmpty);
         }
 
         Post post = await this.context.Posts
-            .FirstOrDefaultAsync(p => p.Id.Equals(createCommentary.PostId));
+            .FirstOrDefaultAsync(p => p.Id.Equals(message.PostId));
 
         if (post == null)
         {
             throw new HandlerException(ErrorType.PostOrCommentaryNotFound);
         }
 
-        if (!string.IsNullOrWhiteSpace(createCommentary.ScriptLanguage))
+        if (!string.IsNullOrWhiteSpace(message.ScriptLanguage))
         {
-            createCommentary.ScriptLanguage = createCommentary.ScriptLanguage.ToLower();
-            if (!this.IsScriptLanguageSupported(createCommentary.ScriptLanguage))
+            message.ScriptLanguage = message.ScriptLanguage.ToLower();
+            if (!this.IsScriptLanguageSupported(message.ScriptLanguage))
             {
                 throw new HandlerException(ErrorType.WrongFormatFile);
             }
         }
         else
         {
-            createCommentary.ScriptLanguage = null;
+            message.ScriptLanguage = null;
         }
 
         Commentary commentary = new Commentary
         {
-            Content = createCommentary.Content,
+            Content = message.Content,
             CreatedAt = DateTime.Now,
 
-            ScriptLanguage = createCommentary.ScriptLanguage,
+            ScriptLanguage = message.ScriptLanguage,
 
             Owner = account,
             Post = post,
@@ -56,7 +56,7 @@ public class CreateCommentaryCommand : HandlerBase, Command<Task<Post>, CreateCo
 
         this.context.Commentaries.Add(commentary);
         post.Commentaries.Add(commentary);
-        commentary.ScriptUrl = createCommentary.Script != null ? Blob.GetPostScriptUrl(createCommentary.Script, commentary.Id).Result : null;
+        commentary.ScriptUrl = message.Script != null ? Blob.GetPostScriptUrl(message.Script, commentary.Id).Result : null;
 
         await this.context.SaveChangesAsync();
 

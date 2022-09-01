@@ -7,27 +7,27 @@ public class UpdateAccountMailAddressCommand : HandlerBase, Command<Task, Update
 
     }
 
-    public async Task Handle(UpdateMailDto updateMail)
+    public async Task Handle(UpdateMailDto message)
     {
         Account account = await this.context.Accounts
-            .FirstOrDefaultAsync(a => a.MailAddress.Equals(updateMail.MailAddress));
+            .FirstOrDefaultAsync(a => a.MailAddress.Equals(message.MailAddress));
 
         if (account == null)
         {
             throw new HandlerException(ErrorType.AccountNotFound);
         }
 
-        if (!DataValidator.IsMailAddressValid(updateMail.NewMailAddress))
+        if (!DataValidator.IsMailAddressValid(message.NewMailAddress))
         {
             throw new HandlerException(ErrorType.InvalidMail);
         }
 
-        if (await this.context.Accounts.AnyAsync(a => a.MailAddress.Equals(updateMail.NewMailAddress)))
+        if (await this.context.Accounts.AnyAsync(a => a.MailAddress.Equals(message.NewMailAddress)))
         {
             throw new HandlerException(ErrorType.MailAlreadyInUse);
         }
 
-        account.MailAddress = updateMail.NewMailAddress;
+        account.MailAddress = message.NewMailAddress;
         await this.context.SaveChangesAsync();
     }
 }
