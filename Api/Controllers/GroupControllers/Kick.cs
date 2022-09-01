@@ -1,4 +1,4 @@
-﻿using Api.Models.ExpositionModels.Resources;
+﻿using Api.Handlers.Commands.GroupCommands;
 using System.Security.Claims;
 
 namespace Api.Controllers.GroupControllers;
@@ -6,51 +6,24 @@ namespace Api.Controllers.GroupControllers;
 public partial class GroupController
 {
     [HttpPost("kick"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
-    public async Task<ActionResult<GroupResource>> Kick(Guid groupId, string memberMailAddress)
+    public async Task<ActionResult> Kick(Guid groupId, string memberMailAddress)
     {
-        /*
         string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
-        Account callerAccount = await this.context.Accounts
-            .FirstOrDefaultAsync(a => a.MailAddress.Equals(mailAddress));
-
-        if (callerAccount == null)
+        try
         {
-            return NotFound(this.exceptionHandler.GetError(ErrorType.AccountNotFound));
+            Group group = await this.handlers.Get<KickMemberFromGroupCommand>().Handle(new KickMemberDto()
+            {
+                CallerMailAddress = mailAddress,
+                MemberMailAddress = memberMailAddress,
+                GroupId = groupId,
+            });
+            
+            return Ok(Mapper.Group_ToResource_WithMembers(group));
         }
-
-        Group group = await this.context.Groups
-            .FirstOrDefaultAsync(p => p.Id.Equals(groupId));
-
-        if (group == null)
+        catch (HandlerException exception)
         {
-            return NotFound(this.exceptionHandler.GetError(ErrorType.GroupNotFound));
+            return exception.Content;
         }
-
-        if (!group.Owner.Id.Equals(callerAccount.Id))
-        {
-            return BadRequest(this.exceptionHandler.GetError(ErrorType.NotOwnerOfGroup));
-        }
-
-        Account memberAccount = await this.context.Accounts
-            .FirstOrDefaultAsync(a => a.MailAddress.Equals(memberMailAddress));
-
-        if (memberAccount == null)
-        {
-            return NotFound(this.exceptionHandler.GetError(ErrorType.AccountNotFound));
-        }
-
-        if (!group.Members.Any(m => m.MailAddress.Equals(memberMailAddress)))
-        {
-            return BadRequest(this.exceptionHandler.GetError(ErrorType.AccountNotInGroup));
-        }
-
-        group.Members.Remove(memberAccount);
-
-        await this.context.SaveChangesAsync();
-
-        return Ok(this.mapper.Group_ToResource_WithMembers(group));
-        */
-        return Ok();
     }        
 }

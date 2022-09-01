@@ -1,4 +1,9 @@
 ﻿{
+  "Undefined": {
+    "code": 500,
+    "error": "Erreur",
+    "message": "Une erreur est survenue"
+  },
   "InvalidMail": {
     "code": 400,
     "error": "Adresse mail invalide",

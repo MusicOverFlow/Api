@@ -35,13 +35,15 @@ public abstract class ExceptionHandler
 public class ExceptionDto
 {
     public int Code { get; init; }
-    public string Error { get; init; } = "Error";
-    public string Message { get; init; } = "An error occured";
+    public string Error { get; init; } = "Erreur";
+    public string Message { get; init; } = "Une erreur est survenue";
     public string Example { get; init; } = string.Empty;
 }
 
 public enum ErrorType
 {
+    Undefined,
+
     InvalidMail,
     InvalidPassword,
     MailAlreadyInUse,

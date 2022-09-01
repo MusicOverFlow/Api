@@ -1,36 +1,21 @@
-﻿using Api.Models.ExpositionModels.Resources;
+﻿using Api.Handlers.Queries.GroupQueries;
 
 namespace Api.Controllers.GroupControllers;
 
 public partial class GroupController
 {
     [HttpGet("name"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
-    public async Task<ActionResult<List<GroupResource>>> ReadName(string name)
+    public async Task<ActionResult> ReadName(string name)
     {
-        /*
-        if (string.IsNullOrWhiteSpace(name))
+        try
         {
-            return BadRequest();
+            List<Group> groups = await this.handlers.Get<ReadGroupByNameQuery>().Handle(name);
+
+            return Ok(groups.Select(g => Mapper.Group_ToResource(g)));
         }
-
-        List<GroupResource_WithMembers> groups = new List<GroupResource_WithMembers>();
-
-        await this.context.Groups
-            .ForEachAsync(g =>
-            {
-                if (groups.Count >= this.MAX_GROUPS_IN_SEARCHES)
-                {
-                    return;
-                }
-
-                if (LevenshteinDistance.Compare(name, g.Name) >= 0.5)
-                {
-                    groups.Add(this.mapper.Group_ToResource_WithMembers(g));
-                }
-            });
-
-        return Ok(groups);
-        */
-        return Ok();
+        catch (HandlerException exception)
+        {
+            return exception.Content;
+        }
     }
 }
