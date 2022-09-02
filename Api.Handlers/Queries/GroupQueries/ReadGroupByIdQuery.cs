@@ -1,8 +1,8 @@
 ﻿namespace Api.Handlers.Queries.GroupQueries;
 
-public class ReadGroupQuery : HandlerBase, Query<Task<List<Group>>, Guid?>
+public class ReadGroupByIdQuery : HandlerBase, Query<Task<List<Group>>, Guid?>
 {
-    public ReadGroupQuery(ModelsContext context) : base(context)
+    public ReadGroupByIdQuery(ModelsContext context) : base(context)
     {
         
     }
@@ -16,8 +16,7 @@ public class ReadGroupQuery : HandlerBase, Query<Task<List<Group>>, Guid?>
             query = query.Where(g => g.Id.Equals(message));
         }
         
-        List<Group> groups = await query
-            .ToListAsync();
+        List<Group> groups = await query.ToListAsync();
 
         if (message != null && groups.Count == 0)
         {

@@ -1,4 +1,4 @@
-﻿using Api.Models.ExpositionModels.Resources;
+﻿using Api.Handlers.Queries.PostQueries;
 using System.Security.Claims;
 
 namespace Api.Controllers.PostControllers;
@@ -6,43 +6,19 @@ namespace Api.Controllers.PostControllers;
 public partial class PostController
 {
     [HttpGet("homePage"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
-    public async Task<ActionResult<List<PostResource>>> ReadHomePage()
+    public async Task<ActionResult> ReadHomePage()
     {
-        /*
         string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
-        Account account = await this.context.Accounts
-            .FirstOrDefaultAsync(a => a.MailAddress.Equals(mailAddress));
-
-        if (account == null)
+        try
         {
-            return NotFound(this.exceptionHandler.GetError(ErrorType.AccountNotFound));
+            List<Post> posts = await this.handlers.Get<ReadHomePagePostsQuery>().Handle(mailAddress);
+
+            return Ok(posts.Select(p => Mapper.Post_ToResource(p)).ToList());
         }
-
-        List<PostResource> posts = new List<PostResource>();
-
-        account.OwnedPosts.ToList().ForEach(p =>
+        catch (HandlerException exception)
         {
-            if (!this.Contains(posts, p.Id)) posts.Add(this.mapper.Post_ToResource(p));
-        });
-        account.OwnedCommentaries.ToList().ForEach(c =>
-        {
-            if (!this.Contains(posts, c.Post.Id)) posts.Add(this.mapper.Post_ToResource(c.Post));
-        });
-        account.Follows.ToList().ForEach(f =>
-        {
-            f.OwnedPosts.ToList().ForEach(p =>
-            {
-                if (!this.Contains(posts, p.Id)) posts.Add(this.mapper.Post_ToResource(p));
-            });
-            f.OwnedCommentaries.ToList().ForEach(c =>
-            {
-                if (!this.Contains(posts, c.Post.Id)) posts.Add(this.mapper.Post_ToResource(c.Post));
-            });
-        });
-
-        return Ok(posts.OrderByDescending(p => p.CreatedAt).ToList());
-        */
-        return Ok();
+            return exception.Content;
+        }
     }
 }

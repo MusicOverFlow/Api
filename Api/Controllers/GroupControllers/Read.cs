@@ -9,7 +9,7 @@ public partial class GroupController
     {
         try
         {
-            List<Group> groups = await this.handlers.Get<ReadGroupQuery>().Handle(id);
+            List<Group> groups = await this.handlers.Get<ReadGroupByIdQuery>().Handle(id);
 
             return Ok(groups
                 .Select(a => Mapper.Group_ToResource_WithMembers_AndPosts(a))
