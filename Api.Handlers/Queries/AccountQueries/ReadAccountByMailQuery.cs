@@ -16,8 +16,7 @@ public class ReadAccountByMailQuery : HandlerBase, Query<Task<List<Account>>, st
             query = query.Where(a => a.MailAddress.Equals(message));
         }
 
-        List<Account> accounts = await query
-            .ToListAsync();
+        List<Account> accounts = await query.ToListAsync();
 
         if (!string.IsNullOrWhiteSpace(message) && accounts.Count == 0)
         {

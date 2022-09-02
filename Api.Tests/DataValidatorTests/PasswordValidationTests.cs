@@ -49,12 +49,12 @@ public class PasswordValidationTests
     }
 
     [Fact(DisplayName =
-        "Password '1Mp?'\n" +
+        "Password '1Mp'\n" +
         "Should not be valid\n" +
         "Because it is too short")]
     public void PasswordValidation_6()
     {
-        DataValidator.IsPasswordValid("1Mp?").Should().BeFalse();
+        DataValidator.IsPasswordValid("1Mp").Should().BeFalse();
     }
 
     [Fact(DisplayName =

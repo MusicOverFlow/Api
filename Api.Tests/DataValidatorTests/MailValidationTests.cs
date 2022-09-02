@@ -18,25 +18,25 @@ public class MailValidationTests
         "Because it is missing the '@'")]
     public void MailValidation_2()
     {
-        DataValidator.IsPasswordValid("gtouchesmyges.fr").Should().BeFalse();
+        DataValidator.IsPasswordValid("gtouchetmyges.fr").Should().BeFalse();
     }
 
     [Fact(DisplayName =
-        "Mail 'gtouches@mygesfr'\n" +
+        "Mail 'gtouchet@mygesfr'\n" +
         "Should not be valid\n" +
         "Because it is missing the '.'")]
     public void MailValidation_3()
     {
-        DataValidator.IsPasswordValid("gtouches@mygesfr").Should().BeFalse();
+        DataValidator.IsPasswordValid("gtouchet@mygesfr").Should().BeFalse();
     }
 
     [Fact(DisplayName =
-        "Mail 'gtouches@'\n" +
+        "Mail 'gtouchet@'\n" +
         "Should not be valid\n" +
         "Because it is missing the domain")]
     public void MailValidation_4()
     {
-        DataValidator.IsPasswordValid("gtouches@").Should().BeFalse();
+        DataValidator.IsPasswordValid("gtouchet@").Should().BeFalse();
     }
 
     [Fact(DisplayName =
