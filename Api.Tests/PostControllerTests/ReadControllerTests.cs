@@ -4,6 +4,7 @@ namespace Api.Tests.PostControllerTests;
 
 public class ReadControllerTests : TestBase
 {
+    /*
     private readonly AccountResource account;
     private readonly PostResource post;
 
@@ -109,4 +110,5 @@ public class ReadControllerTests : TestBase
 
         result.Value.Should().BeOfType<List<PostResource>>();
     }
+    */
 }

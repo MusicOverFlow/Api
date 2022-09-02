@@ -6,6 +6,11 @@ global using System.Net;
 global using System;
 global using System.Threading.Tasks;
 global using System.Linq;
+global using Api.Handlers.Kernel;
+global using Api.Models.Entities;
+global using Api.Handlers.Dtos;
+global using Api.Handlers.Queries.AccountQueries;
+global using Api.Handlers.Commands.AccountCommands;
 using Api.Models;
 using Microsoft.EntityFrameworkCore;
 using Api.Controllers.AccountControllers;
@@ -22,13 +27,7 @@ using Api.Handlers;
 
 public class TestBase
 {
-    // TODO: try to use lazy loading context in tests
-    private readonly ModelsContext dbContext = new ModelsContext(
-        new DbContextOptionsBuilder<ModelsContext>()
-            .UseLazyLoadingProxies()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
-            .Options);
-    private readonly HandlersContainer handlers;
+    protected readonly HandlersContainer handlers;
     private readonly IConfiguration configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
 
     protected readonly AccountController accountsController;
@@ -39,7 +38,13 @@ public class TestBase
 
     protected TestBase()
     {
-        this.handlers = new HandlersContainer(this.dbContext);
+        string databaseName = Guid.NewGuid().ToString();
+        this.handlers = new HandlersContainer(() => new ModelsContext(
+        new DbContextOptionsBuilder<ModelsContext>()
+            // TODO: try to use lazy loading context in tests
+            .UseLazyLoadingProxies()
+            .UseInMemoryDatabase(databaseName)
+            .Options));
         this.accountsController = new AccountController(this.handlers);
         this.postController = new PostController(this.handlers);
         this.commentaryController = new CommentaryController(this.handlers);

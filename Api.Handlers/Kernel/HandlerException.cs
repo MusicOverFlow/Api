@@ -1,5 +1,4 @@
-﻿using Api.Handlers.Utilitaries;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Handlers.Kernel;
 

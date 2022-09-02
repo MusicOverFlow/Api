@@ -4,6 +4,7 @@ namespace Api.Tests.AccountControllerTests;
 
 public class CreateControllerTests : TestBase
 {
+    /*
     [Fact(DisplayName =
         "Account creation with valid request\n" +
         "Should return CreatedResult with status code 201")]
@@ -134,4 +135,5 @@ public class CreateControllerTests : TestBase
 
         result.Value.Should().BeOfType<AccountResource>();
     }
+    */
 }

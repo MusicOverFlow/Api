@@ -4,6 +4,7 @@ namespace Api.Tests.PostControllerTests;
 
 public class ReadHomePageTests : TestBase
 {
+    /*
     private readonly AccountResource account1, account2, account3;
     private PostResource postFromAccount1, postFromAccount2, postFromAccount3;
 
@@ -51,7 +52,7 @@ public class ReadHomePageTests : TestBase
         return result.Value as CommentaryResource;
     }
 
-    /*[Fact(DisplayName =
+    [Fact(DisplayName =
         "Home page of an account that posted a post and follow another account that posted another post\n" +
         "Should contain 2 posts / 3")]
     public async void HomePage_1()
@@ -80,9 +81,9 @@ public class ReadHomePageTests : TestBase
         postTitles.Should().Contain(this.postFromAccount1.Title);
         postTitles.Should().Contain(this.postFromAccount2.Title);
         postTitles.Should().NotContain(this.postFromAccount3.Title);
-    }*/
+    }
 
-    /*[Fact(DisplayName =
+    [Fact(DisplayName =
         "Home page of an account that posted a post and follow another account that posted another post and commented another poster account\n" +
         "Should contain all 3 posts")]
     public async void HomePage_2()
@@ -113,9 +114,9 @@ public class ReadHomePageTests : TestBase
         postTitles.Should().Contain(this.postFromAccount1.Title);
         postTitles.Should().Contain(this.postFromAccount2.Title);
         postTitles.Should().Contain(this.postFromAccount3.Title);
-    }*/
+    }
 
-    /*[Fact(DisplayName =
+    [Fact(DisplayName =
         "Home page of an account that posted a post\n" +
         "And posted a commentary on another account's post\n" +
         "And follow another account that posted another post and commented another poster account\n" +
@@ -150,5 +151,6 @@ public class ReadHomePageTests : TestBase
         postTitles.Should().Contain(this.postFromAccount1.Title);
         postTitles.Should().Contain(this.postFromAccount2.Title);
         postTitles.Should().Contain(this.postFromAccount3.Title);
-    }*/
+    }
+    */
 }

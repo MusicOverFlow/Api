@@ -4,6 +4,7 @@ namespace Api.Tests.AccountControllerTests;
 
 public class ReadNameControllerTests : TestBase
 {
+    /*
     public ReadNameControllerTests()
     {
         _ = base.accountsController.Create(
@@ -91,4 +92,5 @@ public class ReadNameControllerTests : TestBase
 
         result.Value.As<List<AccountResource>>().First().Lastname.Should().Be("Touchet");
     }
+    */
 }

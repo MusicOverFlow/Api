@@ -4,6 +4,7 @@ namespace Api.Tests.AccountControllerTests;
 
 public class ReadControllerTests : TestBase
 {
+    /*
     public ReadControllerTests()
     {
         _ = base.accountsController.Create(
@@ -86,4 +87,5 @@ public class ReadControllerTests : TestBase
 
         result.Value.Should().BeOfType<List<AccountResource_WithPosts_AndGroups_AndFollows>>();
     }
+    */
 }
