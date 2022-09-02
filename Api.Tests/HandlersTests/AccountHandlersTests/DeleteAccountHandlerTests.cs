@@ -5,15 +5,6 @@ namespace Api.Tests.HandlersTests.AccountHandlersTests;
 
 public class DeleteAccountHandlerTests : TestBase
 {
-    private async void RegisterNewAccount(string mailAddress)
-    {
-        await this.handlers.Get<CreateAccountCommand>().Handle(new CreateAccountDto()
-        {
-            MailAddress = mailAddress,
-            Password = "123Password!",
-        });
-    }
-
     [Fact(DisplayName =
         "Deleting an existing account\n" +
         "Should delete the account")]
@@ -21,14 +12,7 @@ public class DeleteAccountHandlerTests : TestBase
     {
         this.RegisterNewAccount("gt@myges.fr");
 
-        try
-        {
-            await this.handlers.Get<DeleteAccountCommand>().Handle("gt@myges.fr");
-        }
-        catch (HandlerException)
-        {
-            
-        }
+        await this.handlers.Get<DeleteAccountCommand>().Handle("gt@myges.fr");
 
         List<Account> accounts = await this.handlers.Get<ReadAccountByMailQuery>().Handle();
         accounts.Count.Should().Be(0);

@@ -23,6 +23,7 @@ using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using Api.Models.ExpositionModels.Resources;
 using Api.Handlers;
+using Api.Handlers.Commands.AccountCommands;
 
 public class TestBase
 {
@@ -38,19 +39,28 @@ public class TestBase
     protected TestBase()
     {
         string databaseName = Guid.NewGuid().ToString();
-        this.handlers = new HandlersContainer(() => new ModelsContext(
-        new DbContextOptionsBuilder<ModelsContext>()
-            // TODO: try to use lazy loading context in tests
+        DbContextOptionsBuilder dbContextOptions = new DbContextOptionsBuilder()
             .UseLazyLoadingProxies()
-            .UseInMemoryDatabase(databaseName)
-            .Options));
+            .UseInMemoryDatabase(databaseName);
+        this.handlers = new HandlersContainer(() => new ModelsContext(dbContextOptions.Options));
+        
+
         this.accountsController = new AccountController(this.handlers);
         this.postController = new PostController(this.handlers);
         this.commentaryController = new CommentaryController(this.handlers);
         this.groupController = new GroupController(this.handlers);
-        this.authenticationController = new AuthenticationController(this.handlers, configuration);
+        this.authenticationController = new AuthenticationController(this.handlers, this.configuration);
     }
-    
+
+    protected async void RegisterNewAccount(string mailAddress)
+    {
+        await this.handlers.Get<CreateAccountCommand>().Handle(new CreateAccountDto()
+        {
+            MailAddress = mailAddress,
+            Password = "123Password!",
+        });
+    }
+
     protected void MockJwtAuthentication(AccountResource account)
     {
         Mock<HttpContext> mock = new Mock<HttpContext>();

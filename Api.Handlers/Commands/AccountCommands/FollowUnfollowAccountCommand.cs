@@ -1,8 +1,8 @@
 ﻿namespace Api.Handlers.Commands.AccountCommands;
 
-public class FollowAccountCommand : HandlerBase, Command<Task, FollowDto>
+public class FollowUnfollowAccountCommand : HandlerBase, Command<Task, FollowDto>
 {
-    public FollowAccountCommand(ModelsContext context) : base(context)
+    public FollowUnfollowAccountCommand(ModelsContext context) : base(context)
     {
 
     }

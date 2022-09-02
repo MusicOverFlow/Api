@@ -12,7 +12,7 @@ public partial class AccountController
 
         try
         {
-            await this.handlers.Get<FollowAccountCommand>().Handle(new FollowDto()
+            await this.handlers.Get<FollowUnfollowAccountCommand>().Handle(new FollowDto()
             {
                 CallerMail = callerMail,
                 TargetMail = mailAddress,

@@ -10,20 +10,12 @@ public class CreateAccountHandlerTests : TestBase
         "Should create the account")]
     public async void CreateAccountHandlerTest_1()
     {
-        Account account = null;
-        try
+        Account account = await this.handlers.Get<CreateAccountCommand>().Handle(new CreateAccountDto()
         {
-            account = await this.handlers.Get<CreateAccountCommand>().Handle(new CreateAccountDto()
-            {
-                MailAddress = "gt@myges.fr",
-                Password = "123Password!",
-            });
-        }
-        catch (HandlerException)
-        {
+            MailAddress = "gt@myges.fr",
+            Password = "123Password!",
+        });
 
-        }
-        
         account.Should().NotBeNull();
     }
     
@@ -43,7 +35,7 @@ public class CreateAccountHandlerTests : TestBase
         }
         catch (HandlerException)
         {
-
+            
         }
         
         account.Should().BeNull();

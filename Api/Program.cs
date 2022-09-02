@@ -86,25 +86,22 @@ builder.Services
 /**
  * Database context
  */
-DbContextOptionsBuilder dbContextOptions = new DbContextOptionsBuilder();
-dbContextOptions.UseLazyLoadingProxies();
-dbContextOptions.UseNpgsql(
-    builder.Configuration.GetConnectionString("MusicOverflowHeroku"),
-    optionBuilder =>
-    {
-        optionBuilder.MigrationsAssembly("Api");
-        optionBuilder.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
-    });
+DbContextOptionsBuilder dbContextOptions = new DbContextOptionsBuilder()
+    .UseLazyLoadingProxies()
+    .UseNpgsql(
+        builder.Configuration.GetConnectionString("MusicOverflowHeroku"),
+        optionBuilder =>
+        {
+            optionBuilder.MigrationsAssembly("Api");
+            optionBuilder.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
+        });
 
 /**
  * Handlers container singleton
  */
 try
 {
-    builder.Services.AddSingleton(new HandlersContainer(() =>
-    {
-        return new ModelsContext(dbContextOptions.Options);
-    }));
+    builder.Services.AddSingleton(new HandlersContainer(() => new ModelsContext(dbContextOptions.Options)));
 }
 catch (HandlerNotFoundException exception)
 {
