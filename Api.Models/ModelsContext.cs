@@ -13,14 +13,17 @@ public class ModelsContext : DbContext
     public DbSet<Commentary> Commentaries { get; set; }
     public DbSet<Group> Groups { get; set; }
 
-    public ModelsContext(DbContextOptions options) : base(options) { }
+    public ModelsContext(DbContextOptions options) : base(options)
+    {
+        
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Account>()
             .HasMany(a => a.OwnedPosts).WithOne(p => p.Owner)
             .OnDelete(DeleteBehavior.SetNull);
-
+        
         modelBuilder.Entity<Account>()
             .HasMany(a => a.OwnedCommentaries).WithOne(p => p.Owner)
             .OnDelete(DeleteBehavior.SetNull);
@@ -43,5 +46,16 @@ public class ModelsContext : DbContext
 
         modelBuilder.Entity<Group>()
             .HasOne(g => g.Owner);
+
+        modelBuilder.Entity<Post>().Navigation(p => p.Owner).AutoInclude();
+        modelBuilder.Entity<Post>().Navigation(p => p.Group).AutoInclude();
+        modelBuilder.Entity<Post>().Navigation(p => p.Commentaries).AutoInclude();
+        modelBuilder.Entity<Post>().Navigation(p => p.Likes).AutoInclude();
+
+        modelBuilder.Entity<Commentary>().Navigation(c => c.Owner).AutoInclude();
+        modelBuilder.Entity<Commentary>().Navigation(c => c.Likes).AutoInclude();
+        
+        modelBuilder.Entity<Group>().Navigation(g => g.Owner).AutoInclude();
+        modelBuilder.Entity<Group>().Navigation(g => g.Members).AutoInclude();
     }
 }

@@ -18,7 +18,7 @@ public partial class AccountController
                 ProfilPic = this.Request.Form.Files.FirstOrDefault(),
             });
 
-            return Ok(Mapper.Account_ToResource(account));
+            return Ok(Mapper.AccountToResource(account));
         }
         catch (HandlerException exception)
         {

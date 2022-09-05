@@ -87,7 +87,7 @@ builder.Services
  * Database context
  */
 DbContextOptionsBuilder dbContextOptions = new DbContextOptionsBuilder()
-    .UseLazyLoadingProxies()
+    //.UseLazyLoadingProxies() // Works in the app, but not in tests, tragic.
     .UseNpgsql(
         builder.Configuration.GetConnectionString("MusicOverflowHeroku"),
         optionBuilder =>

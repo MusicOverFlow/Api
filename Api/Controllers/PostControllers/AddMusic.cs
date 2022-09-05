@@ -15,7 +15,7 @@ public partial class PostController
                 File = Request.Form.Files[0],
             });
 
-            return Ok(Mapper.Post_ToResource(post));
+            return Ok(Mapper.PostToResource(post));
         }
         catch (HandlerException exception)
         {

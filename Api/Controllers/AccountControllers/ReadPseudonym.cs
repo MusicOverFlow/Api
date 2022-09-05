@@ -12,7 +12,7 @@ public partial class AccountController
             List<Account> accounts = await this.handlers.Get<ReadAccountByPseudonymQuery>().Handle(pseudonym);
 
             return Ok(accounts
-                .Select(a => Mapper.Account_ToResource(a))
+                .Select(a => Mapper.AccountToResource(a))
                 .ToList());
         }
         catch (HandlerException exception)

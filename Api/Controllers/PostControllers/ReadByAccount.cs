@@ -15,7 +15,7 @@ public partial class PostController
             List<Post> posts = await this.handlers.Get<ReadPostByAccountQuery>().Handle(mailAddress);
 
             return Ok(posts
-                .Select(p => Mapper.Post_ToResource(p))
+                .Select(p => Mapper.PostToResource(p))
                 .OrderByDescending(p => p.CreatedAt)
                 .ToList());
         }

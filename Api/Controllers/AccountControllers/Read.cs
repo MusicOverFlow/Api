@@ -12,7 +12,7 @@ public partial class AccountController
             List<Account> accounts = await this.handlers.Get<ReadAccountByMailQuery>().Handle(mailAddress);
 
             return Ok(accounts
-                .Select(a => Mapper.Account_ToResource_WithPosts_AndGroups_AndFollows(a))
+                .Select(a => Mapper.AccountToResource(a))
                 .ToList());
         }
         catch (HandlerException exception)

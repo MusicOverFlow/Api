@@ -14,7 +14,7 @@ public partial class PostController
         {
             List<Post> posts = await this.handlers.Get<ReadHomePagePostsQuery>().Handle(mailAddress);
 
-            return Ok(posts.Select(p => Mapper.Post_ToResource(p)).ToList());
+            return Ok(posts.Select(p => Mapper.PostToResource(p)).ToList());
         }
         catch (HandlerException exception)
         {

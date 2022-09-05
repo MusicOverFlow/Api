@@ -16,7 +16,7 @@ public partial class AccountController
             });
 
             return Ok(accounts
-                .Select(a => Mapper.Account_ToResource(a))
+                .Select(a => Mapper.AccountToResource(a))
                 .ToList());
         }
         catch (HandlerException exception)

@@ -1,8 +1,8 @@
-﻿namespace Api.Handlers.Commands.AccountCommands;
+﻿namespace Api.Handlers.Commands.PostCommands;
 
-public class LikeDislikeCommand : HandlerBase, Command<Task, LikeDislikeDto>
+public class LikeDislikePostCommand : HandlerBase, Command<Task, LikeDislikeDto>
 {
-    public LikeDislikeCommand(ModelsContext context) : base(context)
+    public LikeDislikePostCommand(ModelsContext context) : base(context)
     {
 
     }
@@ -10,6 +10,8 @@ public class LikeDislikeCommand : HandlerBase, Command<Task, LikeDislikeDto>
     public async Task Handle(LikeDislikeDto message)
     {
         Account account = await this.context.Accounts
+            .Include(a => a.LikedPosts)
+            .Include(a => a.LikedCommentaries)
             .FirstOrDefaultAsync(a => a.MailAddress.Equals(message.CallerMail));
 
         if (account == null)

@@ -18,7 +18,7 @@ public partial class GroupController
                 GroupId = groupId,
             });
 
-            return Ok(posts.Select(p => Mapper.Post_ToResource(p)));
+            return Ok(posts.Select(p => Mapper.PostToResource(p)));
         }
         catch (HandlerException exception)
         {

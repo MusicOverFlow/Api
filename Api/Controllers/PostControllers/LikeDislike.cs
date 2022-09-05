@@ -1,9 +1,9 @@
-﻿using Api.Handlers.Commands.AccountCommands;
+﻿using Api.Handlers.Commands.PostCommands;
 using System.Security.Claims;
 
-namespace Api.Controllers.AccountControllers;
+namespace Api.Controllers.PostControllers;
 
-public partial class AccountController
+public partial class PostController
 {
     [HttpPut("like"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
     public async Task<ActionResult> LikeDislike(Guid? id = null)
@@ -12,7 +12,7 @@ public partial class AccountController
 
         try
         {
-            await this.handlers.Get<LikeDislikeCommand>().Handle(new LikeDislikeDto()
+            await this.handlers.Get<LikeDislikePostCommand>().Handle(new LikeDislikeDto()
             {
                 CallerMail = callerAddress,
                 PostId = id,

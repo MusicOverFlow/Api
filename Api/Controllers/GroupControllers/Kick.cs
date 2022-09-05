@@ -19,7 +19,7 @@ public partial class GroupController
                 GroupId = groupId,
             });
             
-            return Ok(Mapper.Group_ToResource_WithMembers(group));
+            return Ok(Mapper.GroupToResource(group));
         }
         catch (HandlerException exception)
         {

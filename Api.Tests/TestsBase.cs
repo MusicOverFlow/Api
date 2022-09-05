@@ -40,7 +40,7 @@ public class TestBase
     {
         string databaseName = Guid.NewGuid().ToString();
         DbContextOptionsBuilder dbContextOptions = new DbContextOptionsBuilder()
-            .UseLazyLoadingProxies()
+            //.UseLazyLoadingProxies()
             .UseInMemoryDatabase(databaseName);
         this.handlers = new HandlersContainer(() => new ModelsContext(dbContextOptions.Options));
         
@@ -60,8 +60,8 @@ public class TestBase
             Password = "123Password!",
         });
     }
-
-    protected void MockJwtAuthentication(AccountResource account)
+    
+    protected void MockJwtAuthentication(Account account)
     {
         Mock<HttpContext> mock = new Mock<HttpContext>();
         

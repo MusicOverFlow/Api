@@ -12,7 +12,7 @@ public partial class GroupController
             List<Group> groups = await this.handlers.Get<ReadGroupByIdQuery>().Handle(id);
 
             return Ok(groups
-                .Select(a => Mapper.Group_ToResource_WithMembers_AndPosts(a))
+                .Select(a => Mapper.GroupToResource(a))
                 .ToList());
         }
         catch (HandlerException exception)

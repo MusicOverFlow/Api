@@ -10,6 +10,7 @@ public class FollowUnfollowAccountCommand : HandlerBase, Command<Task, FollowDto
     public async Task Handle(FollowDto message)
     {
         Account callerAccount = await this.context.Accounts
+            .Include(a => a.Follows)
             .FirstOrDefaultAsync(a => a.MailAddress.Equals(message.CallerMail));
 
         Account targetAccount = await this.context.Accounts

@@ -22,7 +22,7 @@ public partial class CommentaryController
                 Script = request.Script,
             });
 
-            return Created(nameof(Create), Mapper.Post_ToResource(post));
+            return Created(nameof(Create), Mapper.PostToResource(post));
         }
         catch (HandlerException exception)
         {

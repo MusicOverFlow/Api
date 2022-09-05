@@ -11,7 +11,7 @@ public partial class GroupController
         {
             List<Group> groups = await this.handlers.Get<ReadGroupByNameQuery>().Handle(name);
 
-            return Ok(groups.Select(g => Mapper.Group_ToResource(g)));
+            return Ok(groups.Select(g => Mapper.GroupToResource(g)));
         }
         catch (HandlerException exception)
         {

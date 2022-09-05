@@ -18,10 +18,3 @@ public class PostResource
     public ICollection<CommentaryResource> Commentaries { get; set; }
 }
 
-public class CreatePost
-{
-    [Required, MaxLength(50)] public string Title { get; set; }
-    [Required, MaxLength(250)] public string Content { get; set; }
-    public string Script { get; set; }
-    public string ScriptLanguage { get; set; }
-}

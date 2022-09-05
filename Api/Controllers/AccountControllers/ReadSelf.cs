@@ -12,9 +12,9 @@ public partial class AccountController
 
         try
         {
-            List<Account> accounts = await this.handlers.Get<ReadAccountByMailQuery>().Handle(mailAddress);
+            Account account = await this.handlers.Get<ReadAccountSelfQuery>().Handle(mailAddress);
 
-            return Ok(Mapper.Account_ToResource_WithPosts_AndGroups_AndFollows(accounts[0]));
+            return Ok(Mapper.AccountToResource(account));
         }
         catch (HandlerException exception)
         {

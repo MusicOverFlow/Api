@@ -1,4 +1,4 @@
-﻿using Api.Handlers.Queries.PostQueries;
+﻿using Api.Handlers.Commands.PostCommands;
 using System.Security.Claims;
 
 namespace Api.Controllers.PostControllers;
@@ -22,7 +22,7 @@ public partial class PostController
                 Script = request.Script
             });
             
-            return Created(nameof(Create), Mapper.Post_ToResource(post));
+            return Created(nameof(Create), Mapper.PostToResource(post));
         }
         catch (HandlerException exception)
         {

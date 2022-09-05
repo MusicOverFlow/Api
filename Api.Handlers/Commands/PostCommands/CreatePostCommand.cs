@@ -1,10 +1,10 @@
-﻿namespace Api.Handlers.Queries.PostQueries;
+﻿namespace Api.Handlers.Commands.PostCommands;
 
 public class CreatePostCommand : HandlerBase, Command<Task<Post>, CreatePostDto>
 {
     public CreatePostCommand(ModelsContext context) : base(context)
     {
-        
+
     }
 
     public async Task<Post> Handle(CreatePostDto message)

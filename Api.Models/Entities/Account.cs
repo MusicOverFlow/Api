@@ -13,13 +13,14 @@ public class Account
     [Required] public string Lastname { get; set; }
     [Required] public string Pseudonym { get; set; }
     [Required] public string PicUrl { get; set; }
-    [Required] public DateTime CreatedAt { get; set; }
 
-    public virtual ICollection<Post> OwnedPosts { get; set; }
-    public virtual ICollection<Post> LikedPosts { get; set; }
-    public virtual ICollection<Commentary> OwnedCommentaries { get; set; }
-    public virtual ICollection<Commentary> LikedCommentaries { get; set; }
+    public ICollection<Post> OwnedPosts { get; set; }
+    public ICollection<Post> LikedPosts { get; set; }
+    public ICollection<Commentary> OwnedCommentaries { get; set; }
+    public ICollection<Commentary> LikedCommentaries { get; set; }
     
-    public virtual ICollection<Group> Groups { get; set; }
-    public virtual ICollection<Account> Follows { get; set; }
+    public ICollection<Group> Groups { get; set; }
+    public ICollection<Account> Follows { get; set; }
+
+    [Required] public DateTime CreatedAt { get; set; }
 }

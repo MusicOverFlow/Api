@@ -18,6 +18,7 @@ public class ReadGroupPostsQuery : HandlerBase, Query<Task<List<Post>>, ReadGrou
         }
 
         Group group = await this.context.Groups
+            .Include(g => g.Posts)
             .FirstOrDefaultAsync(p => p.Id.Equals(message.GroupId));
 
         if (group == null)

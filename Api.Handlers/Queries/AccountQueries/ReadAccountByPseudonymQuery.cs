@@ -19,7 +19,6 @@ public class ReadAccountByPseudonymQuery : HandlerBase, Query<Task<List<Account>
         List<Account> accounts = new List<Account>();
 
         await this.context.Accounts
-            .Include(a => a.Follows)
             .ForEachAsync(a =>
             {
                 if (accounts.Count >= MAX_ACCOUNTS_IN_SEARCHES)

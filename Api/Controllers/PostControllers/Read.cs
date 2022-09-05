@@ -12,7 +12,7 @@ public partial class PostController
             List<Post> posts = await this.handlers.Get<ReadPostByIdQuery>().Handle(id);
 
             return Ok(posts
-                .Select(p => Mapper.Post_ToResource(p))
+                .Select(p => Mapper.PostToResource(p))
                 .ToList());
         }
         catch (HandlerException exception)

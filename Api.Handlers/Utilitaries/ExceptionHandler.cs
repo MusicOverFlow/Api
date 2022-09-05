@@ -18,17 +18,17 @@ public abstract class ExceptionHandler
 
     public static ExceptionDto Get(ErrorType errorType)
     {
-        return exceptions.TryGetValue(errorType, out ExceptionDto errorDto) ? new ExceptionDto()
+        return exceptions.TryGetValue(errorType, out ExceptionDto exceptionDto) ? new ExceptionDto()
         {
-            Error = errorDto.Error,
-            Message = errorDto.Message,
-            Example = errorDto.Example,
+            Error = exceptionDto.Error,
+            Message = exceptionDto.Message,
+            Example = exceptionDto.Example,
         } : new ExceptionDto();
     }
 
     public static int GetCode(ErrorType errorType)
     {
-        return exceptions.TryGetValue(errorType, out ExceptionDto errorDto) ? errorDto.Code : 500;
+        return exceptions.TryGetValue(errorType, out ExceptionDto exceptionDto) ? exceptionDto.Code : 500;
     }
 }
 
