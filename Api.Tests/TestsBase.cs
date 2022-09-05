@@ -42,7 +42,7 @@ public class TestBase
         DbContextOptionsBuilder dbContextOptions = new DbContextOptionsBuilder()
             //.UseLazyLoadingProxies()
             .UseInMemoryDatabase(databaseName);
-        this.handlers = new HandlersContainer(() => new ModelsContext(dbContextOptions.Options));
+        this.handlers = new HandlersContainer(() => new ModelsContext((DbContextOptions<ModelsContext>)dbContextOptions.Options));
         
 
         this.accountsController = new AccountController(this.handlers);
