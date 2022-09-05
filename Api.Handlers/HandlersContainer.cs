@@ -6,21 +6,24 @@ global using Api.Models.Entities;
 global using Api.Models.Enums;
 global using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Api.Handlers;
 
 public class HandlersContainer
 {
+    public IServiceProvider Services { get; }
+    private readonly IServiceScope scope;
     private readonly Dictionary<Type, Func<Handler>> handlersFactories;
-    private readonly Func<ModelsContext> contextFactory;
-    
+
     /// <summary>
     /// The application's handlers container, inject the context factory lambda
     /// </summary>
-    /// <param name="contextFactory"></param>
-    public HandlersContainer(Func<ModelsContext> contextFactory)
+    /// <param name="modelsContext"></param>
+    public HandlersContainer(IServiceProvider services)
     {
-        this.contextFactory = contextFactory;
+        this.Services = services;
+        this.scope = this.Services.CreateScope();
         this.handlersFactories = this.RegisterHandlers();
     }
 
@@ -51,7 +54,7 @@ public class HandlersContainer
             .Where(t => t.IsClass && !t.IsAbstract && t.IsSubclassOf(typeof(HandlerBase)))
             .ToDictionary(tKey => tKey, tValue =>
             {
-                Func<Handler> factory = () => (Handler)Activator.CreateInstance(tValue, this.contextFactory());
+                Func<Handler> factory = () => (Handler)Activator.CreateInstance(tValue, this.scope.ServiceProvider.GetRequiredService<ModelsContext>());
                 return factory;
             });
     }

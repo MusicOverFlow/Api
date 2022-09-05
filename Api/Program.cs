@@ -49,7 +49,7 @@ builder.Services.AddSwaggerGen(options =>
         Type = SecuritySchemeType.Http,
         Description = "JWT Bearer :",
 
-        Reference = new OpenApiReference
+        Reference = new OpenApiReference()
         {
             Id = JwtBearerDefaults.AuthenticationScheme,
             Type = ReferenceType.SecurityScheme
@@ -84,23 +84,20 @@ builder.Services
     });
 
 /**
- * Database context
+ * Handlers container singleton
  */
-DbContextOptionsBuilder dbContextOptions = new DbContextOptionsBuilder()
-    .UseNpgsql(
-        builder.Configuration.GetConnectionString("MusicOverflowHeroku"),
+builder.Services.AddDbContext<ModelsContext>(options => options
+    .UseNpgsql(builder.Configuration.GetConnectionString("MusicOverflowHeroku"),
         optionBuilder =>
         {
             optionBuilder.MigrationsAssembly("Api");
             optionBuilder.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
-        });
+        }),
+        contextLifetime: ServiceLifetime.Transient);
 
-/**
- * Handlers container singleton
- */
 try
 {
-    builder.Services.AddSingleton(new HandlersContainer(() => new ModelsContext(dbContextOptions.Options)));
+    builder.Services.AddSingleton<HandlersContainer>();
 }
 catch (HandlerNotFoundException exception)
 {

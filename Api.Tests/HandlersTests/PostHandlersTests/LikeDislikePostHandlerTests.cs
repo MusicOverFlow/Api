@@ -1,6 +1,5 @@
 ﻿using Api.Handlers.Commands.AccountCommands;
 using Api.Handlers.Commands.PostCommands;
-using Api.Handlers.Queries.AccountQueries;
 using Api.Handlers.Queries.PostQueries;
 
 namespace Api.Tests.HandlersTests.PostHandlersTests;

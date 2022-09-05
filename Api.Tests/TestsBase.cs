@@ -1,10 +1,7 @@
 ﻿global using FluentAssertions;
 global using Xunit;
-global using Microsoft.AspNetCore.Mvc;
 global using System.Collections.Generic;
-global using System.Net;
 global using System;
-global using System.Threading.Tasks;
 global using System.Linq;
 global using Api.Handlers.Utilitaries;
 global using Api.Handlers.Kernel;
@@ -21,29 +18,31 @@ using Microsoft.Extensions.Configuration;
 using Moq;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
-using Api.Models.ExpositionModels.Resources;
 using Api.Handlers;
+using Microsoft.Extensions.DependencyInjection;
 using Api.Handlers.Commands.AccountCommands;
 
 public class TestBase
 {
-    protected readonly HandlersContainer handlers;
+    private readonly IServiceCollection services;
     private readonly IConfiguration configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
+
+    protected readonly HandlersContainer handlers;
 
     protected readonly AccountController accountsController;
     protected readonly PostController postController;
     protected readonly CommentaryController commentaryController;
     protected readonly GroupController groupController;
     protected readonly AuthenticationController authenticationController;
-
+    
     protected TestBase()
     {
-        string databaseName = Guid.NewGuid().ToString();
-        DbContextOptionsBuilder dbContextOptions = new DbContextOptionsBuilder()
-            //.UseLazyLoadingProxies()
-            .UseInMemoryDatabase(databaseName);
-        this.handlers = new HandlersContainer(() => new ModelsContext((DbContextOptions<ModelsContext>)dbContextOptions.Options));
+        this.services = new ServiceCollection();
+        this.services.AddDbContext<ModelsContext>(options =>
+            options.UseInMemoryDatabase(Guid.NewGuid().ToString()),
+            contextLifetime: ServiceLifetime.Transient);
         
+        this.handlers = new HandlersContainer(this.services.BuildServiceProvider());
 
         this.accountsController = new AccountController(this.handlers);
         this.postController = new PostController(this.handlers);
@@ -60,7 +59,7 @@ public class TestBase
             Password = "123Password!",
         });
     }
-    
+
     protected void MockJwtAuthentication(Account account)
     {
         Mock<HttpContext> mock = new Mock<HttpContext>();
