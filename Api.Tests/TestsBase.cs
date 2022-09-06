@@ -25,9 +25,8 @@ using Api.Handlers.Commands.AccountCommands;
 public class TestBase
 {
     private readonly IServiceCollection services;
-    private readonly IConfiguration configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
-
     protected readonly HandlersContainer handlers;
+    private readonly IConfiguration configuration;
 
     protected readonly AccountController accountsController;
     protected readonly PostController postController;
@@ -37,27 +36,18 @@ public class TestBase
     
     protected TestBase()
     {
-        this.services = new ServiceCollection();
-        this.services.AddDbContext<ModelsContext>(options =>
-            options.UseInMemoryDatabase(Guid.NewGuid().ToString()),
-            contextLifetime: ServiceLifetime.Transient);
-        
+        this.services = new ServiceCollection()
+            .AddDbContext<ModelsContext>(
+                options => options.UseInMemoryDatabase(Guid.NewGuid().ToString()),
+                contextLifetime: ServiceLifetime.Transient);
         this.handlers = new HandlersContainer(this.services.BuildServiceProvider());
+        this.configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
 
         this.accountsController = new AccountController(this.handlers);
         this.postController = new PostController(this.handlers);
         this.commentaryController = new CommentaryController(this.handlers);
         this.groupController = new GroupController(this.handlers);
         this.authenticationController = new AuthenticationController(this.handlers, this.configuration);
-    }
-
-    protected async void RegisterNewAccount(string mailAddress)
-    {
-        await this.handlers.Get<CreateAccountCommand>().Handle(new CreateAccountDto()
-        {
-            MailAddress = mailAddress,
-            Password = "123Password!",
-        });
     }
 
     protected void MockJwtAuthentication(Account account)

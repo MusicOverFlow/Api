@@ -5,6 +5,15 @@ namespace Api.Tests.HandlersTests.AccountHandlersTests;
 
 public class DeleteAccountHandlerTests : TestBase
 {
+    private async void RegisterNewAccount(string mailAddress)
+    {
+        await this.handlers.Get<CreateAccountCommand>().Handle(new CreateAccountDto()
+        {
+            MailAddress = mailAddress,
+            Password = "123Password!",
+        });
+    }
+
     [Fact(DisplayName =
         "Deleting an existing account\n" +
         "Should delete the account")]

@@ -91,7 +91,7 @@ builder.Services.AddDbContext<ModelsContext>(options => options
         optionBuilder =>
         {
             optionBuilder.MigrationsAssembly("Api");
-            optionBuilder.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
+            //optionBuilder.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery); // todo tester de corriger le bug en virant ca
         }),
         contextLifetime: ServiceLifetime.Transient);
 

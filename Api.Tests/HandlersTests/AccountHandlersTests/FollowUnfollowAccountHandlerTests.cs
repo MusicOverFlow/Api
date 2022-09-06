@@ -5,6 +5,15 @@ namespace Api.Tests.HandlersTests.AccountHandlersTests;
 
 public class FollowUnfollowAccountHandlerTests : TestBase
 {
+    private async void RegisterNewAccount(string mailAddress)
+    {
+        await this.handlers.Get<CreateAccountCommand>().Handle(new CreateAccountDto()
+        {
+            MailAddress = mailAddress,
+            Password = "123Password!",
+        });
+    }
+
     [Fact(DisplayName =
         "Follow an existing, not followed account\n" +
         "Should add the account to followed accounts")]
