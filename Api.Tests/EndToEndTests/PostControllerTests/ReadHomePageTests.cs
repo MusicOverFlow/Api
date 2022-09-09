@@ -1,6 +1,6 @@
 ﻿using Api.Models.ExpositionModels.Resources;
 
-namespace Api.Tests.PostControllerTests;
+namespace Api.Tests.EndToEndTests.PostControllerTests;
 
 public class ReadHomePageTests : TestBase
 {

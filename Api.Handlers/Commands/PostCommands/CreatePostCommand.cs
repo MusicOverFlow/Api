@@ -22,10 +22,9 @@ public class CreatePostCommand : HandlerBase, Command<Task<Post>, CreatePostDto>
             throw new HandlerException(ErrorType.PostTitleOrContentEmpty);
         }
 
-        if (!string.IsNullOrWhiteSpace(message.ScriptLanguage))
+        if (!string.IsNullOrWhiteSpace(message.ScriptLanguage) && !string.IsNullOrWhiteSpace(message.Script))
         {
-            message.ScriptLanguage = message.ScriptLanguage.ToLower();
-            if (!this.IsScriptLanguageSupported(message.ScriptLanguage))
+            if (!this.IsScriptLanguageSupported(message.ScriptLanguage.ToLower()))
             {
                 throw new HandlerException(ErrorType.WrongFormatFile);
             }
@@ -33,6 +32,7 @@ public class CreatePostCommand : HandlerBase, Command<Task<Post>, CreatePostDto>
         else
         {
             message.ScriptLanguage = null;
+            message.Script = null;
         }
 
         Group group = null;
@@ -49,7 +49,7 @@ public class CreatePostCommand : HandlerBase, Command<Task<Post>, CreatePostDto>
 
         Post post = new Post()
         {
-            Title = message.Title ?? "No title",
+            Title = !string.IsNullOrWhiteSpace(message.Title) ? message.Title : "No title",
             Content = message.Content,
             CreatedAt = DateTime.Now,
 
@@ -62,7 +62,7 @@ public class CreatePostCommand : HandlerBase, Command<Task<Post>, CreatePostDto>
         };
 
         this.context.Posts.Add(post);
-        post.ScriptUrl = message.Script != null ? Blob.GetPostScriptUrl(message.Script, post.Id).Result : null;
+        post.ScriptUrl = message.Script != null ? await Blob.GetPostScriptUrl(message.Script, post.Id) : null;
         await this.context.SaveChangesAsync();
 
         return post;

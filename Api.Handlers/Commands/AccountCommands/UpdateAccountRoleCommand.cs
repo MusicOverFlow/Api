@@ -1,13 +1,13 @@
 ﻿namespace Api.Handlers.Commands.AccountCommands;
 
-public class UpdateAccountRoleCommand : HandlerBase, Command<Task, UpdateAccountRoleDto>
+public class UpdateAccountRoleCommand : HandlerBase, Command<Task<Account>, UpdateAccountRoleDto>
 {
     public UpdateAccountRoleCommand(ModelsContext context) : base(context)
     {
         
     }
     
-    public async Task Handle(UpdateAccountRoleDto message)
+    public async Task<Account> Handle(UpdateAccountRoleDto message)
     {
         Account account = await this.context.Accounts
             .FirstOrDefaultAsync(a => a.MailAddress.Equals(message.MailAddress));
@@ -26,5 +26,7 @@ public class UpdateAccountRoleCommand : HandlerBase, Command<Task, UpdateAccount
 
         account.Role = newRole;
         await this.context.SaveChangesAsync();
+
+        return account;
     }
 }

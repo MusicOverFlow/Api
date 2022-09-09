@@ -2,14 +2,14 @@
 
 namespace Api.Handlers.Commands.AccountCommands;
 
-public class UpdateAccountPasswordCommand : HandlerBase, Command<Task, UpdatePasswordDto>
+public class UpdateAccountPasswordCommand : HandlerBase, Command<Task<Account>, UpdatePasswordDto>
 {
     public UpdateAccountPasswordCommand(ModelsContext context) : base(context)
     {
         
     }
 
-    public async Task Handle(UpdatePasswordDto message)
+    public async Task<Account> Handle(UpdatePasswordDto message)
     {
         Account account = await this.context.Accounts
             .FirstOrDefaultAsync(a => a.MailAddress.Equals(message.MailAddress));
@@ -30,6 +30,8 @@ public class UpdateAccountPasswordCommand : HandlerBase, Command<Task, UpdatePas
         account.PasswordSalt = salt;
         
         await this.context.SaveChangesAsync();
+
+        return account;
     }
 
     private void EncryptPassword(string password, out byte[] hash, out byte[] salt)

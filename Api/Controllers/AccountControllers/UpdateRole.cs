@@ -9,13 +9,13 @@ public partial class AccountController
     {
         try
         {
-            await this.handlers.Get<UpdateAccountRoleCommand>().Handle(new UpdateAccountRoleDto()
+            Account account = await this.handlers.Get<UpdateAccountRoleCommand>().Handle(new UpdateAccountRoleDto()
             {
                 MailAddress = mailAddress,
                 Role = role,
             });
 
-            return Ok();
+            return Ok(Mapper.AccountToResource(account));
         }
         catch (HandlerException exception)
         {

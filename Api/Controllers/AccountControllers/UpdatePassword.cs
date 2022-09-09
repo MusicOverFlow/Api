@@ -12,13 +12,13 @@ public partial class AccountController
 
         try
         {
-            await this.handlers.Get<UpdateAccountPasswordCommand>().Handle(new UpdatePasswordDto()
+            Account account = await this.handlers.Get<UpdateAccountPasswordCommand>().Handle(new UpdatePasswordDto()
             {
                 MailAddress = mailAddress,
                 NewPassword = password,
             });
 
-            return Ok();
+            return Ok(Mapper.AccountToResource(account));
         }
         catch (HandlerException exception)
         {

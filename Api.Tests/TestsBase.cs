@@ -21,6 +21,9 @@ using System.Security.Claims;
 using Api.Handlers;
 using Microsoft.Extensions.DependencyInjection;
 using Api.Handlers.Commands.AccountCommands;
+using System.Threading.Tasks;
+using Api.Handlers.Commands.PostCommands;
+using Api.Handlers.Commands.GroupCommands;
 
 public class TestBase
 {
@@ -34,6 +37,9 @@ public class TestBase
     protected readonly GroupController groupController;
     protected readonly AuthenticationController authenticationController;
     
+    protected readonly string fakeAccountForAwsTesting = "ffe2eff4-c1e2-44e5-9b7e-d1c8a014d295_fake_account_for_testing@test.fr";
+    protected readonly string fakeGroupForAwsTesting = "12d77557-b1af-4c5d-b912-f8e684f1068d_fake_group_for_testing";
+
     protected TestBase()
     {
         this.services = new ServiceCollection()
@@ -48,6 +54,33 @@ public class TestBase
         this.commentaryController = new CommentaryController(this.handlers);
         this.groupController = new GroupController(this.handlers);
         this.authenticationController = new AuthenticationController(this.handlers, this.configuration);
+    }
+
+    protected async Task<Account> RegisterNewAccount(string mailAddress)
+    {
+        return await this.handlers.Get<CreateAccountCommand>().Handle(new CreateAccountDto()
+        {
+            MailAddress = mailAddress,
+            Password = "123Password!",
+        });
+    }
+
+    protected async Task<Post> RegisterNewPost(string creatorMailAddress)
+    {
+        return await this.handlers.Get<CreatePostCommand>().Handle(new CreatePostDto()
+        {
+            CreatorMailAddress = creatorMailAddress,
+            Content = "Post content",
+        });
+    }
+
+    protected async Task<Group> RegisterNewGroup(string creatorMailAddress)
+    {
+        return await this.handlers.Get<CreateGroupCommand>().Handle(new CreateGroupDto()
+        {
+            CreatorMailAddress = creatorMailAddress,
+            Name = "Group name",
+        });
     }
 
     protected void MockJwtAuthentication(Account account)

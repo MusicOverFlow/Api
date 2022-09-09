@@ -12,6 +12,8 @@ public class ReadAccountSelfQuery : HandlerBase, Query<Task<Account>, string>
         Account account = await this.context.Accounts
             .Include(a => a.Groups)
             .Include(a => a.Follows)
+            .Include(a => a.OwnedPosts)
+            .Include(a => a.OwnedCommentaries)
             .Where(a => a.MailAddress.Equals(message))
             .FirstOrDefaultAsync();
 

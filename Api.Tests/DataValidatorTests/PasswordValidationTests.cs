@@ -1,6 +1,4 @@
-﻿using Api.Handlers.Utilitaries;
-
-namespace Api.Tests.DataValidatorTests;
+﻿namespace Api.Tests.DataValidatorTests;
 
 public class PasswordValidationTests
 {

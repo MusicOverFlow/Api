@@ -18,7 +18,7 @@ public class CreateAccountHandlerTests : TestBase
 
         account.Should().NotBeNull();
     }
-    
+
     [Fact(DisplayName =
         "Account creation with any invalid field\n" +
         "Should not create the account")]
@@ -35,9 +35,9 @@ public class CreateAccountHandlerTests : TestBase
         }
         catch (HandlerException)
         {
-            
+
         }
-        
+
         account.Should().BeNull();
     }
 
@@ -52,7 +52,7 @@ public class CreateAccountHandlerTests : TestBase
                 MailAddress = "invalidMailAddress",
                 Password = "123Password!",
             }));
-        
+
         request.Content.StatusCode.Should().Be(400);
         request.Content.Value.As<ExceptionDto>().Error.Should().Be("Adresse mail invalide");
     }
@@ -68,7 +68,7 @@ public class CreateAccountHandlerTests : TestBase
                 MailAddress = "gt@myges.fr",
                 Password = "123",
             }));
-        
+
         request.Content.StatusCode.Should().Be(400);
         request.Content.Value.As<ExceptionDto>().Error.Should().Be("Mot de passe invalide");
     }
@@ -90,7 +90,7 @@ public class CreateAccountHandlerTests : TestBase
                 MailAddress = "gt@myges.fr",
                 Password = "123Password!",
             }));
-        
+
         request.Content.StatusCode.Should().Be(400);
         request.Content.Value.As<ExceptionDto>().Error.Should().Be("Adresse mail déjà enregistrée");
     }

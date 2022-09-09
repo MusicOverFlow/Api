@@ -22,13 +22,13 @@ public class UpdateAccountProfilPicCommand : HandlerBase, Command<Task<Account>,
         {
             throw new HandlerException(ErrorType.WrongFormatFile);
         }
-        
+
         using (var ms = new MemoryStream())
         {
             message.ProfilPic.CopyTo(ms);
             account.PicUrl = Blob.GetProfilPicUrl(ms.ToArray(), account.MailAddress).Result;
         }
-    
+
         await this.context.SaveChangesAsync();
 
         return account;

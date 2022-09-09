@@ -12,7 +12,7 @@ public partial class AccountController
 
         try
         {
-            await this.handlers.Get<UpdateAccountProfilCommand>().Handle(new UpdateProfilDto()
+            Account account = await this.handlers.Get<UpdateAccountProfilCommand>().Handle(new UpdateProfilDto()
             {
                 MailAddress = mailAddress,
                 Firstname = request.Firstname,
@@ -20,7 +20,7 @@ public partial class AccountController
                 Pseudonym = request.Pseudonym,
             });
 
-            return Ok();
+            return Ok(Mapper.AccountToResource(account));
         }
         catch (HandlerException exception)
         {

@@ -114,4 +114,27 @@ public abstract class Blob
         await s3Client.PutObjectAsync(request);
         return $"https://{CONVERTED_SOUNDS}.s3.eu-west-3.amazonaws.com/{filename}";
     }
+
+    /*
+     * Used to clean AWS containers after testing
+     */
+    public async static Task DeletePostScript(Guid postId)
+    {
+        var request = new DeleteObjectRequest()
+        {
+            BucketName = POST_SCRIPTS,
+            Key = postId.ToString(),
+        };
+        await s3Client.DeleteObjectAsync(request);
+    }
+
+    public async static Task DeletePostSounds(string file)
+    {
+        var request = new DeleteObjectRequest()
+        {
+            BucketName = POST_SOUNDS,
+            Key = file,
+        };
+        await s3Client.DeleteObjectAsync(request);
+    }
 }

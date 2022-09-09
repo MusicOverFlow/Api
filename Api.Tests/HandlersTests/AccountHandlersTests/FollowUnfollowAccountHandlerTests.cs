@@ -5,22 +5,13 @@ namespace Api.Tests.HandlersTests.AccountHandlersTests;
 
 public class FollowUnfollowAccountHandlerTests : TestBase
 {
-    private async void RegisterNewAccount(string mailAddress)
-    {
-        await this.handlers.Get<CreateAccountCommand>().Handle(new CreateAccountDto()
-        {
-            MailAddress = mailAddress,
-            Password = "123Password!",
-        });
-    }
-
     [Fact(DisplayName =
         "Follow an existing, not followed account\n" +
         "Should add the account to followed accounts")]
     public async void FollowUnfollowAccountHandlerTest_1()
     {
-        this.RegisterNewAccount("follower@myges.fr");
-        this.RegisterNewAccount("followed@myges.fr");
+        await this.RegisterNewAccount("follower@myges.fr");
+        await this.RegisterNewAccount("followed@myges.fr");
 
         await this.handlers.Get<FollowUnfollowAccountCommand>().Handle(new FollowDto()
         {
@@ -28,9 +19,9 @@ public class FollowUnfollowAccountHandlerTests : TestBase
             TargetMail = "followed@myges.fr",
         });
 
-        Account follower = this.handlers.Get<ReadAccountSelfQuery>().Handle("follower@myges.fr").Result;
-        Account followed = this.handlers.Get<ReadAccountByMailQuery>().Handle("followed@myges.fr").Result.First();
-        follower.Follows.Should().ContainEquivalentOf(followed);
+        Account follower = await this.handlers.Get<ReadAccountSelfQuery>().Handle("follower@myges.fr");
+        Account followed = await this.handlers.Get<ReadAccountSelfQuery>().Handle("followed@myges.fr");
+        follower.Follows.First().MailAddress.Should().Be(followed.MailAddress);
     }
 
     [Fact(DisplayName =
@@ -38,8 +29,8 @@ public class FollowUnfollowAccountHandlerTests : TestBase
         "Should remove the account from followed accounts")]
     public async void FollowUnfollowAccountHandlerTest_2()
     {
-        this.RegisterNewAccount("follower@myges.fr");
-        this.RegisterNewAccount("followed@myges.fr");
+        await this.RegisterNewAccount("follower@myges.fr");
+        await this.RegisterNewAccount("followed@myges.fr");
 
         // Follow
         await this.handlers.Get<FollowUnfollowAccountCommand>().Handle(new FollowDto()
@@ -55,8 +46,8 @@ public class FollowUnfollowAccountHandlerTests : TestBase
             TargetMail = "followed@myges.fr",
         });
 
-        Account follower = this.handlers.Get<ReadAccountSelfQuery>().Handle("follower@myges.fr").Result;
-        Account followed = this.handlers.Get<ReadAccountByMailQuery>().Handle("followed@myges.fr").Result.First();
+        Account follower = await this.handlers.Get<ReadAccountSelfQuery>().Handle("follower@myges.fr");
+        Account followed = await this.handlers.Get<ReadAccountSelfQuery>().Handle("followed@myges.fr");
         follower.Follows.Should().NotContainEquivalentOf(followed);
     }
 }

@@ -26,8 +26,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Api.Handlers\Api.Handlers.csproj" />
     <ProjectReference Include="..\Api.Models\Api.Models.csproj" />
     <ProjectReference Include="..\Api\Api.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="HandlersTests\GroupHandlersTests\" />
   </ItemGroup>
 
 </Project>

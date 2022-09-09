@@ -17,7 +17,7 @@ public class LikeDislikePostHandlerTests : TestBase
             MailAddress = ACCOUNT_MAIL,
             Password = "123Password!",
         }).Result;
-        
+
         this.post = this.handlers.Get<CreatePostCommand>().Handle(new CreatePostDto()
         {
             CreatorMailAddress = this.account.MailAddress,

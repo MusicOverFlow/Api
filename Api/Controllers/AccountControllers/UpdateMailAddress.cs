@@ -12,17 +12,17 @@ public partial class AccountController
 
         try
         {
-            await this.handlers.Get<UpdateAccountMailAddressCommand>().Handle(new UpdateMailDto()
+            Account account = await this.handlers.Get<UpdateAccountMailAddressCommand>().Handle(new UpdateMailDto()
             {
                 MailAddress = actualMailAddress,
                 NewMailAddress = mailAddress,
             });
+
+            return Ok(Mapper.AccountToResource(account));
         }
         catch (HandlerException exception)
         {
             return exception.Content;
         }
-        
-        return Ok();
     }
 }

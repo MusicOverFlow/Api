@@ -1,6 +1,6 @@
 ﻿using Api.Models.ExpositionModels.Resources;
 
-namespace Api.Tests.AccountControllerTests;
+namespace Api.Tests.EndToEndTests.AccountControllerTests;
 
 public class CreateControllerTests : TestBase
 {

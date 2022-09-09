@@ -1,7 +1,7 @@
 ﻿using Api.Models.ExpositionModels.Resources;
 using Microsoft.AspNetCore.Http;
 
-namespace Api.Tests.PostControllerTests;
+namespace Api.Tests.EndToEndTests.PostControllerTests;
 
 public class CreateControllerTests : TestBase
 {

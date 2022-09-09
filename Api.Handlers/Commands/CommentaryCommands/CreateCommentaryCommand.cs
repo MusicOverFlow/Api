@@ -30,10 +30,9 @@ public class CreateCommentaryCommand : HandlerBase, Command<Task<Post>, CreateCo
             throw new HandlerException(ErrorType.PostOrCommentaryNotFound);
         }
 
-        if (!string.IsNullOrWhiteSpace(message.ScriptLanguage))
+        if (!string.IsNullOrWhiteSpace(message.ScriptLanguage) && !string.IsNullOrWhiteSpace(message.Script))
         {
-            message.ScriptLanguage = message.ScriptLanguage.ToLower();
-            if (!this.IsScriptLanguageSupported(message.ScriptLanguage))
+            if (!this.IsScriptLanguageSupported(message.ScriptLanguage.ToLower()))
             {
                 throw new HandlerException(ErrorType.WrongFormatFile);
             }
@@ -41,6 +40,7 @@ public class CreateCommentaryCommand : HandlerBase, Command<Task<Post>, CreateCo
         else
         {
             message.ScriptLanguage = null;
+            message.Script = null;
         }
 
         Commentary commentary = new Commentary
@@ -56,7 +56,7 @@ public class CreateCommentaryCommand : HandlerBase, Command<Task<Post>, CreateCo
 
         this.context.Commentaries.Add(commentary);
         post.Commentaries.Add(commentary);
-        commentary.ScriptUrl = message.Script != null ? Blob.GetPostScriptUrl(message.Script, commentary.Id).Result : null;
+        commentary.ScriptUrl = message.Script != null ? await Blob.GetPostScriptUrl(message.Script, commentary.Id) : null;
 
         await this.context.SaveChangesAsync();
 
