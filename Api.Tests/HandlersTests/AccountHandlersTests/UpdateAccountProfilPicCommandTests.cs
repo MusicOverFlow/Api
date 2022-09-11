@@ -1,11 +1,10 @@
-﻿using Api.Handlers.Commands.AccountCommands;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using System.IO;
 using System.Net.Http;
 
 namespace Api.Tests.HandlersTests.AccountHandlersTests;
 
-public class UpdateAccountProfilPicHandlerTests : TestBase
+public class UpdateAccountProfilPicCommandTests : TestBase
 {
     [Fact(DisplayName =
         "Updating an account with an invalid profil pic file format\n" +
@@ -15,7 +14,7 @@ public class UpdateAccountProfilPicHandlerTests : TestBase
         await this.RegisterNewAccount("gt@myges.fr");
 
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
-            () => this.handlers.Get<UpdateAccountProfilPicCommand>().Handle(new UpdateProfilPicDto()
+            () => new UpdateAccountProfilPicCommand(this.context).Handle(new UpdateProfilPicDto()
             {
                 MailAddress = "gt@myges.fr",
                 ProfilPic = new FormFile(
@@ -36,7 +35,7 @@ public class UpdateAccountProfilPicHandlerTests : TestBase
     public async void UpdateAccountProfilPicHandlerTest_2()
     {
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
-            () => this.handlers.Get<UpdateAccountProfilPicCommand>().Handle(new UpdateProfilPicDto()
+            () => new UpdateAccountProfilPicCommand(this.context).Handle(new UpdateProfilPicDto()
             {
                 MailAddress = "gt@myges.fr",
                 ProfilPic = new FormFile(
@@ -56,13 +55,13 @@ public class UpdateAccountProfilPicHandlerTests : TestBase
         "Should update the account's profil pic URL")]
     public async void UpdateAccountProfilPicHandlerTest_3()
     {
-        Account accountBeforeUpdate = await this.RegisterNewAccount(this.fakeAccountForAwsTesting);
+        Account account = await this.RegisterNewAccount(this.fakeAccountForAwsTesting);
 
         byte[] fakeImage = new byte[] { 0, 1, 2, 3, 4 };
 
-        Account updatedAccount = await this.handlers.Get<UpdateAccountProfilPicCommand>().Handle(new UpdateProfilPicDto()
+        account = await new UpdateAccountProfilPicCommand(this.context).Handle(new UpdateProfilPicDto()
         {
-            MailAddress = this.fakeAccountForAwsTesting,
+            MailAddress = account.MailAddress,
             ProfilPic = new FormFile(
                 baseStream: new MemoryStream(fakeImage),
                 baseStreamOffset: 0,
@@ -71,8 +70,9 @@ public class UpdateAccountProfilPicHandlerTests : TestBase
                 fileName: "myProfilPic.png"),
         });
 
-        accountBeforeUpdate.PicUrl.Should().Contain("placeholder.png");
-        updatedAccount.PicUrl.Should().Contain($"{this.fakeAccountForAwsTesting}.png");
+        account.PicUrl.Should().Contain($"{account.MailAddress}.png");
+
+        await Blob.DeleteAccountPic(account.MailAddress);
     }
 
     [Fact(DisplayName =
@@ -80,13 +80,13 @@ public class UpdateAccountProfilPicHandlerTests : TestBase
         "Should update the account's profil pic on AWS")]
     public async void UpdateAccountProfilPicHandlerTest_4()
     {
-        await this.RegisterNewAccount(this.fakeAccountForAwsTesting);
+        Account account = await this.RegisterNewAccount(this.fakeAccountForAwsTesting);
 
         byte[] fakeImage = new byte[] { 0, 1, 2, 3, 4 };
 
-        Account updatedAccount = await this.handlers.Get<UpdateAccountProfilPicCommand>().Handle(new UpdateProfilPicDto()
+        account = await new UpdateAccountProfilPicCommand(this.context).Handle(new UpdateProfilPicDto()
         {
-            MailAddress = this.fakeAccountForAwsTesting,
+            MailAddress = account.MailAddress,
             ProfilPic = new FormFile(
                 baseStream: new MemoryStream(fakeImage),
                 baseStreamOffset: 0,
@@ -97,10 +97,12 @@ public class UpdateAccountProfilPicHandlerTests : TestBase
 
         // Download the file as bytes and compare it to the fake image
         using HttpClient client = new HttpClient();
-        using HttpResponseMessage response = await client.GetAsync(updatedAccount.PicUrl);
+        using HttpResponseMessage response = await client.GetAsync(account.PicUrl);
         using Stream stream = await response.Content.ReadAsStreamAsync();
         byte[] downloadedFile = new byte[fakeImage.Length];
         stream.Read(downloadedFile, 0, fakeImage.Length);
         downloadedFile.Should().Equal(fakeImage);
+
+        await Blob.DeleteAccountPic(account.MailAddress);
     }
 }

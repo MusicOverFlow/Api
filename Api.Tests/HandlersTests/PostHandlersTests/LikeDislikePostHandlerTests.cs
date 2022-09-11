@@ -1,45 +1,25 @@
-﻿using Api.Handlers.Commands.AccountCommands;
-using Api.Handlers.Commands.PostCommands;
-using Api.Handlers.Queries.PostQueries;
-
-namespace Api.Tests.HandlersTests.PostHandlersTests;
+﻿namespace Api.Tests.HandlersTests.PostHandlersTests;
 
 public class LikeDislikePostHandlerTests : TestBase
 {
-    private const string ACCOUNT_MAIL = "gt@myges.fr";
-    private Account account;
-    private Post post;
-
-    public LikeDislikePostHandlerTests()
-    {
-        this.account = this.handlers.Get<CreateAccountCommand>().Handle(new CreateAccountDto()
-        {
-            MailAddress = ACCOUNT_MAIL,
-            Password = "123Password!",
-        }).Result;
-
-        this.post = this.handlers.Get<CreatePostCommand>().Handle(new CreatePostDto()
-        {
-            CreatorMailAddress = this.account.MailAddress,
-            Content = "Post content",
-        }).Result;
-    }
-
     [Fact(DisplayName =
         "Liking an existing post\n" +
         "Should add the caller account to the post's likes")]
     public async void LikeDislikePostHandlerTest_1()
     {
-        await this.handlers.Get<LikeDislikePostCommand>().Handle(new LikeDislikeDto()
+        Account account = await this.RegisterNewAccount("gt@myges.fr");
+        Post post = await this.RegisterNewPost(account.MailAddress);
+        
+        await new LikeDislikePostCommand(this.context).Handle(new LikeDislikeDto()
         {
-            CallerMail = ACCOUNT_MAIL,
-            PostId = this.post.Id,
+            CallerMail = account.MailAddress,
+            PostId = post.Id,
         });
 
-        Post likedPost = this.handlers.Get<ReadPostByIdQuery>().Handle(this.post.Id).Result.First();
+        Post likedPost = new ReadPostByIdQuery(this.context).Handle(post.Id).Result.First();
 
         likedPost.Likes.Count.Should().Be(1);
-        likedPost.Likes.First().MailAddress.Should().Be(ACCOUNT_MAIL);
+        likedPost.Likes.First().MailAddress.Should().Be(account.MailAddress);
     }
 
     [Fact(DisplayName =
@@ -47,21 +27,24 @@ public class LikeDislikePostHandlerTests : TestBase
         "Should remove the caller account from the post's likes")]
     public async void LikeDislikePostHandlerTest_2()
     {
+        Account account = await this.RegisterNewAccount("gt@myges.fr");
+        Post post = await this.RegisterNewPost(account.MailAddress);
+
         // Like
-        await this.handlers.Get<LikeDislikePostCommand>().Handle(new LikeDislikeDto()
+        await new LikeDislikePostCommand(this.context).Handle(new LikeDislikeDto()
         {
-            CallerMail = this.account.MailAddress,
-            PostId = this.post.Id,
+            CallerMail = account.MailAddress,
+            PostId = post.Id,
         });
 
         // Dislike
-        await this.handlers.Get<LikeDislikePostCommand>().Handle(new LikeDislikeDto()
+        await new LikeDislikePostCommand(this.context).Handle(new LikeDislikeDto()
         {
-            CallerMail = this.account.MailAddress,
-            PostId = this.post.Id,
+            CallerMail = account.MailAddress,
+            PostId = post.Id,
         });
 
-        Post likedPost = this.handlers.Get<ReadPostByIdQuery>().Handle(this.post.Id).Result.First();
+        Post likedPost = new ReadPostByIdQuery(this.context).Handle(post.Id).Result.First();
 
         likedPost.Likes.Count.Should().Be(0);
     }
@@ -71,10 +54,12 @@ public class LikeDislikePostHandlerTests : TestBase
         "Should throw exception with code 404 and error type \"Post ou commentaire introuvable\"")]
     public async void LikeDislikePostHandlerTest_3()
     {
+        Account account = await this.RegisterNewAccount("gt@myges.fr");
+
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
-            () => this.handlers.Get<LikeDislikePostCommand>().Handle(new LikeDislikeDto()
+            () => new LikeDislikePostCommand(this.context).Handle(new LikeDislikeDto()
             {
-                CallerMail = this.account.MailAddress,
+                CallerMail = account.MailAddress,
                 PostId = Guid.NewGuid(),
             }));
 

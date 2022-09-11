@@ -1,5 +1,4 @@
-﻿using Api.Models.ExpositionModels.Resources;
-using AutoMapper;
+﻿using AutoMapper;
 
 namespace Api.Utilitaries;
 

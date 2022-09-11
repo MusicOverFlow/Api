@@ -20,7 +20,7 @@ public class AuthenticationQuery : HandlerBase, Query<Task<string>, Authenticati
         Account account = await this.context.Accounts
             .FirstOrDefaultAsync(a => a.MailAddress.Equals(message.MailAddress));
 
-        if (account == null || !IsPasswordCorrect(message.Password, account.PasswordHash, account.PasswordSalt))
+        if (account == null || !this.IsPasswordCorrect(message.Password, account.PasswordHash, account.PasswordSalt))
         {
             throw new HandlerException(ErrorType.WrongCredentials);
         }

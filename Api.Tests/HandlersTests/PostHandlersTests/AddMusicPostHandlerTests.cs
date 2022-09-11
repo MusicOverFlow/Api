@@ -1,5 +1,4 @@
-﻿using Api.Handlers.Commands.PostCommands;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using System.IO;
 using System.Net.Http;
 
@@ -7,20 +6,19 @@ namespace Api.Tests.HandlersTests.PostHandlersTests;
 
 public class AddMusicPostHandlerTests : TestBase
 {
-
     [Fact(DisplayName =
         "Adding a sound with valid format to a post\n" +
         "Should update the post's sound URL")]
     public async void AddMusicPostHandlerTest_1()
     {
         await this.RegisterNewAccount("gt@myges.fr");
-        Post postWithoutSound = await this.RegisterNewPost("gt@myges.fr");
+        Post post = await this.RegisterNewPost("gt@myges.fr");
 
         byte[] fakeSound = new byte[] { 0, 1, 2, 3, 4 };
 
-        Post postWithSound = await this.handlers.Get<AddMusicPostCommand>().Handle(new AddMusicDto()
+        post = await new AddMusicPostCommand(this.context).Handle(new AddMusicDto()
         {
-            PostId = postWithoutSound.Id,
+            PostId = post.Id,
             File = new FormFile(
                 baseStream: new MemoryStream(fakeSound),
                 baseStreamOffset: 0,
@@ -28,11 +26,10 @@ public class AddMusicPostHandlerTests : TestBase
                 name: "",
                 fileName: "mySound.mp3"),
         });
+        
+        post.MusicUrl.Should().Be($"https://post-sounds.s3.eu-west-3.amazonaws.com/{post.Id}.mySound.mp3");
 
-        postWithoutSound.MusicUrl.Should().BeNull();
-        postWithSound.MusicUrl.Should().Be($"https://post-sounds.s3.eu-west-3.amazonaws.com/{postWithSound.Id}.mySound.mp3");
-
-        await Blob.DeletePostSounds($"{postWithSound.Id}.mySound.mp3");
+        await Blob.DeletePostSound($"{post.Id}.mySound.mp3");
     }
 
     [Fact(DisplayName =
@@ -45,7 +42,7 @@ public class AddMusicPostHandlerTests : TestBase
 
         byte[] fakeSound = new byte[] { 0, 1, 2, 3, 4 };
 
-        Post postWithSound = await this.handlers.Get<AddMusicPostCommand>().Handle(new AddMusicDto()
+        Post postWithSound = await new AddMusicPostCommand(this.context).Handle(new AddMusicDto()
         {
             PostId = postWithoutSound.Id,
             File = new FormFile(
@@ -64,6 +61,6 @@ public class AddMusicPostHandlerTests : TestBase
         stream.Read(downloadedFile, 0, fakeSound.Length);
         downloadedFile.Should().Equal(fakeSound);
 
-        await Blob.DeletePostSounds($"{postWithSound.Id}.mySound.mp3");
+        await Blob.DeletePostSound($"{postWithSound.Id}.mySound.mp3");
     }
 }

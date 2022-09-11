@@ -1,9 +1,6 @@
-﻿using Api.Handlers.Commands.AccountCommands;
-using Api.Handlers.Queries.AccountQueries;
+﻿namespace Api.Tests.HandlersTests.AccountHandlersTests;
 
-namespace Api.Tests.HandlersTests.AccountHandlersTests;
-
-public class UpdateAccountMailAddressHandlerTests : TestBase
+public class UpdateAccountMailAddressCommandTests : TestBase
 {
     [Fact(DisplayName =
         "Updating an account mail address with a valid mail address\n" +
@@ -12,14 +9,13 @@ public class UpdateAccountMailAddressHandlerTests : TestBase
     {
         await this.RegisterNewAccount("gt@myges.fr");
 
-        await this.handlers.Get<UpdateAccountMailAddressCommand>().Handle(new UpdateMailDto()
+        Account updatedAccount = await new UpdateAccountMailAddressCommand(this.context).Handle(new UpdateMailDto()
         {
             MailAddress = "gt@myges.fr",
             NewMailAddress = "gtnew@myges.fr",
         });
-
-        Account updatedAccount = await this.handlers.Get<ReadAccountSelfQuery>().Handle("gtnew@myges.fr");
-        updatedAccount.Should().NotBeNull();
+        
+        updatedAccount.MailAddress.Should().Be("gtnew@myges.fr");
     }
 
     [Fact(DisplayName =
@@ -30,7 +26,7 @@ public class UpdateAccountMailAddressHandlerTests : TestBase
         await this.RegisterNewAccount("gt@myges.fr");
 
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
-            () => this.handlers.Get<UpdateAccountMailAddressCommand>().Handle(new UpdateMailDto()
+            () => new UpdateAccountMailAddressCommand(this.context).Handle(new UpdateMailDto()
             {
                 MailAddress = "gt@myges.fr",
                 NewMailAddress = "hello",
@@ -49,7 +45,7 @@ public class UpdateAccountMailAddressHandlerTests : TestBase
         await this.RegisterNewAccount("gtsecond@myges.fr");
 
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
-            () => this.handlers.Get<UpdateAccountMailAddressCommand>().Handle(new UpdateMailDto()
+            () => new UpdateAccountMailAddressCommand(this.context).Handle(new UpdateMailDto()
             {
                 MailAddress = "gtfirst@myges.fr",
                 NewMailAddress = "gtsecond@myges.fr",
@@ -65,7 +61,7 @@ public class UpdateAccountMailAddressHandlerTests : TestBase
     public async void UpdateAccountMailAddressHandlerTest_4()
     {
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
-            () => this.handlers.Get<UpdateAccountMailAddressCommand>().Handle(new UpdateMailDto()
+            () => new UpdateAccountMailAddressCommand(this.context).Handle(new UpdateMailDto()
             {
                 MailAddress = "gtfirst@myges.fr",
                 NewMailAddress = "gtsecond@myges.fr",

@@ -1,7 +1,4 @@
-﻿using Api.Handlers.Commands.CommentaryCommands;
-using Api.Models.Enums;
-
-namespace Api.Tests.HandlersTests.CommentaryHandlersTests;
+﻿namespace Api.Tests.HandlersTests.CommentaryHandlersTests;
 
 public class CreateCommentaryHandlerTests : TestBase
 {
@@ -13,7 +10,7 @@ public class CreateCommentaryHandlerTests : TestBase
         await this.RegisterNewAccount("gt@myges.fr");
         Post post = await this.RegisterNewPost("gt@myges.fr");
 
-        Post postWithCommentary = await this.handlers.Get<CreateCommentaryCommand>().Handle(new CreateCommentaryDto()
+        Post postWithCommentary = await new CreateCommentaryCommand(this.context).Handle(new CreateCommentaryDto()
         {
             CreatorMailAddress = "gt@myges.fr",
             Content = "Commentary content",
@@ -31,7 +28,7 @@ public class CreateCommentaryHandlerTests : TestBase
         await this.RegisterNewAccount("gt@myges.fr");
         Post post = await this.RegisterNewPost("gt@myges.fr");
 
-        Post postWithCommentary = await this.handlers.Get<CreateCommentaryCommand>().Handle(new CreateCommentaryDto()
+        Post postWithCommentary = await new CreateCommentaryCommand(this.context).Handle(new CreateCommentaryDto()
         {
             CreatorMailAddress = "gt@myges.fr",
             Content = "Commentary content",
@@ -49,7 +46,7 @@ public class CreateCommentaryHandlerTests : TestBase
         await this.RegisterNewAccount("gt@myges.fr");
         Post post = await this.RegisterNewPost("gt@myges.fr");
 
-        Post postWithCommentary = await this.handlers.Get<CreateCommentaryCommand>().Handle(new CreateCommentaryDto()
+        Post postWithCommentary = await new CreateCommentaryCommand(this.context).Handle(new CreateCommentaryDto()
         {
             CreatorMailAddress = "gt@myges.fr",
             Content = "Commentary content",
@@ -73,7 +70,7 @@ public class CreateCommentaryHandlerTests : TestBase
         await this.RegisterNewAccount("gt@myges.fr");
         Post post = await this.RegisterNewPost("gt@myges.fr");
 
-        Post postWithCommentary = await this.handlers.Get<CreateCommentaryCommand>().Handle(new CreateCommentaryDto()
+        Post postWithCommentary = await new CreateCommentaryCommand(this.context).Handle(new CreateCommentaryDto()
         {
             CreatorMailAddress = "gt@myges.fr",
             Content = "Commentary content",
@@ -93,7 +90,7 @@ public class CreateCommentaryHandlerTests : TestBase
         await this.RegisterNewAccount("gt@myges.fr");
 
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
-            () => this.handlers.Get<CreateCommentaryCommand>().Handle(new CreateCommentaryDto()
+            () => new CreateCommentaryCommand(this.context).Handle(new CreateCommentaryDto()
             {
                 CreatorMailAddress = "gt@myges.fr",
                 Content = "Commentary content",
@@ -113,7 +110,7 @@ public class CreateCommentaryHandlerTests : TestBase
         Post post = await this.RegisterNewPost("gt@myges.fr");
 
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
-            () => this.handlers.Get<CreateCommentaryCommand>().Handle(new CreateCommentaryDto()
+            () => new CreateCommentaryCommand(this.context).Handle(new CreateCommentaryDto()
             {
                 CreatorMailAddress = "newGuy@myges.fr",
                 Content = "Commentary content",

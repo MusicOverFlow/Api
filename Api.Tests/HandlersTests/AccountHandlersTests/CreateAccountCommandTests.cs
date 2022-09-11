@@ -1,16 +1,15 @@
-﻿using Api.Handlers.Commands.AccountCommands;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace Api.Tests.HandlersTests.AccountHandlersTests;
 
-public class CreateAccountHandlerTests : TestBase
+public class CreateAccountCommandTests : TestBase
 {
     [Fact(DisplayName =
         "Account creation with valid request\n" +
         "Should create the account")]
     public async void CreateAccountHandlerTest_1()
     {
-        Account account = await this.handlers.Get<CreateAccountCommand>().Handle(new CreateAccountDto()
+        Account account = await new CreateAccountCommand(this.context).Handle(new CreateAccountDto()
         {
             MailAddress = "gt@myges.fr",
             Password = "123Password!",
@@ -27,7 +26,7 @@ public class CreateAccountHandlerTests : TestBase
         Account account = null;
         try
         {
-            account = await this.handlers.Get<CreateAccountCommand>().Handle(new CreateAccountDto()
+            account = await new CreateAccountCommand(this.context).Handle(new CreateAccountDto()
             {
                 MailAddress = null,
                 Password = "123Password!",
@@ -47,7 +46,7 @@ public class CreateAccountHandlerTests : TestBase
     public async void CreateAccountHandlerTest_3()
     {
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
-            () => this.handlers.Get<CreateAccountCommand>().Handle(new CreateAccountDto()
+            () => new CreateAccountCommand(this.context).Handle(new CreateAccountDto()
             {
                 MailAddress = "invalidMailAddress",
                 Password = "123Password!",
@@ -63,7 +62,7 @@ public class CreateAccountHandlerTests : TestBase
     public async void CreateAccountHandlerTest_4()
     {
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
-            () => this.handlers.Get<CreateAccountCommand>().Handle(new CreateAccountDto()
+            () => new CreateAccountCommand(this.context).Handle(new CreateAccountDto()
             {
                 MailAddress = "gt@myges.fr",
                 Password = "123",
@@ -78,14 +77,14 @@ public class CreateAccountHandlerTests : TestBase
         "Should throw exception with code 400 and error type \"Adresse mail déjà enregistrée\"")]
     public async void CreateAccountHandlerTest_5()
     {
-        await this.handlers.Get<CreateAccountCommand>().Handle(new CreateAccountDto()
+        await new CreateAccountCommand(this.context).Handle(new CreateAccountDto()
         {
             MailAddress = "gt@myges.fr",
             Password = "123Password!",
         });
 
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
-            () => this.handlers.Get<CreateAccountCommand>().Handle(new CreateAccountDto()
+            () => new CreateAccountCommand(this.context).Handle(new CreateAccountDto()
             {
                 MailAddress = "gt@myges.fr",
                 Password = "123Password!",
@@ -101,7 +100,7 @@ public class CreateAccountHandlerTests : TestBase
     public async void CreateAccountHandlerTest_6()
     {
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
-            () => this.handlers.Get<CreateAccountCommand>().Handle(new CreateAccountDto()
+            () => new CreateAccountCommand(this.context).Handle(new CreateAccountDto()
             {
                 MailAddress = "gt@myges.fr",
                 Password = "123Password!",

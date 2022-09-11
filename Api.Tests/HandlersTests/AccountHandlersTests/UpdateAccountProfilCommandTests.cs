@@ -1,9 +1,6 @@
-﻿using Api.Handlers.Commands.AccountCommands;
-using Api.Handlers.Queries.AccountQueries;
+﻿namespace Api.Tests.HandlersTests.AccountHandlersTests;
 
-namespace Api.Tests.HandlersTests.AccountHandlersTests;
-
-public class UpdateAccountProfilHandlerTests : TestBase
+public class UpdateAccountProfilCommandTests : TestBase
 {
     [Fact(DisplayName =
        "Updating an account firstname with a firstname\n" +
@@ -12,13 +9,12 @@ public class UpdateAccountProfilHandlerTests : TestBase
     {
         await this.RegisterNewAccount("gt@myges.fr");
 
-        await this.handlers.Get<UpdateAccountProfilCommand>().Handle(new UpdateProfilDto()
+        Account updatedAccount = await new UpdateAccountProfilCommand(this.context).Handle(new UpdateProfilDto()
         {
             MailAddress = "gt@myges.fr",
             Firstname = "MyNewFirstname",
         });
-
-        Account updatedAccount = await this.handlers.Get<ReadAccountSelfQuery>().Handle("gt@myges.fr");
+        
         updatedAccount.Firstname.Should().Be("MyNewFirstname");
     }
 
@@ -29,13 +25,12 @@ public class UpdateAccountProfilHandlerTests : TestBase
     {
         await this.RegisterNewAccount("gt@myges.fr");
 
-        await this.handlers.Get<UpdateAccountProfilCommand>().Handle(new UpdateProfilDto()
+        Account updatedAccount = await new UpdateAccountProfilCommand(this.context).Handle(new UpdateProfilDto()
         {
             MailAddress = "gt@myges.fr",
             Firstname = string.Empty,
         });
-
-        Account updatedAccount = await this.handlers.Get<ReadAccountSelfQuery>().Handle("gt@myges.fr");
+        
         updatedAccount.Firstname.Should().Be("Unknown");
     }
 
@@ -46,12 +41,11 @@ public class UpdateAccountProfilHandlerTests : TestBase
     {
         await this.RegisterNewAccount("gt@myges.fr");
 
-        await this.handlers.Get<UpdateAccountProfilCommand>().Handle(new UpdateProfilDto()
+        Account updatedAccount = await new UpdateAccountProfilCommand(this.context).Handle(new UpdateProfilDto()
         {
             MailAddress = "gt@myges.fr",
         });
-
-        Account updatedAccount = await this.handlers.Get<ReadAccountSelfQuery>().Handle("gt@myges.fr");
+        
         updatedAccount.Firstname.Should().Be("Unknown");
     }
 
@@ -61,7 +55,7 @@ public class UpdateAccountProfilHandlerTests : TestBase
     public async void UpdateAccountProfilHandlerTest_4()
     {
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
-            () => this.handlers.Get<UpdateAccountProfilCommand>().Handle(new UpdateProfilDto()
+            () => new UpdateAccountProfilCommand(this.context).Handle(new UpdateProfilDto()
             {
                 MailAddress = "gt@myges.fr",
             }));

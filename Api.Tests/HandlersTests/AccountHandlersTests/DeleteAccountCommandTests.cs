@@ -1,9 +1,6 @@
-﻿using Api.Handlers.Commands.AccountCommands;
-using Api.Handlers.Queries.AccountQueries;
+﻿namespace Api.Tests.HandlersTests.AccountHandlersTests;
 
-namespace Api.Tests.HandlersTests.AccountHandlersTests;
-
-public class DeleteAccountHandlerTests : TestBase
+public class DeleteAccountCommandTests : TestBase
 {
     [Fact(DisplayName =
         "Deleting an existing account\n" +
@@ -12,9 +9,9 @@ public class DeleteAccountHandlerTests : TestBase
     {
         await this.RegisterNewAccount("gt@myges.fr");
 
-        await this.handlers.Get<DeleteAccountCommand>().Handle("gt@myges.fr");
+        await new DeleteAccountCommand(this.context).Handle("gt@myges.fr");
 
-        List<Account> accounts = await this.handlers.Get<ReadAccountByMailQuery>().Handle();
+        List<Account> accounts = await new ReadAccountByMailQuery(this.context).Handle();
         accounts.Count.Should().Be(0);
     }
 
@@ -24,7 +21,7 @@ public class DeleteAccountHandlerTests : TestBase
     public async void DeleteAccountHandlerTest_2()
     {
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
-            () => this.handlers.Get<DeleteAccountCommand>().Handle("gt@myges.fr"));
+            () => new DeleteAccountCommand(this.context).Handle("gt@myges.fr"));
 
         request.Content.StatusCode.Should().Be(404);
         request.Content.Value.As<ExceptionDto>().Error.Should().Be("Compte introuvable");

@@ -128,12 +128,22 @@ public abstract class Blob
         await s3Client.DeleteObjectAsync(request);
     }
 
-    public async static Task DeletePostSounds(string file)
+    public async static Task DeletePostSound(string file)
     {
         var request = new DeleteObjectRequest()
         {
             BucketName = POST_SOUNDS,
             Key = file,
+        };
+        await s3Client.DeleteObjectAsync(request);
+    }
+    
+    public async static Task DeleteAccountPic(string mailAddress)
+    {
+        var request = new DeleteObjectRequest()
+        {
+            BucketName = PROFIL_PICS,
+            Key = $"{mailAddress}.png",
         };
         await s3Client.DeleteObjectAsync(request);
     }

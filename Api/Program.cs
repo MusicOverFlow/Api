@@ -1,23 +1,3 @@
-global using Api.Models;
-global using Api.Models.Entities;
-global using Api.Models.Enums;
-global using Api.Utilitaries;
-global using Microsoft.AspNetCore.Mvc;
-global using Microsoft.EntityFrameworkCore;
-global using static Api.Utilitaries.AuthorizeRolesAttribute;
-global using Amazon.S3;
-global using Api.Handlers.Dtos;
-global using Api.Handlers.Kernel;
-global using Api.Handlers;
-global using Api.Models.ExpositionModels.Requests;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Http.Features;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using System.Text;
-using System.Text.Json.Serialization;
-
-
 bool dev = true;
 
 

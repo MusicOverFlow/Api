@@ -1,33 +1,15 @@
-﻿global using FluentAssertions;
-global using Xunit;
-global using System.Collections.Generic;
-global using System;
-global using System.Linq;
-global using Api.Handlers.Utilitaries;
-global using Api.Handlers.Kernel;
-global using Api.Models.Entities;
-global using Api.Handlers.Dtos;
-using Api.Models;
-using Microsoft.EntityFrameworkCore;
-using Api.Controllers.AccountControllers;
-using Api.Controllers.PostControllers;
-using Api.Controllers.CommentaryControllers;
-using Api.Controllers.GroupControllers;
-using Api.Controllers.AuthenticationControllers;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Moq;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
-using Api.Handlers;
-using Microsoft.Extensions.DependencyInjection;
-using Api.Handlers.Commands.AccountCommands;
-using System.Threading.Tasks;
-using Api.Handlers.Commands.PostCommands;
-using Api.Handlers.Commands.GroupCommands;
+using Microsoft.EntityFrameworkCore;
 
 public class TestBase
 {
     private readonly IServiceCollection services;
+    
+    protected readonly ModelsContext context;
     protected readonly HandlersContainer handlers;
     private readonly IConfiguration configuration;
 
@@ -46,6 +28,8 @@ public class TestBase
             .AddDbContext<ModelsContext>(
                 options => options.UseInMemoryDatabase(Guid.NewGuid().ToString()),
                 contextLifetime: ServiceLifetime.Transient);
+        
+        this.context = this.services.BuildServiceProvider().GetRequiredService<ModelsContext>();
         this.handlers = new HandlersContainer(this.services.BuildServiceProvider());
         this.configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
 
@@ -58,7 +42,7 @@ public class TestBase
 
     protected async Task<Account> RegisterNewAccount(string mailAddress)
     {
-        return await this.handlers.Get<CreateAccountCommand>().Handle(new CreateAccountDto()
+        return await new CreateAccountCommand(this.context).Handle(new CreateAccountDto()
         {
             MailAddress = mailAddress,
             Password = "123Password!",
@@ -67,7 +51,7 @@ public class TestBase
 
     protected async Task<Post> RegisterNewPost(string creatorMailAddress)
     {
-        return await this.handlers.Get<CreatePostCommand>().Handle(new CreatePostDto()
+        return await new CreatePostCommand(this.context).Handle(new CreatePostDto()
         {
             CreatorMailAddress = creatorMailAddress,
             Content = "Post content",
@@ -76,7 +60,7 @@ public class TestBase
 
     protected async Task<Group> RegisterNewGroup(string creatorMailAddress)
     {
-        return await this.handlers.Get<CreateGroupCommand>().Handle(new CreateGroupDto()
+        return await new CreateGroupCommand(this.context).Handle(new CreateGroupDto()
         {
             CreatorMailAddress = creatorMailAddress,
             Name = "Group name",

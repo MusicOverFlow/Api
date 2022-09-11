@@ -1,25 +1,32 @@
-﻿using Api.Handlers.Commands.AccountCommands;
-using Api.Handlers.Queries.AccountQueries;
+﻿using System.Security.Cryptography;
 
 namespace Api.Tests.HandlersTests.AccountHandlersTests;
 
-public class UpdateAccountPasswordHandlerTests : TestBase
+public class UpdateAccountPasswordCommandTests : TestBase
 {
+    private bool CompareTo(string password, byte[] hash, byte[] salt)
+    {
+        return new HMACSHA512(salt)
+            .ComputeHash(System.Text.Encoding.UTF8.GetBytes(password))
+            .SequenceEqual(hash);
+    }
+
     [Fact(DisplayName =
         "Updating an account password with a valid password\n" +
         "Should update the account's password")]
     public async void UpdateAccountPasswordHandlerTest_1()
     {
-        Account beforeUpdateAccount = await this.RegisterNewAccount("gt@myges.fr");
+        Account account = await this.RegisterNewAccount("gt@myges.fr");
+        byte[] beforeUpdateHash = account.PasswordHash;
+        byte[] beforeUpdateSalt = account.PasswordSalt;
 
-        await this.handlers.Get<UpdateAccountPasswordCommand>().Handle(new UpdatePasswordDto()
+        Account updatedAccount = await new UpdateAccountPasswordCommand(this.context).Handle(new UpdatePasswordDto()
         {
-            MailAddress = "gt@myges.fr",
+            MailAddress = account.MailAddress,
             NewPassword = "456drowssaP?",
         });
 
-        Account updatedAccount = await this.handlers.Get<ReadAccountSelfQuery>().Handle("gt@myges.fr");
-        updatedAccount.PasswordHash.Should().NotEqual(beforeUpdateAccount.PasswordHash);
+        updatedAccount.PasswordHash.Should().NotBeEquivalentTo(beforeUpdateHash);
     }
 
     [Fact(DisplayName =
@@ -30,7 +37,7 @@ public class UpdateAccountPasswordHandlerTests : TestBase
         await this.RegisterNewAccount("gt@myges.fr");
 
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
-            () => this.handlers.Get<UpdateAccountPasswordCommand>().Handle(new UpdatePasswordDto()
+            () => new UpdateAccountPasswordCommand(this.context).Handle(new UpdatePasswordDto()
             {
                 MailAddress = "gt@myges.fr",
                 NewPassword = "myPass",
@@ -46,10 +53,11 @@ public class UpdateAccountPasswordHandlerTests : TestBase
     public async void UpdateAccountPasswordHandlerTest_3()
     {
         Account beforeUpdateAccount = await this.RegisterNewAccount("gt@myges.fr");
-
+        Account updatedAccount = beforeUpdateAccount;
+        
         try
         {
-            await this.handlers.Get<UpdateAccountPasswordCommand>().Handle(new UpdatePasswordDto()
+            updatedAccount = await new UpdateAccountPasswordCommand(this.context).Handle(new UpdatePasswordDto()
             {
                 MailAddress = "gt@myges.fr",
                 NewPassword = "myPass",
@@ -59,8 +67,7 @@ public class UpdateAccountPasswordHandlerTests : TestBase
         {
 
         }
-
-        Account updatedAccount = await this.handlers.Get<ReadAccountSelfQuery>().Handle("gt@myges.fr");
+        
         updatedAccount.PasswordHash.Should().Equal(beforeUpdateAccount.PasswordHash);
     }
 
@@ -70,7 +77,7 @@ public class UpdateAccountPasswordHandlerTests : TestBase
     public async void UpdateAccountPasswordHandlerTest_4()
     {
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
-            () => this.handlers.Get<UpdateAccountPasswordCommand>().Handle(new UpdatePasswordDto()
+            () => new UpdateAccountPasswordCommand(this.context).Handle(new UpdatePasswordDto()
             {
                 MailAddress = "gt@myges.fr",
                 NewPassword = "123Password!",

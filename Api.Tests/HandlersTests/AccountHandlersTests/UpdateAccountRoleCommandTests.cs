@@ -1,9 +1,6 @@
-﻿using Api.Handlers.Commands.AccountCommands;
-using Api.Models.Enums;
+﻿namespace Api.Tests.HandlersTests.AccountHandlersTests;
 
-namespace Api.Tests.HandlersTests.AccountHandlersTests;
-
-public class UpdateAccountRoleHandlerTests : TestBase
+public class UpdateAccountRoleCommandTests : TestBase
 {
     /*
      * Note : il faut être admin pour pouvoir modifier le rôle d'un compte
@@ -16,7 +13,11 @@ public class UpdateAccountRoleHandlerTests : TestBase
         "Should set the role to User")]
     public async void UpdateAccountRoleHandlerTest_1()
     {
-        Account account = await this.RegisterNewAccount("gt@myges.fr");
+        Account account = await new CreateAccountCommand(this.context).Handle(new CreateAccountDto()
+        {
+            MailAddress = "gt@myges.fr",
+            Password = "123Password!",
+        });
         account.Role.Should().Be(Role.User.ToString());
     }
 
@@ -27,7 +28,7 @@ public class UpdateAccountRoleHandlerTests : TestBase
     {
         await this.RegisterNewAccount("gt@myges.fr");
 
-        Account account = await this.handlers.Get<UpdateAccountRoleCommand>().Handle(new UpdateAccountRoleDto()
+        Account account = await new UpdateAccountRoleCommand(this.context).Handle(new UpdateAccountRoleDto()
         {
             MailAddress = "gt@myges.fr",
             Role = Role.Moderator.ToString(),
@@ -44,7 +45,7 @@ public class UpdateAccountRoleHandlerTests : TestBase
         await this.RegisterNewAccount("gt@myges.fr");
 
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
-            () => this.handlers.Get<UpdateAccountRoleCommand>().Handle(new UpdateAccountRoleDto()
+            () => new UpdateAccountRoleCommand(this.context).Handle(new UpdateAccountRoleDto()
             {
                 MailAddress = "gt@myges.fr",
                 Role = "Aviateur",
@@ -60,7 +61,7 @@ public class UpdateAccountRoleHandlerTests : TestBase
     public async void UpdateAccountRoleHandlerTest_4()
     {
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
-            () => this.handlers.Get<UpdateAccountRoleCommand>().Handle(new UpdateAccountRoleDto()
+            () => new UpdateAccountRoleCommand(this.context).Handle(new UpdateAccountRoleDto()
             {
                 MailAddress = "gt@myges.fr",
                 Role = Role.Moderator.ToString(),

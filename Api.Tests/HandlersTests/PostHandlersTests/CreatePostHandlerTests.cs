@@ -1,8 +1,4 @@
-﻿using Api.Handlers.Commands.PostCommands;
-using Api.Handlers.Queries.AccountQueries;
-using Api.Models.Enums;
-
-namespace Api.Tests.HandlersTests.PostHandlersTests;
+﻿namespace Api.Tests.HandlersTests.PostHandlersTests;
 
 public class CreatePostHandlerTests : TestBase
 {
@@ -13,7 +9,7 @@ public class CreatePostHandlerTests : TestBase
     {
         await this.RegisterNewAccount("gt@myges.fr");
 
-        Post post = await this.handlers.Get<CreatePostCommand>().Handle(new CreatePostDto()
+        Post post = await new CreatePostCommand(this.context).Handle(new CreatePostDto()
         {
             CreatorMailAddress = "gt@myges.fr",
             Content = "Post content",
@@ -28,7 +24,7 @@ public class CreatePostHandlerTests : TestBase
     public async void CreatePostHandlerTest_2()
     {
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
-            () => this.handlers.Get<CreatePostCommand>().Handle(new CreatePostDto()
+            () => new CreatePostCommand(this.context).Handle(new CreatePostDto()
             {
                 CreatorMailAddress = "gt@myges.fr",
                 Content = "Post content",
@@ -46,7 +42,7 @@ public class CreatePostHandlerTests : TestBase
         await this.RegisterNewAccount("gt@myges.fr");
 
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
-            () => this.handlers.Get<CreatePostCommand>().Handle(new CreatePostDto()
+            () => new CreatePostCommand(this.context).Handle(new CreatePostDto()
             {
                 CreatorMailAddress = "gt@myges.fr",
                 Content = "",
@@ -63,7 +59,7 @@ public class CreatePostHandlerTests : TestBase
     {
         await this.RegisterNewAccount("gt@myges.fr");
 
-        Post post = await this.handlers.Get<CreatePostCommand>().Handle(new CreatePostDto()
+        Post post = await new CreatePostCommand(this.context).Handle(new CreatePostDto()
         {
             CreatorMailAddress = "gt@myges.fr",
             Content = "Post content",
@@ -84,7 +80,7 @@ public class CreatePostHandlerTests : TestBase
     {
         await this.RegisterNewAccount("gt@myges.fr");
 
-        Post post = await this.handlers.Get<CreatePostCommand>().Handle(new CreatePostDto()
+        Post post = await new CreatePostCommand(this.context).Handle(new CreatePostDto()
         {
             CreatorMailAddress = "gt@myges.fr",
             Content = "Post content",
@@ -102,7 +98,7 @@ public class CreatePostHandlerTests : TestBase
         await this.RegisterNewAccount("gt@myges.fr");
         Group group = await this.RegisterNewGroup("gt@myges.fr");
 
-        Post post = await this.handlers.Get<CreatePostCommand>().Handle(new CreatePostDto()
+        Post post = await new CreatePostCommand(this.context).Handle(new CreatePostDto()
         {
             CreatorMailAddress = "gt@myges.fr",
             Content = "Post content",
@@ -119,13 +115,13 @@ public class CreatePostHandlerTests : TestBase
     {
         await this.RegisterNewAccount("gt@myges.fr");
 
-        Post post = await this.handlers.Get<CreatePostCommand>().Handle(new CreatePostDto()
+        Post post = await new CreatePostCommand(this.context).Handle(new CreatePostDto()
         {
             CreatorMailAddress = "gt@myges.fr",
             Content = "Post content",
         });
 
-        Account accountWithPost = await this.handlers.Get<ReadAccountSelfQuery>().Handle("gt@myges.fr");
+        Account accountWithPost = await new ReadAccountSelfQuery(this.context).Handle("gt@myges.fr");
 
         accountWithPost.OwnedPosts.First().Id.Should().Be(post.Id);
     }
@@ -138,7 +134,7 @@ public class CreatePostHandlerTests : TestBase
         await this.RegisterNewAccount("gt@myges.fr");
 
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
-            () => this.handlers.Get<CreatePostCommand>().Handle(new CreatePostDto()
+            () => new CreatePostCommand(this.context).Handle(new CreatePostDto()
             {
                 CreatorMailAddress = "gt@myges.fr",
                 Content = "Post content",
