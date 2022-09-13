@@ -1,6 +1,6 @@
 ﻿namespace Api.Tests.HandlersTests.PostHandlersTests;
 
-public class CreatePostHandlerTests : TestBase
+public class CreatePostCommandTests : TestBase
 {
     [Fact(DisplayName =
         "Creating a post with content and existing creator mail address\n" +

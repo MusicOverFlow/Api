@@ -1,6 +1,6 @@
 ﻿namespace Api.Tests.HandlersTests.PostHandlersTests;
 
-public class LikeDislikePostHandlerTests : TestBase
+public class LikeDislikePostCommandTests : TestBase
 {
     [Fact(DisplayName =
         "Liking an existing post\n" +

@@ -1,6 +1,6 @@
 ﻿namespace Api.Tests.HandlersTests.CommentaryHandlersTests;
 
-public class CreateCommentaryHandlerTests : TestBase
+public class CreateCommentaryCommandTests : TestBase
 {
     [Fact(DisplayName =
         "Creating a commentary with content and existing post's ID and creator mail\n" +
@@ -119,5 +119,25 @@ public class CreateCommentaryHandlerTests : TestBase
 
         request.Content.StatusCode.Should().Be(404);
         request.Content.Value.As<ExceptionDto>().Error.Should().Be("Compte introuvable");
+    }
+
+    [Fact(DisplayName =
+        "Creating a commentary without content\n" +
+        "Should throw exception with code 400 and error type \"Contenu du post vide\"")]
+    public async void CreateCommentaryHandlerTest_7()
+    {
+        await this.RegisterNewAccount("gt@myges.fr");
+        Post post = await this.RegisterNewPost("gt@myges.fr");
+
+        HandlerException request = await Assert.ThrowsAsync<HandlerException>(
+            () => new CreateCommentaryCommand(this.context).Handle(new CreateCommentaryDto()
+            {
+                CreatorMailAddress = "gt@myges.fr",
+                Content = string.Empty,
+                PostId = post.Id,
+            }));
+
+        request.Content.StatusCode.Should().Be(400);
+        request.Content.Value.As<ExceptionDto>().Error.Should().Be("Contenu du post vide");
     }
 }

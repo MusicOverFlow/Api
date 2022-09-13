@@ -19,7 +19,7 @@ public partial class PostController
                 Content = request.Content,
                 GroupId = groupId,
                 ScriptLanguage = request.ScriptLanguage,
-                Script = request.Script
+                Script = request.Script,
             });
             
             return Created(nameof(Create), Mapper.PostToResource(post));

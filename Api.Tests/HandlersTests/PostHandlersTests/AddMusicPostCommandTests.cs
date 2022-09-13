@@ -4,7 +4,7 @@ using System.Net.Http;
 
 namespace Api.Tests.HandlersTests.PostHandlersTests;
 
-public class AddMusicPostHandlerTests : TestBase
+public class AddMusicPostCommandTests : TestBase
 {
     [Fact(DisplayName =
         "Adding a sound with valid format to a post\n" +

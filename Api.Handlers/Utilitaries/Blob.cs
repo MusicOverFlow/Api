@@ -51,7 +51,7 @@ public abstract class Blob
             InputStream = new MemoryStream(groupPic),
         };
         await s3Client.PutObjectAsync(request);
-        return $"https://{PROFIL_PICS}.s3.eu-west-3.amazonaws.com/{groupId}.png";
+        return $"https://{GROUP_PICS}.s3.eu-west-3.amazonaws.com/{groupId}.png";
     }
 
     public async static Task<string> GetMusicUrl(byte[] sound, Guid postId, string filename)
@@ -120,31 +120,21 @@ public abstract class Blob
      */
     public async static Task DeletePostScript(Guid postId)
     {
-        var request = new DeleteObjectRequest()
-        {
-            BucketName = POST_SCRIPTS,
-            Key = postId.ToString(),
-        };
-        await s3Client.DeleteObjectAsync(request);
+        await s3Client.DeleteObjectAsync(POST_SCRIPTS, postId.ToString());
     }
 
     public async static Task DeletePostSound(string file)
     {
-        var request = new DeleteObjectRequest()
-        {
-            BucketName = POST_SOUNDS,
-            Key = file,
-        };
-        await s3Client.DeleteObjectAsync(request);
+        await s3Client.DeleteObjectAsync(POST_SOUNDS, file);
     }
-    
+
     public async static Task DeleteAccountPic(string mailAddress)
     {
-        var request = new DeleteObjectRequest()
-        {
-            BucketName = PROFIL_PICS,
-            Key = $"{mailAddress}.png",
-        };
-        await s3Client.DeleteObjectAsync(request);
+        await s3Client.DeleteObjectAsync(PROFIL_PICS, $"{mailAddress}.png");
+    }
+
+    public async static Task DeleteGroupPic(Guid groupId)
+    {
+        await s3Client.DeleteObjectAsync(GROUP_PICS, $"{groupId}.png");
     }
 }
