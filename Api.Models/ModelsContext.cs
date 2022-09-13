@@ -47,15 +47,15 @@ public class ModelsContext : DbContext
         modelBuilder.Entity<Group>()
             .HasOne(g => g.Owner);
 
-        modelBuilder.Entity<Post>().Navigation(p => p.Owner).AutoInclude();
-        modelBuilder.Entity<Post>().Navigation(p => p.Group).AutoInclude();
-        modelBuilder.Entity<Post>().Navigation(p => p.Commentaries).AutoInclude();
-        modelBuilder.Entity<Post>().Navigation(p => p.Likes).AutoInclude();
+        //modelBuilder.Entity<Post>().Navigation(p => p.Owner).AutoInclude();
+        //modelBuilder.Entity<Post>().Navigation(p => p.Group).AutoInclude();
+        //modelBuilder.Entity<Post>().Navigation(p => p.Commentaries).AutoInclude();
+        //modelBuilder.Entity<Post>().Navigation(p => p.Likes).AutoInclude();
 
-        modelBuilder.Entity<Commentary>().Navigation(c => c.Owner).AutoInclude();
-        modelBuilder.Entity<Commentary>().Navigation(c => c.Likes).AutoInclude();
+        //modelBuilder.Entity<Commentary>().Navigation(c => c.Owner).AutoInclude();
+        //modelBuilder.Entity<Commentary>().Navigation(c => c.Likes).AutoInclude();
         
-        modelBuilder.Entity<Group>().Navigation(g => g.Owner).AutoInclude();
-        modelBuilder.Entity<Group>().Navigation(g => g.Members).AutoInclude();
+        //modelBuilder.Entity<Group>().Navigation(g => g.Owner).AutoInclude();
+        //modelBuilder.Entity<Group>().Navigation(g => g.Members).AutoInclude();
     }
 }

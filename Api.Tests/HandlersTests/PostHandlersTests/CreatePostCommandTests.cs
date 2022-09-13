@@ -121,9 +121,10 @@ public class CreatePostCommandTests : TestBase
             Content = "Post content",
         });
 
-        Account accountWithPost = await new ReadAccountSelfQuery(this.context).Handle("gt@myges.fr");
+        Account accountWithPost = this.context.Accounts
+            .FirstOrDefault(a => a.MailAddress.Equals("gt@myges.fr"));
 
-        accountWithPost.OwnedPosts.First().Id.Should().Be(post.Id);
+        accountWithPost.OwnedPosts.Should().Contain(post);
     }
 
     [Fact(DisplayName =

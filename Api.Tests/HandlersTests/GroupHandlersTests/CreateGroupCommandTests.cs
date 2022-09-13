@@ -67,7 +67,7 @@ public class CreateGroupCommandTests : TestBase
 
         byte[] fakeImage = new byte[] { 0, 1, 2, 3, 4 };
 
-        Group group = await new CreateGroupCommand(this.context).Handle(new CreateGroupDto()
+        await new CreateGroupCommand(this.context).Handle(new CreateGroupDto()
         {
             CreatorMailAddress = "gt@myges.fr",
             Name = "Group name",
@@ -75,9 +75,11 @@ public class CreateGroupCommandTests : TestBase
                 baseStream: new MemoryStream(fakeImage),
                 baseStreamOffset: 0,
                 length: fakeImage.Length,
-                name: "",
-                fileName: "myGroupPic.png"),
+                name: "paul",
+                fileName: "paul.png"),
         });
+
+        Group group = this.context.Groups.FirstOrDefault(g => g.Name.Equals("Group name"));
 
         // Download the file as bytes and compare it to the fake image
         using HttpClient client = new HttpClient();

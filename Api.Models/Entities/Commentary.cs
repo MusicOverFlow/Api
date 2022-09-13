@@ -11,9 +11,9 @@ public class Commentary
     public string ScriptLanguage { get; set; }
     public int LikesCount { get; set; }
 
-    public Account Owner { get; set; }
-    public Post Post { get; set; }
-    public ICollection<Account> Likes { get; set; }
+    public virtual Account Owner { get; set; }
+    public virtual Post Post { get; set; }
+    public virtual ICollection<Account> Likes { get; set; } = new List<Account>();
 
-    [Required] public DateTime CreatedAt { get; set; }
+    [Required] public DateTime CreatedAt { get; set; } = DateTime.Now;
 }

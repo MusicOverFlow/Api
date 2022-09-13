@@ -12,10 +12,10 @@ public class Post
     public string ScriptUrl { get; set; }
     public string ScriptLanguage { get; set; }
 
-    public Account Owner { get; set; }
-    public Group Group { get; set; }
-    public ICollection<Commentary> Commentaries { get; set; }
-    public ICollection<Account> Likes { get; set; }
+    public virtual Account Owner { get; set; }
+    public virtual Group Group { get; set; }
+    public virtual ICollection<Commentary> Commentaries { get; set; } = new List<Commentary>();
+    public virtual ICollection<Account> Likes { get; set; } = new List<Account>();
 
-    [Required] public DateTime CreatedAt { get; set; }
+    [Required] public DateTime CreatedAt { get; set; } = DateTime.Now;
 }

@@ -51,13 +51,9 @@ public class CreatePostCommand : HandlerBase, Command<Task<Post>, CreatePostDto>
         {
             Title = !string.IsNullOrWhiteSpace(message.Title) ? message.Title : "No title",
             Content = message.Content,
-            CreatedAt = DateTime.Now,
-
             ScriptLanguage = message.ScriptLanguage,
-
             Owner = account,
             Group = group,
-
             MusicUrl = null,
         };
 

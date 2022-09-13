@@ -3,7 +3,6 @@ using Microsoft.Extensions.Configuration;
 using Moq;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
-using Microsoft.EntityFrameworkCore;
 
 public class TestBase
 {
@@ -26,10 +25,15 @@ public class TestBase
     {
         this.services = new ServiceCollection()
             .AddDbContext<ModelsContext>(
-                options => options.UseInMemoryDatabase(Guid.NewGuid().ToString()),
-                contextLifetime: ServiceLifetime.Transient);
+                options => options.UseInMemoryDatabase(Guid.NewGuid().ToString()));
         
         this.context = this.services.BuildServiceProvider().GetRequiredService<ModelsContext>();
+
+        // How to use lazy loading in tests : DIY.
+        this.context.Accounts.Include(a => a.Follows).Load();
+        this.context.Accounts.Include(a => a.Groups).Load();
+        this.context.Posts.Include(p => p.Likes).Load();
+
         this.handlers = new HandlersContainer(this.services.BuildServiceProvider());
         this.configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
 
@@ -39,7 +43,7 @@ public class TestBase
         this.groupController = new GroupController(this.handlers);
         this.authenticationController = new AuthenticationController(this.handlers, this.configuration);
     }
-
+    
     protected async Task<Account> RegisterNewAccount(string mailAddress)
     {
         return await new CreateAccountCommand(this.context).Handle(new CreateAccountDto()
@@ -84,7 +88,7 @@ public class TestBase
         this.commentaryController.ControllerContext.HttpContext = mock.Object;
     }
 
-    /* useful for later testing
+    /* useful for later testing maybe idk
     protected async Task<ActionResult<string>> Authenticate(string mailAddress, string password)
     {
         return await this.authenticationController.Authenticate(new Authentication()

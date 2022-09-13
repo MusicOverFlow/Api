@@ -18,6 +18,7 @@ public class UpdateAccountRoleCommandTests : TestBase
             MailAddress = "gt@myges.fr",
             Password = "123Password!",
         });
+        
         account.Role.Should().Be(Role.User.ToString());
     }
 

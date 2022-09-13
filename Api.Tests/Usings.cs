@@ -22,3 +22,4 @@ global using Api.Handlers.Queries.AccountQueries;
 global using Api.Handlers.Commands.CommentaryCommands;
 global using Api.Models.Enums;
 global using Api.Handlers.Queries.PostQueries;
+global using Microsoft.EntityFrameworkCore;
