@@ -10,7 +10,6 @@ public class CreateGroupCommand : HandlerBase, Command<Task<Group>, CreateGroupD
     public async Task<Group> Handle(CreateGroupDto message)
     {
         Account account = await this.context.Accounts
-            .Include(a => a.Groups)
             .FirstOrDefaultAsync(a => a.MailAddress.Equals(message.CreatorMailAddress));
 
         if (account == null)
@@ -40,8 +39,6 @@ public class CreateGroupCommand : HandlerBase, Command<Task<Group>, CreateGroupD
             Name = message.Name,
             Description = message.Description,
             PicUrl = await Blob.GetGroupPicUrl(fileBytes, id),
-            CreatedAt = DateTime.Now,
-
             Owner = account,
         };
 

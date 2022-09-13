@@ -53,7 +53,6 @@ public class CreateAccountCommand : HandlerBase, Command<Task<Account>, CreateAc
             Lastname = message.Lastname ?? "Unknown",
             Pseudonym = message.Pseudonym ?? "Anonymous",
             PicUrl = Blob.GetProfilPicUrl(fileBytes, message.MailAddress).Result,
-            CreatedAt = DateTime.Now,
         };
 
         this.context.Accounts.Add(account);

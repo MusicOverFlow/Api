@@ -64,9 +64,10 @@ builder.Services
     });
 
 /**
- * Handlers container singleton
+ * DbContext singleton
  */
 builder.Services.AddDbContext<ModelsContext>(options => options
+    .UseLazyLoadingProxies()
     .UseNpgsql(builder.Configuration.GetConnectionString("MusicOverflowHeroku"),
         optionBuilder =>
         {
@@ -75,6 +76,9 @@ builder.Services.AddDbContext<ModelsContext>(options => options
         }),
         contextLifetime: ServiceLifetime.Transient);
 
+/**
+ * Handlers container singleton
+ */
 try
 {
     builder.Services.AddSingleton<HandlersContainer>();

@@ -9,9 +9,9 @@ public class Group
     [Required] public string PicUrl { get; set; }
     public string Description { get; set; }
 
-    public Account Owner { get; set; }
-    public ICollection<Account> Members { get; set; }
-    public ICollection<Post> Posts { get; set; }
+    public virtual Account Owner { get; set; }
+    public virtual ICollection<Account> Members { get; set; } = new List<Account>();
+    public virtual ICollection<Post> Posts { get; set; } = new List<Post>();
 
-    [Required] public DateTime CreatedAt { get; set; }
+    [Required] public DateTime CreatedAt { get; set; } = DateTime.Now;
 }

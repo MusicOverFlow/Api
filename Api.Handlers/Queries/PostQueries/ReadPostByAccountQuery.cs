@@ -10,8 +10,6 @@ public class ReadPostByAccountQuery : HandlerBase, Query<Task<List<Post>>, strin
     public async Task<List<Post>> Handle(string message)
     {
         Account account = await this.context.Accounts
-            .Include(a => a.OwnedPosts)
-            .Include(a => a.OwnedCommentaries)
             .FirstOrDefaultAsync(a => a.MailAddress.Equals(message));
 
         if (account == null)

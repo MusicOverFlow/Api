@@ -11,8 +11,8 @@ public class DeleteAccountCommandTests : TestBase
 
         await new DeleteAccountCommand(this.context).Handle("gt@myges.fr");
 
-        List<Account> accounts = await new ReadAccountByMailQuery(this.context).Handle();
-        accounts.Count.Should().Be(0);
+        Account account = this.context.Accounts.FirstOrDefault(a => a.MailAddress == "gt@myges.fr");
+        account.Should().BeNull();
     }
 
     [Fact(DisplayName =

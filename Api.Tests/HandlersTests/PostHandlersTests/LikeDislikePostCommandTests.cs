@@ -16,10 +16,11 @@ public class LikeDislikePostCommandTests : TestBase
             PostId = post.Id,
         });
 
-        Post likedPost = new ReadPostByIdQuery(this.context).Handle(post.Id).Result.First();
-
+        Post likedPost = this.context.Posts
+            .FirstOrDefault(p => p.Id.Equals(post.Id));
+        
         likedPost.Likes.Count.Should().Be(1);
-        likedPost.Likes.First().MailAddress.Should().Be(account.MailAddress);
+        likedPost.Likes.Should().Contain(account);
     }
 
     [Fact(DisplayName =
@@ -28,23 +29,24 @@ public class LikeDislikePostCommandTests : TestBase
     public async void LikeDislikePostHandlerTest_2()
     {
         Account account = await this.RegisterNewAccount("gt@myges.fr");
-        Post post = await this.RegisterNewPost(account.MailAddress);
+        Post post = await this.RegisterNewPost("gt@myges.fr");
 
         // Like
         await new LikeDislikePostCommand(this.context).Handle(new LikeDislikeDto()
         {
-            CallerMail = account.MailAddress,
+            CallerMail = "gt@myges.fr",
             PostId = post.Id,
         });
 
         // Dislike
         await new LikeDislikePostCommand(this.context).Handle(new LikeDislikeDto()
         {
-            CallerMail = account.MailAddress,
+            CallerMail = "gt@myges.fr",
             PostId = post.Id,
         });
 
-        Post likedPost = new ReadPostByIdQuery(this.context).Handle(post.Id).Result.First();
+        Post likedPost = this.context.Posts
+            .FirstOrDefault(p => p.Id.Equals(post.Id));
 
         likedPost.Likes.Count.Should().Be(0);
     }

@@ -10,18 +10,6 @@ public class ReadHomePagePostsQuery : HandlerBase, Query<Task<List<Post>>, strin
     public async Task<List<Post>> Handle(string message)
     {
         Account account = await this.context.Accounts
-            .Include(a => a.OwnedPosts)
-            .Include(a => a.LikedPosts)
-            .Include(a => a.OwnedCommentaries)
-            .Include(a => a.LikedCommentaries)
-            .Include(a => a.Follows)
-                .ThenInclude(f => f.OwnedPosts)
-            .Include(a => a.Follows)
-                .ThenInclude(f => f.LikedPosts)
-            .Include(a => a.Follows)
-                .ThenInclude(f => f.OwnedCommentaries)
-            .Include(a => a.Follows)
-                .ThenInclude(f => f.LikedCommentaries)
             .FirstOrDefaultAsync(a => a.MailAddress.Equals(message));
 
         if (account == null)

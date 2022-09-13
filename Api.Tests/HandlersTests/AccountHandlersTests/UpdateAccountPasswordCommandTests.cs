@@ -4,13 +4,6 @@ namespace Api.Tests.HandlersTests.AccountHandlersTests;
 
 public class UpdateAccountPasswordCommandTests : TestBase
 {
-    private bool CompareTo(string password, byte[] hash, byte[] salt)
-    {
-        return new HMACSHA512(salt)
-            .ComputeHash(System.Text.Encoding.UTF8.GetBytes(password))
-            .SequenceEqual(hash);
-    }
-
     [Fact(DisplayName =
         "Updating an account password with a valid password\n" +
         "Should update the account's password")]
@@ -18,8 +11,7 @@ public class UpdateAccountPasswordCommandTests : TestBase
     {
         Account account = await this.RegisterNewAccount("gt@myges.fr");
         byte[] beforeUpdateHash = account.PasswordHash;
-        byte[] beforeUpdateSalt = account.PasswordSalt;
-
+        
         Account updatedAccount = await new UpdateAccountPasswordCommand(this.context).Handle(new UpdatePasswordDto()
         {
             MailAddress = account.MailAddress,

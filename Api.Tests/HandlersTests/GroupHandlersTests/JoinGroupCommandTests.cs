@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace Api.Tests.HandlersTests.GroupHandlersTests;
+﻿namespace Api.Tests.HandlersTests.GroupHandlersTests;
 
 public class JoinGroupCommandTests : TestBase
 {
@@ -29,15 +27,18 @@ public class JoinGroupCommandTests : TestBase
     public async void JoinGroupCommandTest_2()
     {
         Account account = await this.RegisterNewAccount("newMember@myges.fr");
-
+        
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
             () => new JoinGroupCommand(this.context).Handle(new JoinGroupDto()
             {
                 MailAddress = "newMember@myges.fr",
                 GroupId = Guid.NewGuid(),
             }));
-        
-        this.context.Accounts.Include(a => a.Groups).Where(a => a.Id.Equals(account.Id)).First().Groups.Should().BeEmpty();
+
+        account = this.context.Accounts
+            .FirstOrDefault(a => a.Id.Equals(account.Id));
+            
+        account.Groups.Should().BeEmpty();
         request.Content.StatusCode.Should().Be(404);
         request.Content.Value.As<ExceptionDto>().Error.Should().Be("Groupe introuvable");
     }

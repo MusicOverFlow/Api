@@ -9,16 +9,19 @@ public class FollowUnfollowAccountCommandTests : TestBase
     {
         await this.RegisterNewAccount("follower@myges.fr");
         await this.RegisterNewAccount("followed@myges.fr");
-
+        
         await new FollowUnfollowAccountCommand(this.context).Handle(new FollowDto()
         {
             CallerMail = "follower@myges.fr",
             TargetMail = "followed@myges.fr",
         });
 
-        Account follower = await new ReadAccountSelfQuery(this.context).Handle("follower@myges.fr");
-        Account followed = await new ReadAccountSelfQuery(this.context).Handle("followed@myges.fr");
-        follower.Follows.First().MailAddress.Should().Be(followed.MailAddress);
+        Account followed = await this.context.Accounts
+            .FirstAsync(a => a.MailAddress.Equals("followed@myges.fr"));
+        Account follower = await this.context.Accounts
+            .FirstAsync(a => a.MailAddress.Equals("follower@myges.fr"));
+
+        follower.Follows.Should().Contain(followed);
     }
 
     [Fact(DisplayName =
@@ -43,9 +46,12 @@ public class FollowUnfollowAccountCommandTests : TestBase
             TargetMail = "followed@myges.fr",
         });
 
-        Account follower = await new ReadAccountSelfQuery(this.context).Handle("follower@myges.fr");
-        Account followed = await new ReadAccountSelfQuery(this.context).Handle("followed@myges.fr");
-        follower.Follows.Should().NotContainEquivalentOf(followed);
+        Account followed = await this.context.Accounts
+            .FirstAsync(a => a.MailAddress.Equals("followed@myges.fr"));
+        Account follower = await this.context.Accounts
+            .FirstAsync(a => a.MailAddress.Equals("follower@myges.fr"));
+        
+        follower.Follows.Should().NotContain(followed);
     }
 
     [Fact(DisplayName =

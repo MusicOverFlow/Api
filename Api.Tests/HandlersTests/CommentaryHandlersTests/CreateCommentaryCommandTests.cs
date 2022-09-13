@@ -25,17 +25,17 @@ public class CreateCommentaryCommandTests : TestBase
         "Should set the commentary's owner as its creator")]
     public async void CreateCommentaryHandlerTest_2()
     {
-        await this.RegisterNewAccount("gt@myges.fr");
+        Account account = await this.RegisterNewAccount("gt@myges.fr");
         Post post = await this.RegisterNewPost("gt@myges.fr");
 
         Post postWithCommentary = await new CreateCommentaryCommand(this.context).Handle(new CreateCommentaryDto()
         {
-            CreatorMailAddress = "gt@myges.fr",
+            CreatorMailAddress = account.MailAddress,
             Content = "Commentary content",
             PostId = post.Id,
         });
 
-        postWithCommentary.Commentaries.First().Owner.MailAddress.Should().Be("gt@myges.fr");
+        postWithCommentary.Commentaries.First().Owner.Should().Be(account);
     }
 
     [Fact(DisplayName =

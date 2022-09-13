@@ -46,10 +46,7 @@ public class CreateCommentaryCommand : HandlerBase, Command<Task<Post>, CreateCo
         Commentary commentary = new Commentary
         {
             Content = message.Content,
-            CreatedAt = DateTime.Now,
-
             ScriptLanguage = message.ScriptLanguage,
-
             Owner = account,
             Post = post,
         };

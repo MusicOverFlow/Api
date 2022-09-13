@@ -10,8 +10,6 @@ public class LikeDislikePostCommand : HandlerBase, Command<Task, LikeDislikeDto>
     public async Task Handle(LikeDislikeDto message)
     {
         Account account = await this.context.Accounts
-            .Include(a => a.LikedPosts)
-            .Include(a => a.LikedCommentaries)
             .FirstOrDefaultAsync(a => a.MailAddress.Equals(message.CallerMail));
 
         if (account == null)
