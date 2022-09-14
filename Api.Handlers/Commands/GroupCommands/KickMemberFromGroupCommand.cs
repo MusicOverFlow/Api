@@ -38,6 +38,11 @@ public class KickMemberFromGroupCommand : HandlerBase, Command<Task<Group>, Kick
             throw new HandlerException(ErrorType.AccountNotFound);
         }
 
+        if (callerAccount.Equals(memberAccount))
+        {
+            throw new HandlerException(ErrorType.LeaveWhileOwner);
+        }
+
         if (!group.Members.Any(m => m.MailAddress.Equals(message.MemberMailAddress)))
         {
             throw new HandlerException(ErrorType.Undefined);
