@@ -2,9 +2,11 @@
 
 public class UpdateAccountProfilPicCommand : HandlerBase, Command<Task<Account>, UpdateProfilPicDto>
 {
-    public UpdateAccountProfilPicCommand(ModelsContext context) : base(context)
+    private readonly IContainer container;
+
+    public UpdateAccountProfilPicCommand(ModelsContext context, IContainer container) : base(context)
     {
-        
+        this.container = container;
     }
 
     public async Task<Account> Handle(UpdateProfilPicDto message)
@@ -26,7 +28,7 @@ public class UpdateAccountProfilPicCommand : HandlerBase, Command<Task<Account>,
         using (var ms = new MemoryStream())
         {
             message.ProfilPic.CopyTo(ms);
-            account.PicUrl = Blob.GetProfilPicUrl(ms.ToArray(), account.MailAddress).Result;
+            account.PicUrl = this.container.GetProfilPicUrl(ms.ToArray(), account.MailAddress).Result;
         }
 
         await this.context.SaveChangesAsync();

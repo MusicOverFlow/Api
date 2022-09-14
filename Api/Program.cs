@@ -1,10 +1,11 @@
+using Api.Handlers.Containers;
+
 bool dev = true;
 
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
-builder.Services.AddAWSService<IAmazonS3>();
 builder.Services.Configure<FormOptions>(o => {
     o.ValueLengthLimit = int.MaxValue;
     o.MultipartBodyLengthLimit = int.MaxValue;
@@ -76,6 +77,13 @@ builder.Services.AddDbContext<ModelsContext>(options => options
         }),
         contextLifetime: ServiceLifetime.Transient);
 
+/*
+ * Containers
+ */
+builder.Services.AddSingleton<IContainer>(new AwsContainer(builder.Configuration));
+// TODO: voir si chaine de connexion est secure dans appsettings avant de balancer les identifiants FMM
+//builder.Services.AddSingleton<IContainer>(new AzureContainer(builder.Configuration));
+
 /**
  * Handlers container singleton
  */
@@ -83,7 +91,7 @@ try
 {
     builder.Services.AddSingleton<HandlersContainer>();
 }
-catch (HandlerNotFoundException exception)
+catch (HandlerRegistrationException exception)
 {
     Console.WriteLine(exception.Message);
     return;

@@ -10,8 +10,7 @@ public partial class AccountController
         [FromForm] string password,
         [FromForm] string firstname,
         [FromForm] string lastname,
-        [FromForm] string pseudonym,
-        [FromForm] byte[] profilPic)
+        [FromForm] string pseudonym)
     {
         try
         {
@@ -22,7 +21,7 @@ public partial class AccountController
                 Firstname = firstname,
                 Lastname = lastname,
                 Pseudonym = pseudonym,
-                ProfilPic = Request.Form.Files.GetFile(nameof(profilPic)),
+                ProfilPic = Request.Form.Files.GetFile("profilPic"),
             });
 
             return Ok(Mapper.AccountToResource(account));

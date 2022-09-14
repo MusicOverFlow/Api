@@ -1,4 +1,6 @@
-﻿namespace Api.Tests.HandlersTests.PostHandlersTests;
+﻿using Api.Handlers.Containers;
+
+namespace Api.Tests.HandlersTests.PostHandlersTests;
 
 public class CreatePostCommandTests : TestBase
 {
@@ -9,7 +11,7 @@ public class CreatePostCommandTests : TestBase
     {
         await this.RegisterNewAccount("gt@myges.fr");
 
-        Post post = await new CreatePostCommand(this.context).Handle(new CreatePostDto()
+        Post post = await new CreatePostCommand(this.context, this.container).Handle(new CreatePostDto()
         {
             CreatorMailAddress = "gt@myges.fr",
             Content = "Post content",
@@ -24,7 +26,7 @@ public class CreatePostCommandTests : TestBase
     public async void CreatePostHandlerTest_2()
     {
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
-            () => new CreatePostCommand(this.context).Handle(new CreatePostDto()
+            () => new CreatePostCommand(this.context, this.container).Handle(new CreatePostDto()
             {
                 CreatorMailAddress = "gt@myges.fr",
                 Content = "Post content",
@@ -42,7 +44,7 @@ public class CreatePostCommandTests : TestBase
         await this.RegisterNewAccount("gt@myges.fr");
 
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
-            () => new CreatePostCommand(this.context).Handle(new CreatePostDto()
+            () => new CreatePostCommand(this.context, this.container).Handle(new CreatePostDto()
             {
                 CreatorMailAddress = "gt@myges.fr",
                 Content = "",
@@ -59,7 +61,7 @@ public class CreatePostCommandTests : TestBase
     {
         await this.RegisterNewAccount("gt@myges.fr");
 
-        Post post = await new CreatePostCommand(this.context).Handle(new CreatePostDto()
+        Post post = await new CreatePostCommand(this.context, this.container).Handle(new CreatePostDto()
         {
             CreatorMailAddress = "gt@myges.fr",
             Content = "Post content",
@@ -70,7 +72,7 @@ public class CreatePostCommandTests : TestBase
         post.ScriptLanguage.Should().Be(Language.C.ToString());
         post.ScriptUrl.Should().Be($"https://post-scripts.s3.eu-west-3.amazonaws.com/{post.Id}");
 
-        await Blob.DeletePostScript(post.Id);
+        await this.container.DeletePostScript(post.Id);
     }
 
     [Fact(DisplayName =
@@ -80,7 +82,7 @@ public class CreatePostCommandTests : TestBase
     {
         await this.RegisterNewAccount("gt@myges.fr");
 
-        Post post = await new CreatePostCommand(this.context).Handle(new CreatePostDto()
+        Post post = await new CreatePostCommand(this.context, this.container).Handle(new CreatePostDto()
         {
             CreatorMailAddress = "gt@myges.fr",
             Content = "Post content",
@@ -98,7 +100,7 @@ public class CreatePostCommandTests : TestBase
         await this.RegisterNewAccount("gt@myges.fr");
         Group group = await this.RegisterNewGroup("gt@myges.fr");
 
-        Post post = await new CreatePostCommand(this.context).Handle(new CreatePostDto()
+        Post post = await new CreatePostCommand(this.context, this.container).Handle(new CreatePostDto()
         {
             CreatorMailAddress = "gt@myges.fr",
             Content = "Post content",
@@ -115,7 +117,7 @@ public class CreatePostCommandTests : TestBase
     {
         await this.RegisterNewAccount("gt@myges.fr");
 
-        Post post = await new CreatePostCommand(this.context).Handle(new CreatePostDto()
+        Post post = await new CreatePostCommand(this.context, this.container).Handle(new CreatePostDto()
         {
             CreatorMailAddress = "gt@myges.fr",
             Content = "Post content",
@@ -135,7 +137,7 @@ public class CreatePostCommandTests : TestBase
         await this.RegisterNewAccount("gt@myges.fr");
 
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
-            () => new CreatePostCommand(this.context).Handle(new CreatePostDto()
+            () => new CreatePostCommand(this.context, this.container).Handle(new CreatePostDto()
             {
                 CreatorMailAddress = "gt@myges.fr",
                 Content = "Post content",

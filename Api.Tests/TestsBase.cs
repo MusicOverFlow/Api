@@ -3,14 +3,16 @@ using Microsoft.Extensions.Configuration;
 using Moq;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
+using Api.Handlers.Containers;
 
 public class TestBase
 {
+    private readonly IConfiguration configuration;
     private readonly IServiceCollection services;
     
     protected readonly ModelsContext context;
+    protected readonly IContainer container;
     protected readonly HandlersContainer handlers;
-    private readonly IConfiguration configuration;
 
     protected readonly AccountController accountsController;
     protected readonly PostController postController;
@@ -23,30 +25,37 @@ public class TestBase
 
     protected TestBase()
     {
-        this.services = new ServiceCollection()
-            .AddDbContext<ModelsContext>(
-                options => options.UseInMemoryDatabase(Guid.NewGuid().ToString()));
+        this.configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
         
+        this.services = new ServiceCollection()
+            .AddDbContext<ModelsContext>(options => options.UseInMemoryDatabase(Guid.NewGuid().ToString()))
+            .AddSingleton<IContainer>(new AwsContainer(this.configuration));
+
+        this.container = this.services.BuildServiceProvider().GetService<IContainer>();
         this.context = this.services.BuildServiceProvider().GetRequiredService<ModelsContext>();
 
-        // How to use lazy loading in tests : DIY.
-        this.context.Accounts.Include(a => a.Follows).Load();
-        this.context.Accounts.Include(a => a.Groups).Load();
-        this.context.Posts.Include(p => p.Likes).Load();
+        this.InitializeContextLoading();
 
         this.handlers = new HandlersContainer(this.services.BuildServiceProvider());
-        this.configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
-
+        
         this.accountsController = new AccountController(this.handlers);
         this.postController = new PostController(this.handlers);
         this.commentaryController = new CommentaryController(this.handlers);
         this.groupController = new GroupController(this.handlers);
         this.authenticationController = new AuthenticationController(this.handlers, this.configuration);
     }
+
+    // How to use lazy loading in tests : DIY.
+    private void InitializeContextLoading()
+    {
+        this.context.Accounts.Include(a => a.Follows).Load();
+        this.context.Accounts.Include(a => a.Groups).Load();
+        this.context.Posts.Include(p => p.Likes).Load();
+    }
     
     protected async Task<Account> RegisterNewAccount(string mailAddress)
     {
-        return await new CreateAccountCommand(this.context).Handle(new CreateAccountDto()
+        return await new CreateAccountCommand(this.context, this.container).Handle(new CreateAccountDto()
         {
             MailAddress = mailAddress,
             Password = "123Password!",
@@ -55,7 +64,7 @@ public class TestBase
 
     protected async Task<Post> RegisterNewPost(string creatorMailAddress)
     {
-        return await new CreatePostCommand(this.context).Handle(new CreatePostDto()
+        return await new CreatePostCommand(this.context, this.container).Handle(new CreatePostDto()
         {
             CreatorMailAddress = creatorMailAddress,
             Content = "Post content",
@@ -64,7 +73,7 @@ public class TestBase
 
     protected async Task<Group> RegisterNewGroup(string creatorMailAddress)
     {
-        return await new CreateGroupCommand(this.context).Handle(new CreateGroupDto()
+        return await new CreateGroupCommand(this.context, this.container).Handle(new CreateGroupDto()
         {
             CreatorMailAddress = creatorMailAddress,
             Name = "Group name",

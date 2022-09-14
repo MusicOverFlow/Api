@@ -2,9 +2,11 @@
 
 public class CreateCommentaryCommand : HandlerBase, Command<Task<Post>, CreateCommentaryDto>
 {
-    public CreateCommentaryCommand(ModelsContext context) : base(context)
+    private readonly IContainer container;
+    
+    public CreateCommentaryCommand(ModelsContext context, IContainer container) : base(context)
     {
-
+        this.container = container;
     }
 
     public async Task<Post> Handle(CreateCommentaryDto message)
@@ -52,8 +54,7 @@ public class CreateCommentaryCommand : HandlerBase, Command<Task<Post>, CreateCo
         };
 
         this.context.Commentaries.Add(commentary);
-        post.Commentaries.Add(commentary);
-        commentary.ScriptUrl = message.Script != null ? await Blob.GetPostScriptUrl(message.Script, commentary.Id) : null;
+        commentary.ScriptUrl = message.Script != null ? await this.container.GetPostScriptUrl(message.Script, commentary.Id) : null;
 
         await this.context.SaveChangesAsync();
 

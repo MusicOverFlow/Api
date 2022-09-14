@@ -5,6 +5,7 @@ global using Api.Handlers.Kernel;
 global using Api.Models.Entities;
 global using Api.Models.Enums;
 global using Microsoft.EntityFrameworkCore;
+global using Api.Handlers.Containers;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -32,14 +33,14 @@ public class HandlersContainer
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <returns>The instanciated handler</returns>
-    /// <exception cref="HandlerNotFoundException"></exception>
+    /// <exception cref="HandlerRegistrationException"></exception>
     public T Get<T>() where T : Handler
     {
         if (this.handlersFactories.ContainsKey(typeof(T)))
         {
             return (T) this.handlersFactories[typeof(T)]();
         }
-        throw new HandlerNotFoundException(typeof(T).Name);
+        throw new HandlerRegistrationException(typeof(T).Name);
     }
 
     /// <summary>
@@ -54,13 +55,24 @@ public class HandlersContainer
             .Where(t => t.IsClass && !t.IsAbstract && t.IsSubclassOf(typeof(HandlerBase)))
             .ToDictionary(tKey => tKey, tValue =>
             {
-                Func<Handler> factory = () => (Handler)Activator.CreateInstance(tValue, this.scope.ServiceProvider.GetRequiredService<ModelsContext>());
+                Func<Handler> factory;
+                factory = tValue.GetConstructors()[0].GetParameters().Length switch
+                {
+                    1 => () => (Handler)Activator.CreateInstance(tValue,
+                        this.scope.ServiceProvider.GetRequiredService<ModelsContext>()),
+                        
+                    2 => () => (Handler)Activator.CreateInstance(tValue,
+                        this.scope.ServiceProvider.GetRequiredService<ModelsContext>(),
+                        this.scope.ServiceProvider.GetRequiredService<IContainer>()),
+                        
+                    _ => throw new HandlerRegistrationException(tValue.Name)
+                };
                 return factory;
             });
     }
 }
 
-public class HandlerNotFoundException : Exception
+public class HandlerRegistrationException : Exception
 {
-    public HandlerNotFoundException(string handlerType) : base($"Handler {handlerType} not found") { }
+    public HandlerRegistrationException(string handlerType) : base($"Handler {handlerType} registration failed") { }
 }

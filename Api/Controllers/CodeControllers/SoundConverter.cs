@@ -1,5 +1,4 @@
-﻿using Api.Handlers.Utilitaries;
-using NAudio.Wave;
+﻿using NAudio.Wave;
 
 namespace Api.Controllers.CodeControllers;
 
@@ -8,9 +7,11 @@ namespace Api.Controllers.CodeControllers;
 #pragma warning disable CS1998
 public class Converter : ControllerBase
 {
-    public Converter()
+    private readonly IContainer container;
+    
+    public Converter(IContainer container)
     {
-        
+        this.container = container;
     }
 
     [HttpPost]
@@ -68,7 +69,7 @@ public class Converter : ControllerBase
                 break;
         }
 
-        return Ok(new { Output = Blob.GetConvertedSoundUrl(
+        return Ok(new { Output = this.container.GetConvertedSoundUrl(
             sound: this.ReadBytes(fileStream),
             filename: Path.GetFileNameWithoutExtension(file.FileName) + format).Result });
     }

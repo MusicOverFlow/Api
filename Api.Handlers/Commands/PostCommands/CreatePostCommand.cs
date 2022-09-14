@@ -2,9 +2,11 @@
 
 public class CreatePostCommand : HandlerBase, Command<Task<Post>, CreatePostDto>
 {
-    public CreatePostCommand(ModelsContext context) : base(context)
-    {
+    private readonly IContainer container;
 
+    public CreatePostCommand(ModelsContext context, IContainer container) : base(context)
+    {
+        this.container = container;
     }
 
     public async Task<Post> Handle(CreatePostDto message)
@@ -58,7 +60,7 @@ public class CreatePostCommand : HandlerBase, Command<Task<Post>, CreatePostDto>
         };
 
         this.context.Posts.Add(post);
-        post.ScriptUrl = message.Script != null ? await Blob.GetPostScriptUrl(message.Script, post.Id) : null;
+        post.ScriptUrl = message.Script != null ? await this.container.GetPostScriptUrl(message.Script, post.Id) : null;
         await this.context.SaveChangesAsync();
 
         return post;
