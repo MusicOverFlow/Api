@@ -2,25 +2,25 @@
 
 public class FollowUnfollowAccountCommandTests : TestBase
 {
+    private Account follower, followed;
+    
+    public FollowUnfollowAccountCommandTests()
+    {
+        this.follower = this.RegisterNewAccount("follower@myges.fr").Result;
+        this.followed = this.RegisterNewAccount("followed@myges.fr").Result;
+    }
+
     [Fact(DisplayName =
         "Follow an existing, not followed account\n" +
         "Should add the account to followed accounts")]
     public async void FollowUnfollowAccountHandlerTest_1()
     {
-        await this.RegisterNewAccount("follower@myges.fr");
-        await this.RegisterNewAccount("followed@myges.fr");
-        
         await new FollowUnfollowAccountCommand(this.context).Handle(new FollowDto()
         {
-            CallerMail = "follower@myges.fr",
-            TargetMail = "followed@myges.fr",
+            CallerMail = this.follower.MailAddress,
+            TargetMail = this.followed.MailAddress,
         });
-
-        Account followed = await this.context.Accounts
-            .FirstAsync(a => a.MailAddress.Equals("followed@myges.fr"));
-        Account follower = await this.context.Accounts
-            .FirstAsync(a => a.MailAddress.Equals("follower@myges.fr"));
-
+        
         follower.Follows.Should().Contain(followed);
     }
 
@@ -29,64 +29,50 @@ public class FollowUnfollowAccountCommandTests : TestBase
         "Should remove the account from followed accounts")]
     public async void FollowUnfollowAccountHandlerTest_2()
     {
-        await this.RegisterNewAccount("follower@myges.fr");
-        await this.RegisterNewAccount("followed@myges.fr");
-
         // Follow
         await new FollowUnfollowAccountCommand(this.context).Handle(new FollowDto()
         {
-            CallerMail = "follower@myges.fr",
-            TargetMail = "followed@myges.fr",
+            CallerMail = this.follower.MailAddress,
+            TargetMail = this.followed.MailAddress,
         });
 
         // Unfollow
         await new FollowUnfollowAccountCommand(this.context).Handle(new FollowDto()
         {
-            CallerMail = "follower@myges.fr",
-            TargetMail = "followed@myges.fr",
+            CallerMail = this.follower.MailAddress,
+            TargetMail = this.followed.MailAddress,
         });
-
-        Account followed = await this.context.Accounts
-            .FirstAsync(a => a.MailAddress.Equals("followed@myges.fr"));
-        Account follower = await this.context.Accounts
-            .FirstAsync(a => a.MailAddress.Equals("follower@myges.fr"));
         
         follower.Follows.Should().NotContain(followed);
     }
 
     [Fact(DisplayName =
         "Following yourself\n" +
-        "Should throw exception with code 400 and type \"Tentative de self-follow\"")]
+        "Should throw exception code 400")]
     public async void FollowUnfollowAccountHandlerTest_3()
     {
-        await this.RegisterNewAccount("gt@myges.fr");
-
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
             () => new FollowUnfollowAccountCommand(this.context).Handle(new FollowDto()
             {
-                CallerMail = "gt@myges.fr",
-                TargetMail = "gt@myges.fr",
+                CallerMail = this.follower.MailAddress,
+                TargetMail = this.follower.MailAddress,
             }));
 
         request.Content.StatusCode.Should().Be(400);
-        request.Content.Value.As<ExceptionDto>().Error.Should().Be("Tentative de self-follow");
     }
 
     [Fact(DisplayName =
         "Following an inexisting account\n" +
-        "Should throw exception with code 404 and type \"Compte introuvable\"")]
+        "Should throw exception code 404")]
     public async void FollowUnfollowAccountHandlerTest_4()
     {
-        await this.RegisterNewAccount("gt@myges.fr");
-
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
             () => new FollowUnfollowAccountCommand(this.context).Handle(new FollowDto()
             {
-                CallerMail = "gt@myges.fr",
-                TargetMail = "gt2@myges.fr",
+                CallerMail = this.follower.MailAddress,
+                TargetMail = "nonExistingAccount@myges.fr",
             }));
 
         request.Content.StatusCode.Should().Be(404);
-        request.Content.Value.As<ExceptionDto>().Error.Should().Be("Compte introuvable");
     }
 }

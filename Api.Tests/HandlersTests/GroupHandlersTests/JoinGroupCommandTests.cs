@@ -2,44 +2,44 @@
 
 public class JoinGroupCommandTests : TestBase
 {
+    private Account groupOwner, member;
+    private Group group;
+
+    public JoinGroupCommandTests()
+    {
+        this.groupOwner = this.RegisterNewAccount("gt1@myges.fr").Result;
+        this.member = this.RegisterNewAccount("gt2@myges.fr").Result;
+        this.group = this.RegisterNewGroup(this.groupOwner.MailAddress).Result;
+    }
+
     [Fact(DisplayName =
         "Joining a group should add the account to the group's members")]
     public async void JoinGroupCommandTest_1()
     {
-        await this.RegisterNewAccount("gt@myges.fr");
-        Group group = await this.RegisterNewGroup("gt@myges.fr");
-        await this.RegisterNewAccount("newMember@myges.fr");
-
         await new JoinGroupCommand(this.context).Handle(new JoinGroupDto()
         {
-            MailAddress = "newMember@myges.fr",
-            GroupId = group.Id,
+            MailAddress = this.member.MailAddress,
+            GroupId = this.group.Id,
         });
 
         // 2 because the creator is already in the group
-        group.Members.Should().HaveCount(2);
+        this.group.Members.Should().HaveCount(2);
     }
 
     [Fact(DisplayName =
         "Joining an inexisting group\n" +
         "Should not add the account to the group's members\n" +
-        "And throw exception code 404 with type \"Groupe introuvable\"")]
+        "And throw exception code 404")]
     public async void JoinGroupCommandTest_2()
     {
-        Account account = await this.RegisterNewAccount("newMember@myges.fr");
-        
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
             () => new JoinGroupCommand(this.context).Handle(new JoinGroupDto()
             {
-                MailAddress = "newMember@myges.fr",
+                MailAddress = this.member.MailAddress,
                 GroupId = Guid.NewGuid(),
             }));
-
-        account = this.context.Accounts
-            .FirstOrDefault(a => a.Id.Equals(account.Id));
-            
-        account.Groups.Should().BeEmpty();
+        
+        this.member.Groups.Should().BeEmpty();
         request.Content.StatusCode.Should().Be(404);
-        request.Content.Value.As<ExceptionDto>().Error.Should().Be("Groupe introuvable");
     }
 }

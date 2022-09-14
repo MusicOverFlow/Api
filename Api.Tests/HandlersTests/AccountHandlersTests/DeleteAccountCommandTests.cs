@@ -2,28 +2,32 @@
 
 public class DeleteAccountCommandTests : TestBase
 {
+    private Account account;
+    
+    public DeleteAccountCommandTests()
+    {
+        this.account = this.RegisterNewAccount("gt@myges.fr").Result;
+    }
+
     [Fact(DisplayName =
         "Deleting an existing account\n" +
         "Should delete the account")]
     public async void DeleteAccountHandlerTest_1()
     {
-        await this.RegisterNewAccount("gt@myges.fr");
+        await new DeleteAccountCommand(this.context).Handle(this.account.MailAddress);
 
-        await new DeleteAccountCommand(this.context).Handle("gt@myges.fr");
-
-        Account account = this.context.Accounts.FirstOrDefault(a => a.MailAddress == "gt@myges.fr");
-        account.Should().BeNull();
+        Account deletedAccount = this.context.Accounts.FirstOrDefault(a => a.MailAddress.Equals(this.account.MailAddress));
+        deletedAccount.Should().BeNull();
     }
 
     [Fact(DisplayName =
         "Deleting an unexisting account\n" +
-        "Should throw exception with code 404 and error type \"Compte introuvable\"")]
+        "Should throw exception code 404")]
     public async void DeleteAccountHandlerTest_2()
     {
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
-            () => new DeleteAccountCommand(this.context).Handle("gt@myges.fr"));
+            () => new DeleteAccountCommand(this.context).Handle("nonExistingAccount@myges.fr"));
 
         request.Content.StatusCode.Should().Be(404);
-        request.Content.Value.As<ExceptionDto>().Error.Should().Be("Compte introuvable");
     }
 }

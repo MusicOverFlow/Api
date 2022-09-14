@@ -1,5 +1,4 @@
-﻿using Api.Handlers.Containers;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using System.IO;
 using System.Net.Http;
 
@@ -7,19 +6,25 @@ namespace Api.Tests.HandlersTests.PostHandlersTests;
 
 public class AddMusicPostCommandTests : TestBase
 {
+    private Account account;
+    private Post post;
+
+    public AddMusicPostCommandTests()
+    {
+        this.account = this.RegisterNewAccount("gr@myges.fr").Result;
+        this.post = this.RegisterNewPost(this.account.MailAddress).Result;
+    }
+    
     [Fact(DisplayName =
         "Adding a sound with valid format to a post\n" +
         "Should update the post's sound URL")]
     public async void AddMusicPostHandlerTest_1()
     {
-        await this.RegisterNewAccount("gt@myges.fr");
-        Post post = await this.RegisterNewPost("gt@myges.fr");
-
         byte[] fakeSound = new byte[] { 0, 1, 2, 3, 4 };
 
-        post = await new AddMusicPostCommand(this.context, this.container).Handle(new AddMusicDto()
+        Post postWithMusic = await new AddMusicPostCommand(this.context, this.container).Handle(new AddMusicDto()
         {
-            PostId = post.Id,
+            PostId = this.post.Id,
             File = new FormFile(
                 baseStream: new MemoryStream(fakeSound),
                 baseStreamOffset: 0,
@@ -27,10 +32,10 @@ public class AddMusicPostCommandTests : TestBase
                 name: "",
                 fileName: "mySound.mp3"),
         });
-        
-        post.MusicUrl.Should().Be($"https://post-sounds.s3.eu-west-3.amazonaws.com/{post.Id}.mySound.mp3");
 
-        await this.container.DeletePostSound($"{post.Id}.mySound.mp3");
+        postWithMusic.MusicUrl.Should().Be($"https://post-sounds.s3.eu-west-3.amazonaws.com/{postWithMusic.Id}.mySound.mp3");
+
+        await this.container.DeletePostSound($"{postWithMusic.Id}.mySound.mp3");
     }
 
     [Fact(DisplayName =
@@ -38,14 +43,11 @@ public class AddMusicPostCommandTests : TestBase
         "Should update the post's sound on AWS")]
     public async void AddMusicPostHandlerTest_2()
     {
-        await this.RegisterNewAccount("gt@myges.fr");
-        Post postWithoutSound = await this.RegisterNewPost("gt@myges.fr");
-
         byte[] fakeSound = new byte[] { 0, 1, 2, 3, 4 };
 
         Post postWithSound = await new AddMusicPostCommand(this.context, this.container).Handle(new AddMusicDto()
         {
-            PostId = postWithoutSound.Id,
+            PostId = this.post.Id,
             File = new FormFile(
                 baseStream: new MemoryStream(fakeSound),
                 baseStreamOffset: 0,

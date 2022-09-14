@@ -1,20 +1,24 @@
-﻿using System.Security.Cryptography;
-
-namespace Api.Tests.HandlersTests.AccountHandlersTests;
+﻿namespace Api.Tests.HandlersTests.AccountHandlersTests;
 
 public class UpdateAccountPasswordCommandTests : TestBase
 {
+    private Account account;
+    
+    public UpdateAccountPasswordCommandTests()
+    {
+        this.account = this.RegisterNewAccount("gt@myges.fr").Result;
+    }
+    
     [Fact(DisplayName =
         "Updating an account password with a valid password\n" +
         "Should update the account's password")]
     public async void UpdateAccountPasswordHandlerTest_1()
     {
-        Account account = await this.RegisterNewAccount("gt@myges.fr");
         byte[] beforeUpdateHash = account.PasswordHash;
         
         Account updatedAccount = await new UpdateAccountPasswordCommand(this.context).Handle(new UpdatePasswordDto()
         {
-            MailAddress = account.MailAddress,
+            MailAddress = this.account.MailAddress,
             NewPassword = "456drowssaP?",
         });
 
@@ -23,20 +27,17 @@ public class UpdateAccountPasswordCommandTests : TestBase
 
     [Fact(DisplayName =
         "Updating an account password with an invalid password\n" +
-        "Should throw exception with code 400 and error type \"Mot de passe invalide\"")]
+        "Should throw exception code 400")]
     public async void UpdateAccountPasswordHandlerTest_2()
     {
-        await this.RegisterNewAccount("gt@myges.fr");
-
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
             () => new UpdateAccountPasswordCommand(this.context).Handle(new UpdatePasswordDto()
             {
-                MailAddress = "gt@myges.fr",
+                MailAddress = this.account.MailAddress,
                 NewPassword = "myPass",
             }));
 
         request.Content.StatusCode.Should().Be(400);
-        request.Content.Value.As<ExceptionDto>().Error.Should().Be("Mot de passe invalide");
     }
 
     [Fact(DisplayName =
@@ -44,14 +45,12 @@ public class UpdateAccountPasswordCommandTests : TestBase
         "Should not update the account's password")]
     public async void UpdateAccountPasswordHandlerTest_3()
     {
-        Account beforeUpdateAccount = await this.RegisterNewAccount("gt@myges.fr");
-        Account updatedAccount = beforeUpdateAccount;
-        
+        Account updatedAccount = this.account;
         try
         {
             updatedAccount = await new UpdateAccountPasswordCommand(this.context).Handle(new UpdatePasswordDto()
             {
-                MailAddress = "gt@myges.fr",
+                MailAddress = this.account.MailAddress,
                 NewPassword = "myPass",
             });
         }
@@ -60,22 +59,21 @@ public class UpdateAccountPasswordCommandTests : TestBase
 
         }
         
-        updatedAccount.PasswordHash.Should().Equal(beforeUpdateAccount.PasswordHash);
+        updatedAccount.PasswordHash.Should().Equal(this.account.PasswordHash);
     }
 
     [Fact(DisplayName =
         "Updating an inexisting account password\n" +
-        "Should throw exception with code 404 and error type \"Compte introuvable\"")]
+        "Should throw exception code 404")]
     public async void UpdateAccountPasswordHandlerTest_4()
     {
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
             () => new UpdateAccountPasswordCommand(this.context).Handle(new UpdatePasswordDto()
             {
-                MailAddress = "gt@myges.fr",
+                MailAddress = "unknown@myges.fr",
                 NewPassword = "123Password!",
             }));
 
         request.Content.StatusCode.Should().Be(404);
-        request.Content.Value.As<ExceptionDto>().Error.Should().Be("Compte introuvable");
     }
 }

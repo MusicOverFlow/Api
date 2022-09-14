@@ -1,22 +1,26 @@
-﻿using Api.Handlers.Containers;
-
-namespace Api.Tests.HandlersTests.CommentaryHandlersTests;
+﻿namespace Api.Tests.HandlersTests.CommentaryHandlersTests;
 
 public class CreateCommentaryCommandTests : TestBase
 {
+    private Account account;
+    private Post post;
+
+    public CreateCommentaryCommandTests()
+    {
+        this.account = this.RegisterNewAccount("gt@myges.fr").Result;
+        this.post = this.RegisterNewPost(this.account.MailAddress).Result;
+    }
+
     [Fact(DisplayName =
         "Creating a commentary with content and existing post's ID and creator mail\n" +
         "Should create the commentary and link it to the post")]
     public async void CreateCommentaryHandlerTest_1()
     {
-        await this.RegisterNewAccount("gt@myges.fr");
-        Post post = await this.RegisterNewPost("gt@myges.fr");
-
         Post postWithCommentary = await new CreateCommentaryCommand(this.context, this.container).Handle(new CreateCommentaryDto()
         {
-            CreatorMailAddress = "gt@myges.fr",
+            CreatorMailAddress = this.account.MailAddress,
             Content = "Commentary content",
-            PostId = post.Id,
+            PostId = this.post.Id,
         });
 
         postWithCommentary.Commentaries.Should().HaveCount(1);
@@ -27,17 +31,14 @@ public class CreateCommentaryCommandTests : TestBase
         "Should set the commentary's owner as its creator")]
     public async void CreateCommentaryHandlerTest_2()
     {
-        Account account = await this.RegisterNewAccount("gt@myges.fr");
-        Post post = await this.RegisterNewPost("gt@myges.fr");
-
         Post postWithCommentary = await new CreateCommentaryCommand(this.context, this.container).Handle(new CreateCommentaryDto()
         {
-            CreatorMailAddress = account.MailAddress,
+            CreatorMailAddress = this.account.MailAddress,
             Content = "Commentary content",
-            PostId = post.Id,
+            PostId = this.post.Id,
         });
 
-        postWithCommentary.Commentaries.First().Owner.Should().Be(account);
+        postWithCommentary.Commentaries.First().Owner.Should().Be(this.account);
     }
 
     [Fact(DisplayName =
@@ -45,14 +46,11 @@ public class CreateCommentaryCommandTests : TestBase
         "Should create an URL to host the script")]
     public async void CreateCommentaryHandlerTest_3()
     {
-        await this.RegisterNewAccount("gt@myges.fr");
-        Post post = await this.RegisterNewPost("gt@myges.fr");
-
         Post postWithCommentary = await new CreateCommentaryCommand(this.context, this.container).Handle(new CreateCommentaryDto()
         {
-            CreatorMailAddress = "gt@myges.fr",
+            CreatorMailAddress = this.account.MailAddress,
             Content = "Commentary content",
-            PostId = post.Id,
+            PostId = this.post.Id,
             ScriptLanguage = Language.Python.ToString(),
             Script = "print('Hello, testing world')",
         });
@@ -69,77 +67,62 @@ public class CreateCommentaryCommandTests : TestBase
         "Should discard the script of the commentary")]
     public async void CreateCommentaryHandlerTest_4()
     {
-        await this.RegisterNewAccount("gt@myges.fr");
-        Post post = await this.RegisterNewPost("gt@myges.fr");
-
         Post postWithCommentary = await new CreateCommentaryCommand(this.context, this.container).Handle(new CreateCommentaryDto()
         {
-            CreatorMailAddress = "gt@myges.fr",
+            CreatorMailAddress = this.account.MailAddress,
             Content = "Commentary content",
-            PostId = post.Id,
+            PostId = this.post.Id,
             Script = "print('Hello, testing world')",
         });
 
-        Commentary commentary = postWithCommentary.Commentaries.First();
-        commentary.ScriptUrl.Should().Be(null);
+        postWithCommentary.Commentaries.First().ScriptUrl.Should().Be(null);
     }
 
     [Fact(DisplayName =
         "Creating a commentary linked to an inexisting post\n" +
-        "Should throw exception with code 404 and error type \"Post ou commentaire introuvable\"")]
+        "Should throw exception code 404")]
     public async void CreateCommentaryHandlerTest_5()
     {
-        await this.RegisterNewAccount("gt@myges.fr");
-
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
             () => new CreateCommentaryCommand(this.context, this.container).Handle(new CreateCommentaryDto()
             {
-                CreatorMailAddress = "gt@myges.fr",
+                CreatorMailAddress = this.account.MailAddress,
                 Content = "Commentary content",
                 PostId = Guid.NewGuid(),
             }));
 
         request.Content.StatusCode.Should().Be(404);
-        request.Content.Value.As<ExceptionDto>().Error.Should().Be("Post ou commentaire introuvable");
     }
 
     [Fact(DisplayName =
         "Creating a commentary linked to an inexisting post\n" +
-        "Should throw exception with code 404 and error type \"Compte introuvable\"")]
+        "Should throw exception code 404")]
     public async void CreateCommentaryHandlerTest_6()
     {
-        await this.RegisterNewAccount("gt@myges.fr");
-        Post post = await this.RegisterNewPost("gt@myges.fr");
-
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
             () => new CreateCommentaryCommand(this.context, this.container).Handle(new CreateCommentaryDto()
             {
-                CreatorMailAddress = "newGuy@myges.fr",
+                CreatorMailAddress = "unknown@myges.fr",
                 Content = "Commentary content",
-                PostId = post.Id,
+                PostId = this.post.Id,
             }));
 
         request.Content.StatusCode.Should().Be(404);
-        request.Content.Value.As<ExceptionDto>().Error.Should().Be("Compte introuvable");
     }
 
     [Fact(DisplayName =
         "Creating a commentary without content\n" +
-        "Should throw exception with code 400 and error type \"Contenu du post vide\"")]
+        "Should throw exception code 400")]
     public async void CreateCommentaryHandlerTest_7()
     {
-        await this.RegisterNewAccount("gt@myges.fr");
-        Post post = await this.RegisterNewPost("gt@myges.fr");
-
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
             () => new CreateCommentaryCommand(this.context, this.container).Handle(new CreateCommentaryDto()
             {
-                CreatorMailAddress = "gt@myges.fr",
+                CreatorMailAddress = this.account.MailAddress,
                 Content = string.Empty,
-                PostId = post.Id,
+                PostId = this.post.Id,
             }));
 
         request.Content.StatusCode.Should().Be(400);
-        request.Content.Value.As<ExceptionDto>().Error.Should().Be("Contenu du post vide");
     }
 }

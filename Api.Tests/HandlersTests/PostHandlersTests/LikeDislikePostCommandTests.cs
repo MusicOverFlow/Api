@@ -2,25 +2,28 @@
 
 public class LikeDislikePostCommandTests : TestBase
 {
+    private Account account;
+    private Post post;
+
+    public LikeDislikePostCommandTests()
+    {
+        this.account = this.RegisterNewAccount("gt@myges.fr").Result;
+        this.post = this.RegisterNewPost(this.account.MailAddress).Result;
+    }
+
     [Fact(DisplayName =
         "Liking an existing post\n" +
         "Should add the caller account to the post's likes")]
     public async void LikeDislikePostHandlerTest_1()
     {
-        Account account = await this.RegisterNewAccount("gt@myges.fr");
-        Post post = await this.RegisterNewPost(account.MailAddress);
-        
         await new LikeDislikePostCommand(this.context).Handle(new LikeDislikeDto()
         {
-            CallerMail = account.MailAddress,
-            PostId = post.Id,
+            CallerMail = this.account.MailAddress,
+            PostId = this.post.Id,
         });
-
-        Post likedPost = this.context.Posts
-            .FirstOrDefault(p => p.Id.Equals(post.Id));
         
-        likedPost.Likes.Count.Should().Be(1);
-        likedPost.Likes.Should().Contain(account);
+        this.post.Likes.Count.Should().Be(1);
+        this.post.Likes.Should().Contain(this.account);
     }
 
     [Fact(DisplayName =
@@ -28,44 +31,36 @@ public class LikeDislikePostCommandTests : TestBase
         "Should remove the caller account from the post's likes")]
     public async void LikeDislikePostHandlerTest_2()
     {
-        Account account = await this.RegisterNewAccount("gt@myges.fr");
-        Post post = await this.RegisterNewPost("gt@myges.fr");
-
         // Like
         await new LikeDislikePostCommand(this.context).Handle(new LikeDislikeDto()
         {
-            CallerMail = "gt@myges.fr",
-            PostId = post.Id,
+            CallerMail = this.account.MailAddress,
+            PostId = this.post.Id,
         });
-
+        
         // Dislike
         await new LikeDislikePostCommand(this.context).Handle(new LikeDislikeDto()
         {
-            CallerMail = "gt@myges.fr",
-            PostId = post.Id,
+            CallerMail = this.account.MailAddress,
+            PostId = this.post.Id,
         });
-
-        Post likedPost = this.context.Posts
-            .FirstOrDefault(p => p.Id.Equals(post.Id));
-
-        likedPost.Likes.Count.Should().Be(0);
+        
+        this.post.Likes.Count.Should().Be(0);
+        this.post.Likes.Should().NotContain(this.account);
     }
 
     [Fact(DisplayName =
         "Liking a non existing post\n" +
-        "Should throw exception with code 404 and error type \"Post ou commentaire introuvable\"")]
+        "Should throw exception code 404")]
     public async void LikeDislikePostHandlerTest_3()
     {
-        Account account = await this.RegisterNewAccount("gt@myges.fr");
-
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
             () => new LikeDislikePostCommand(this.context).Handle(new LikeDislikeDto()
             {
-                CallerMail = account.MailAddress,
+                CallerMail = this.account.MailAddress,
                 PostId = Guid.NewGuid(),
             }));
 
         request.Content.StatusCode.Should().Be(404);
-        request.Content.Value.As<ExceptionDto>().Error.Should().Be("Post ou commentaire introuvable");
     }
 }

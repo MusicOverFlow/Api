@@ -2,16 +2,21 @@
 
 public class UpdateAccountMailAddressCommandTests : TestBase
 {
+    private Account account;
+
+    public UpdateAccountMailAddressCommandTests()
+    {
+        this.account = this.RegisterNewAccount("gt@myges.fr").Result;
+    }
+    
     [Fact(DisplayName =
         "Updating an account mail address with a valid mail address\n" +
         "Should update the account mail address")]
     public async void UpdateAccountMailAddressHandlerTest_1()
     {
-        await this.RegisterNewAccount("gt@myges.fr");
-
         Account updatedAccount = await new UpdateAccountMailAddressCommand(this.context).Handle(new UpdateMailDto()
         {
-            MailAddress = "gt@myges.fr",
+            MailAddress = this.account.MailAddress,
             NewMailAddress = "gtnew@myges.fr",
         });
         
@@ -20,54 +25,48 @@ public class UpdateAccountMailAddressCommandTests : TestBase
 
     [Fact(DisplayName =
         "Updating an account mail address with an invalid mail address\n" +
-        "Should throw exception with code 400 and error type \"Adresse mail invalide\"")]
+        "Should throw exception code 400")]
     public async void UpdateAccountMailAddressHandlerTest_2()
     {
-        await this.RegisterNewAccount("gt@myges.fr");
-
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
             () => new UpdateAccountMailAddressCommand(this.context).Handle(new UpdateMailDto()
             {
-                MailAddress = "gt@myges.fr",
+                MailAddress = this.account.MailAddress,
                 NewMailAddress = "hello",
             }));
 
         request.Content.StatusCode.Should().Be(400);
-        request.Content.Value.As<ExceptionDto>().Error.Should().Be("Adresse mail invalide");
     }
 
     [Fact(DisplayName =
         "Updating an account mail address with an already registered mail address\n" +
-        "Should throw exception with code 400 and error type \"Adresse mail déjà enregistrée\"")]
+        "Should throw exception code 400")]
     public async void UpdateAccountMailAddressHandlerTest_3()
     {
-        await this.RegisterNewAccount("gtfirst@myges.fr");
-        await this.RegisterNewAccount("gtsecond@myges.fr");
+        await this.RegisterNewAccount("gtnew@myges.fr");
 
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
             () => new UpdateAccountMailAddressCommand(this.context).Handle(new UpdateMailDto()
             {
-                MailAddress = "gtfirst@myges.fr",
-                NewMailAddress = "gtsecond@myges.fr",
+                MailAddress = this.account.MailAddress,
+                NewMailAddress = "gtnew@myges.fr",
             }));
 
         request.Content.StatusCode.Should().Be(400);
-        request.Content.Value.As<ExceptionDto>().Error.Should().Be("Adresse mail déjà enregistrée");
     }
 
     [Fact(DisplayName =
         "Updating an inexisting account mail address\n" +
-        "Should throw exception with code 404 and error type \"Compte introuvable\"")]
+        "Should throw exception with 404")]
     public async void UpdateAccountMailAddressHandlerTest_4()
     {
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
             () => new UpdateAccountMailAddressCommand(this.context).Handle(new UpdateMailDto()
             {
-                MailAddress = "gtfirst@myges.fr",
-                NewMailAddress = "gtsecond@myges.fr",
+                MailAddress = "myMail@myges.fr",
+                NewMailAddress = "myNewMail@myges.fr",
             }));
 
         request.Content.StatusCode.Should().Be(404);
-        request.Content.Value.As<ExceptionDto>().Error.Should().Be("Compte introuvable");
     }
 }

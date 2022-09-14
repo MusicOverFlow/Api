@@ -6,17 +6,22 @@ namespace Api.Tests.HandlersTests.AccountHandlersTests;
 
 public class UpdateAccountProfilPicCommandTests : TestBase
 {
+    private Account account;
+
+    public UpdateAccountProfilPicCommandTests()
+    {
+        this.account = this.RegisterNewAccount("gt@myges.fr").Result;
+    }
+    
     [Fact(DisplayName =
         "Updating an account with an invalid profil pic file format\n" +
-        "Should throw exception with code 400 and error type \"Format de fichier invalide\"")]
+        "Should throw exception code 400")]
     public async void UpdateAccountProfilPicHandlerTest_1()
     {
-        await this.RegisterNewAccount("gt@myges.fr");
-
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
             () => new UpdateAccountProfilPicCommand(this.context, this.container).Handle(new UpdateProfilPicDto()
             {
-                MailAddress = "gt@myges.fr",
+                MailAddress = this.account.MailAddress,
                 ProfilPic = new FormFile(
                     baseStream: null,
                     baseStreamOffset: 0,
@@ -26,18 +31,17 @@ public class UpdateAccountProfilPicCommandTests : TestBase
             }));
 
         request.Content.StatusCode.Should().Be(400);
-        request.Content.Value.As<ExceptionDto>().Error.Should().Be("Format de fichier invalide");
     }
 
     [Fact(DisplayName =
         "Updating an inexisting account's profil pic\n" +
-        "Should throw exception with code 404 and error type \"Compte introuvable\"")]
+        "Should throw exception code 404")]
     public async void UpdateAccountProfilPicHandlerTest_2()
     {
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
             () => new UpdateAccountProfilPicCommand(this.context, this.container).Handle(new UpdateProfilPicDto()
             {
-                MailAddress = "gt@myges.fr",
+                MailAddress = "unkown@myges.fr",
                 ProfilPic = new FormFile(
                     baseStream: null,
                     baseStreamOffset: 0,
@@ -47,7 +51,6 @@ public class UpdateAccountProfilPicCommandTests : TestBase
             }));
 
         request.Content.StatusCode.Should().Be(404);
-        request.Content.Value.As<ExceptionDto>().Error.Should().Be("Compte introuvable");
     }
 
     [Fact(DisplayName =

@@ -42,7 +42,7 @@ public class CreateAccountCommandTests : TestBase
 
     [Fact(DisplayName =
         "Account creation with invalid mail address\n" +
-        "Should throw exception with code 400 and error type \"Adresse mail invalide\"")]
+        "Should throw exception code 400")]
     public async void CreateAccountHandlerTest_3()
     {
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
@@ -53,12 +53,11 @@ public class CreateAccountCommandTests : TestBase
             }));
 
         request.Content.StatusCode.Should().Be(400);
-        request.Content.Value.As<ExceptionDto>().Error.Should().Be("Adresse mail invalide");
     }
 
     [Fact(DisplayName =
         "Account creation with invalid password\n" +
-        "Should throw exception with code 400 and error type \"Mot de passe invalide\"")]
+        "Should throw exception code 400")]
     public async void CreateAccountHandlerTest_4()
     {
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
@@ -69,12 +68,11 @@ public class CreateAccountCommandTests : TestBase
             }));
 
         request.Content.StatusCode.Should().Be(400);
-        request.Content.Value.As<ExceptionDto>().Error.Should().Be("Mot de passe invalide");
     }
 
     [Fact(DisplayName =
         "Account creation with already registered mail address\n" +
-        "Should throw exception with code 400 and error type \"Adresse mail déjà enregistrée\"")]
+        "Should throw exception code 400")]
     public async void CreateAccountHandlerTest_5()
     {
         await new CreateAccountCommand(this.context, this.container).Handle(new CreateAccountDto()
@@ -91,12 +89,11 @@ public class CreateAccountCommandTests : TestBase
             }));
 
         request.Content.StatusCode.Should().Be(400);
-        request.Content.Value.As<ExceptionDto>().Error.Should().Be("Adresse mail déjà enregistrée");
     }
 
     [Fact(DisplayName =
         "Account creation with an invalid profil pic file format\n" +
-        "Should throw exception with code 400 and error type \"Format de fichier invalide\"")]
+        "Should throw exception code 400")]
     public async void CreateAccountHandlerTest_6()
     {
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
@@ -113,6 +110,5 @@ public class CreateAccountCommandTests : TestBase
             }));
 
         request.Content.StatusCode.Should().Be(400);
-        request.Content.Value.As<ExceptionDto>().Error.Should().Be("Format de fichier invalide");
     }
 }

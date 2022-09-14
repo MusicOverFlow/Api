@@ -2,16 +2,21 @@
 
 public class UpdateAccountProfilCommandTests : TestBase
 {
+    private Account account;
+
+    public UpdateAccountProfilCommandTests()
+    {
+        this.account = this.RegisterNewAccount("gt@myges.fr").Result;
+    }
+
     [Fact(DisplayName =
        "Updating an account firstname with a firstname\n" +
        "Should update the account's firstname")]
     public async void UpdateAccountProfilHandlerTest_1()
     {
-        await this.RegisterNewAccount("gt@myges.fr");
-
         Account updatedAccount = await new UpdateAccountProfilCommand(this.context).Handle(new UpdateProfilDto()
         {
-            MailAddress = "gt@myges.fr",
+            MailAddress = this.account.MailAddress,
             Firstname = "MyNewFirstname",
         });
         
@@ -23,11 +28,9 @@ public class UpdateAccountProfilCommandTests : TestBase
        "Should not update the account's firstname")]
     public async void UpdateAccountProfilHandlerTest_2()
     {
-        await this.RegisterNewAccount("gt@myges.fr");
-
         Account updatedAccount = await new UpdateAccountProfilCommand(this.context).Handle(new UpdateProfilDto()
         {
-            MailAddress = "gt@myges.fr",
+            MailAddress = this.account.MailAddress,
             Firstname = string.Empty,
         });
         
@@ -39,11 +42,9 @@ public class UpdateAccountProfilCommandTests : TestBase
         "Should not update the account's firstname")]
     public async void UpdateAccountProfilHandlerTest_3()
     {
-        await this.RegisterNewAccount("gt@myges.fr");
-
         Account updatedAccount = await new UpdateAccountProfilCommand(this.context).Handle(new UpdateProfilDto()
         {
-            MailAddress = "gt@myges.fr",
+            MailAddress = this.account.MailAddress,
         });
         
         updatedAccount.Firstname.Should().Be("Unknown");
@@ -51,17 +52,16 @@ public class UpdateAccountProfilCommandTests : TestBase
 
     [Fact(DisplayName =
         "Updating an inexisting account firstname\n" +
-        "Should throw exception with code 404 and error type \"Compte introuvable\"")]
+        "Should throw exception code 404")]
     public async void UpdateAccountProfilHandlerTest_4()
     {
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
             () => new UpdateAccountProfilCommand(this.context).Handle(new UpdateProfilDto()
             {
-                MailAddress = "gt@myges.fr",
+                MailAddress = "unknown@myges.fr",
             }));
 
         request.Content.StatusCode.Should().Be(404);
-        request.Content.Value.As<ExceptionDto>().Error.Should().Be("Compte introuvable");
     }
 
     /**

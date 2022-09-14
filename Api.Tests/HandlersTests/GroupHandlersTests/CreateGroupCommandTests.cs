@@ -1,5 +1,4 @@
-﻿using Api.Handlers.Containers;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using System.IO;
 using System.Net.Http;
 
@@ -7,16 +6,21 @@ namespace Api.Tests.HandlersTests.GroupHandlersTests;
 
 public class CreateGroupCommandTests : TestBase
 {
+    private Account account;
+
+    public CreateGroupCommandTests()
+    {
+        this.account = this.RegisterNewAccount("gt@myges.fr").Result;
+    }
+    
     [Fact(DisplayName =
         "Group creation with a valid request\n" +
         "Shoud create the account")]
     public async void CreateGroupCommandTest_1()
     {
-        await this.RegisterNewAccount("gt@myges.fr");
-
         Group group = await new CreateGroupCommand(this.context, this.container).Handle(new CreateGroupDto()
         {
-            CreatorMailAddress = "gt@myges.fr",
+            CreatorMailAddress = this.account.MailAddress,
             Name = "Group name",
         });
 
@@ -26,37 +30,33 @@ public class CreateGroupCommandTests : TestBase
     [Fact(DisplayName =
         "Group creation without a name\n" +
         "Shoud not create the account\n" +
-        "And throw exception code 400 with type \"Nom de groupe invalide\"")]
+        "And throw exception code 400")]
     public async void CreateGroupCommandTest_2()
     {
-        await this.RegisterNewAccount("gt@myges.fr");
-
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
             () => new CreateGroupCommand(this.context, this.container).Handle(new CreateGroupDto()
             {
-                CreatorMailAddress = "gt@myges.fr",
+                CreatorMailAddress = this.account.MailAddress,
                 Name = null,
             }));
 
         request.Content.StatusCode.Should().Be(400);
-        request.Content.Value.As<ExceptionDto>().Error.Should().Be("Nom de groupe invalide");
     }
 
     [Fact(DisplayName =
         "Group creation with an inexisting creator account\n" +
         "Shoud not create the account\n" +
-        "And throw exception code 404 with type \"Compte introuvable\"")]
+        "And throw exception code 404")]
     public async void CreateGroupCommandTest_3()
     {
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
             () => new CreateGroupCommand(this.context, this.container).Handle(new CreateGroupDto()
             {
-                CreatorMailAddress = "gt@myges.fr",
+                CreatorMailAddress = "unknown@myges.fr",
                 Name = "Group name",
             }));
 
         request.Content.StatusCode.Should().Be(404);
-        request.Content.Value.As<ExceptionDto>().Error.Should().Be("Compte introuvable");
     }
 
     [Fact(DisplayName =
@@ -64,13 +64,11 @@ public class CreateGroupCommandTests : TestBase
         "Shoud upload the pic on AWS")]
     public async void CreateGroupCommandTest_4()
     {
-        await this.RegisterNewAccount("gt@myges.fr");
-
         byte[] fakeImage = new byte[] { 0, 1, 2, 3, 4 };
 
         await new CreateGroupCommand(this.context, this.container).Handle(new CreateGroupDto()
         {
-            CreatorMailAddress = "gt@myges.fr",
+            CreatorMailAddress = this.account.MailAddress,
             Name = "Group name",
             GroupPic = new FormFile(
                 baseStream: new MemoryStream(fakeImage),
@@ -98,13 +96,11 @@ public class CreateGroupCommandTests : TestBase
         "Shoud create the group pic URL")]
     public async void CreateGroupCommandTest_5()
     {
-        await this.RegisterNewAccount("gt@myges.fr");
-
         byte[] fakeImage = new byte[] { 0, 1, 2, 3, 4 };
 
         Group group = await new CreateGroupCommand(this.context, this.container).Handle(new CreateGroupDto()
         {
-            CreatorMailAddress = "gt@myges.fr",
+            CreatorMailAddress = this.account.MailAddress,
             Name = "Group name",
             GroupPic = new FormFile(
                 baseStream: new MemoryStream(fakeImage),

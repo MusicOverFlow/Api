@@ -2,6 +2,13 @@
 
 public class UpdateAccountRoleCommandTests : TestBase
 {
+    private Account account;
+
+    public UpdateAccountRoleCommandTests()
+    {
+        this.account = this.RegisterNewAccount("gt@myges.fr").Result;
+    }
+    
     /*
      * Note : il faut être admin pour pouvoir modifier le rôle d'un compte
      * Cette vérification est faite par le middleware de EFCore, et n'est
@@ -15,7 +22,7 @@ public class UpdateAccountRoleCommandTests : TestBase
     {
         Account account = await new CreateAccountCommand(this.context, this.container).Handle(new CreateAccountDto()
         {
-            MailAddress = "gt@myges.fr",
+            MailAddress = "newGuy@myges.fr",
             Password = "123Password!",
         });
         
@@ -27,11 +34,9 @@ public class UpdateAccountRoleCommandTests : TestBase
         "Should update the account's role")]
     public async void UpdateAccountRoleHandlerTest_2()
     {
-        await this.RegisterNewAccount("gt@myges.fr");
-
         Account account = await new UpdateAccountRoleCommand(this.context).Handle(new UpdateAccountRoleDto()
         {
-            MailAddress = "gt@myges.fr",
+            MailAddress = this.account.MailAddress,
             Role = Role.Moderator.ToString(),
         });
 
@@ -40,35 +45,31 @@ public class UpdateAccountRoleCommandTests : TestBase
 
     [Fact(DisplayName =
         "Updating an account role with an invalid role\n" +
-        "Should throw exception with code 400 and error type \"Rôle invalide\"")]
+        "Should throw exception code 400")]
     public async void UpdateAccountRoleHandlerTest_3()
     {
-        await this.RegisterNewAccount("gt@myges.fr");
-
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
             () => new UpdateAccountRoleCommand(this.context).Handle(new UpdateAccountRoleDto()
             {
-                MailAddress = "gt@myges.fr",
+                MailAddress = this.account.MailAddress,
                 Role = "Aviateur",
             }));
 
         request.Content.StatusCode.Should().Be(400);
-        request.Content.Value.As<ExceptionDto>().Error.Should().Be("Rôle invalide");
     }
 
     [Fact(DisplayName =
         "Updating an inexisting account role\n" +
-        "Should throw exception with code 404 and error type \"Compte introuvable\"")]
+        "Should throw exception code 404")]
     public async void UpdateAccountRoleHandlerTest_4()
     {
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
             () => new UpdateAccountRoleCommand(this.context).Handle(new UpdateAccountRoleDto()
             {
-                MailAddress = "gt@myges.fr",
+                MailAddress = "unknown@myges.fr",
                 Role = Role.Moderator.ToString(),
             }));
 
         request.Content.StatusCode.Should().Be(404);
-        request.Content.Value.As<ExceptionDto>().Error.Should().Be("Compte introuvable");
     }
 }
