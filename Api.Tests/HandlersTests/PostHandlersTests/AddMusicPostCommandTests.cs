@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Api.Handlers.Containers;
+using Microsoft.AspNetCore.Http;
 using System.IO;
 using System.Net.Http;
 
@@ -16,7 +17,7 @@ public class AddMusicPostCommandTests : TestBase
 
         byte[] fakeSound = new byte[] { 0, 1, 2, 3, 4 };
 
-        post = await new AddMusicPostCommand(this.context).Handle(new AddMusicDto()
+        post = await new AddMusicPostCommand(this.context, this.container).Handle(new AddMusicDto()
         {
             PostId = post.Id,
             File = new FormFile(
@@ -29,7 +30,7 @@ public class AddMusicPostCommandTests : TestBase
         
         post.MusicUrl.Should().Be($"https://post-sounds.s3.eu-west-3.amazonaws.com/{post.Id}.mySound.mp3");
 
-        await Blob.DeletePostSound($"{post.Id}.mySound.mp3");
+        await this.container.DeletePostSound($"{post.Id}.mySound.mp3");
     }
 
     [Fact(DisplayName =
@@ -42,7 +43,7 @@ public class AddMusicPostCommandTests : TestBase
 
         byte[] fakeSound = new byte[] { 0, 1, 2, 3, 4 };
 
-        Post postWithSound = await new AddMusicPostCommand(this.context).Handle(new AddMusicDto()
+        Post postWithSound = await new AddMusicPostCommand(this.context, this.container).Handle(new AddMusicDto()
         {
             PostId = postWithoutSound.Id,
             File = new FormFile(
@@ -61,6 +62,6 @@ public class AddMusicPostCommandTests : TestBase
         stream.Read(downloadedFile, 0, fakeSound.Length);
         downloadedFile.Should().Equal(fakeSound);
 
-        await Blob.DeletePostSound($"{postWithSound.Id}.mySound.mp3");
+        await this.container.DeletePostSound($"{postWithSound.Id}.mySound.mp3");
     }
 }

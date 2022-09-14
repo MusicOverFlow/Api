@@ -4,8 +4,10 @@
 [Route("api/execute")]
 public partial class CodeController : ControllerBase
 {
-    public CodeController()
-    {
+    private readonly IContainer container;
 
+    public CodeController(IContainer container)
+    {
+        this.container = container;
     }
 }

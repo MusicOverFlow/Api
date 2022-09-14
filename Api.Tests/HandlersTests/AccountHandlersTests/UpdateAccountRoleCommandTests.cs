@@ -13,7 +13,7 @@ public class UpdateAccountRoleCommandTests : TestBase
         "Should set the role to User")]
     public async void UpdateAccountRoleHandlerTest_1()
     {
-        Account account = await new CreateAccountCommand(this.context).Handle(new CreateAccountDto()
+        Account account = await new CreateAccountCommand(this.context, this.container).Handle(new CreateAccountDto()
         {
             MailAddress = "gt@myges.fr",
             Password = "123Password!",

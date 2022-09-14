@@ -17,3 +17,4 @@ global using System.Text;
 global using System.Text.Json.Serialization;
 global using Api.Models.ExpositionModels.Resources;
 global using Microsoft.AspNetCore.Authorization;
+global using Api.Handlers.Containers;

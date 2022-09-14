@@ -14,7 +14,7 @@ public class UpdateAccountProfilPicCommandTests : TestBase
         await this.RegisterNewAccount("gt@myges.fr");
 
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
-            () => new UpdateAccountProfilPicCommand(this.context).Handle(new UpdateProfilPicDto()
+            () => new UpdateAccountProfilPicCommand(this.context, this.container).Handle(new UpdateProfilPicDto()
             {
                 MailAddress = "gt@myges.fr",
                 ProfilPic = new FormFile(
@@ -35,7 +35,7 @@ public class UpdateAccountProfilPicCommandTests : TestBase
     public async void UpdateAccountProfilPicHandlerTest_2()
     {
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
-            () => new UpdateAccountProfilPicCommand(this.context).Handle(new UpdateProfilPicDto()
+            () => new UpdateAccountProfilPicCommand(this.context, this.container).Handle(new UpdateProfilPicDto()
             {
                 MailAddress = "gt@myges.fr",
                 ProfilPic = new FormFile(
@@ -59,7 +59,7 @@ public class UpdateAccountProfilPicCommandTests : TestBase
 
         byte[] fakeImage = new byte[] { 0, 1, 2, 3, 4 };
 
-        account = await new UpdateAccountProfilPicCommand(this.context).Handle(new UpdateProfilPicDto()
+        account = await new UpdateAccountProfilPicCommand(this.context, this.container).Handle(new UpdateProfilPicDto()
         {
             MailAddress = account.MailAddress,
             ProfilPic = new FormFile(
@@ -72,7 +72,7 @@ public class UpdateAccountProfilPicCommandTests : TestBase
 
         account.PicUrl.Should().Contain($"{account.MailAddress}.png");
 
-        await Blob.DeleteAccountPic(account.MailAddress);
+        await this.container.DeleteAccountPic(account.MailAddress);
     }
 
     [Fact(DisplayName =
@@ -84,7 +84,7 @@ public class UpdateAccountProfilPicCommandTests : TestBase
 
         byte[] fakeImage = new byte[] { 0, 1, 2, 3, 4 };
 
-        account = await new UpdateAccountProfilPicCommand(this.context).Handle(new UpdateProfilPicDto()
+        account = await new UpdateAccountProfilPicCommand(this.context, this.container).Handle(new UpdateProfilPicDto()
         {
             MailAddress = account.MailAddress,
             ProfilPic = new FormFile(
@@ -103,6 +103,6 @@ public class UpdateAccountProfilPicCommandTests : TestBase
         stream.Read(downloadedFile, 0, fakeImage.Length);
         downloadedFile.Should().Equal(fakeImage);
 
-        await Blob.DeleteAccountPic(account.MailAddress);
+        await this.container.DeleteAccountPic(account.MailAddress);
     }
 }

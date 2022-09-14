@@ -2,9 +2,11 @@
 
 public class CreateGroupCommand : HandlerBase, Command<Task<Group>, CreateGroupDto>
 {
-    public CreateGroupCommand(ModelsContext context) : base(context)
+    private readonly IContainer container;
+
+    public CreateGroupCommand(ModelsContext context, IContainer container) : base(context)
     {
-        
+        this.container = container;
     }
 
     public async Task<Group> Handle(CreateGroupDto message)
@@ -38,7 +40,7 @@ public class CreateGroupCommand : HandlerBase, Command<Task<Group>, CreateGroupD
             Id = id,
             Name = message.Name,
             Description = message.Description,
-            PicUrl = await Blob.GetGroupPicUrl(fileBytes, id),
+            PicUrl = await this.container.GetGroupPicUrl(fileBytes, id),
             Owner = account,
         };
 

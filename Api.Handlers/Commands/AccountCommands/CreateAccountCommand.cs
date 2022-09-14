@@ -4,9 +4,11 @@ namespace Api.Handlers.Commands.AccountCommands;
 
 public class CreateAccountCommand : HandlerBase, Command<Task<Account>, CreateAccountDto>
 {
-    public CreateAccountCommand(ModelsContext context) : base(context)
+    private readonly IContainer container;
+    
+    public CreateAccountCommand(ModelsContext context, IContainer container) : base(context)
     {
-
+        this.container = container;
     }
 
     public async Task<Account> Handle(CreateAccountDto message)
@@ -52,7 +54,7 @@ public class CreateAccountCommand : HandlerBase, Command<Task<Account>, CreateAc
             Firstname = message.Firstname ?? "Unknown",
             Lastname = message.Lastname ?? "Unknown",
             Pseudonym = message.Pseudonym ?? "Anonymous",
-            PicUrl = Blob.GetProfilPicUrl(fileBytes, message.MailAddress).Result,
+            PicUrl = this.container.GetProfilPicUrl(fileBytes, message.MailAddress).Result,
         };
 
         this.context.Accounts.Add(account);

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Api.Handlers.Containers;
+using Microsoft.AspNetCore.Http;
 using System.IO;
 using System.Net.Http;
 
@@ -13,7 +14,7 @@ public class CreateGroupCommandTests : TestBase
     {
         await this.RegisterNewAccount("gt@myges.fr");
 
-        Group group = await new CreateGroupCommand(this.context).Handle(new CreateGroupDto()
+        Group group = await new CreateGroupCommand(this.context, this.container).Handle(new CreateGroupDto()
         {
             CreatorMailAddress = "gt@myges.fr",
             Name = "Group name",
@@ -31,7 +32,7 @@ public class CreateGroupCommandTests : TestBase
         await this.RegisterNewAccount("gt@myges.fr");
 
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
-            () => new CreateGroupCommand(this.context).Handle(new CreateGroupDto()
+            () => new CreateGroupCommand(this.context, this.container).Handle(new CreateGroupDto()
             {
                 CreatorMailAddress = "gt@myges.fr",
                 Name = null,
@@ -48,7 +49,7 @@ public class CreateGroupCommandTests : TestBase
     public async void CreateGroupCommandTest_3()
     {
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
-            () => new CreateGroupCommand(this.context).Handle(new CreateGroupDto()
+            () => new CreateGroupCommand(this.context, this.container).Handle(new CreateGroupDto()
             {
                 CreatorMailAddress = "gt@myges.fr",
                 Name = "Group name",
@@ -67,7 +68,7 @@ public class CreateGroupCommandTests : TestBase
 
         byte[] fakeImage = new byte[] { 0, 1, 2, 3, 4 };
 
-        await new CreateGroupCommand(this.context).Handle(new CreateGroupDto()
+        await new CreateGroupCommand(this.context, this.container).Handle(new CreateGroupDto()
         {
             CreatorMailAddress = "gt@myges.fr",
             Name = "Group name",
@@ -89,7 +90,7 @@ public class CreateGroupCommandTests : TestBase
         stream.Read(downloadedFile, 0, fakeImage.Length);
         downloadedFile.Should().Equal(fakeImage);
 
-        await Blob.DeleteGroupPic(group.Id);
+        await this.container.DeleteGroupPic(group.Id);
     }
 
     [Fact(DisplayName =
@@ -101,7 +102,7 @@ public class CreateGroupCommandTests : TestBase
 
         byte[] fakeImage = new byte[] { 0, 1, 2, 3, 4 };
 
-        Group group = await new CreateGroupCommand(this.context).Handle(new CreateGroupDto()
+        Group group = await new CreateGroupCommand(this.context, this.container).Handle(new CreateGroupDto()
         {
             CreatorMailAddress = "gt@myges.fr",
             Name = "Group name",
@@ -115,6 +116,6 @@ public class CreateGroupCommandTests : TestBase
 
         group.PicUrl.Should().Be($"https://group-pics.s3.eu-west-3.amazonaws.com/{group.Id}.png");
         
-        await Blob.DeleteGroupPic(group.Id);
+        await this.container.DeleteGroupPic(group.Id);
     }
 }

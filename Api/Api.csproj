@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="appsettings.Development.json" />
     <Content Remove="C:\Users\Guillaume\.nuget\packages\entityframeworkcore.diagrams\0.4.2\contentFiles\any\netstandard1.6\wwwroot\db-diagrams\3rdpartylicenses.txt" />
     <Content Remove="C:\Users\Guillaume\.nuget\packages\entityframeworkcore.diagrams\0.4.2\contentFiles\any\netstandard1.6\wwwroot\db-diagrams\favicon.ico" />
     <Content Remove="C:\Users\Guillaume\.nuget\packages\entityframeworkcore.diagrams\0.4.2\contentFiles\any\netstandard1.6\wwwroot\db-diagrams\index.html" />

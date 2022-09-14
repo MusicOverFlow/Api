@@ -2,9 +2,11 @@
 
 public class AddMusicPostCommand : HandlerBase, Command<Task<Post>, AddMusicDto>
 {
-    public AddMusicPostCommand(ModelsContext context) : base(context)
+    private readonly IContainer container;
+    
+    public AddMusicPostCommand(ModelsContext context, IContainer container) : base(context)
     {
-        
+        this.container = container;
     }
 
     public async Task<Post> Handle(AddMusicDto message)
@@ -30,7 +32,7 @@ public class AddMusicPostCommand : HandlerBase, Command<Task<Post>, AddMusicDto>
         using (var ms = new MemoryStream())
         {
             message.File.CopyTo(ms);
-            post.MusicUrl = Blob.GetMusicUrl(ms.ToArray(), post.Id, message.File.FileName).Result;
+            post.MusicUrl = this.container.GetMusicUrl(ms.ToArray(), post.Id, message.File.FileName).Result;
         }
 
         await this.context.SaveChangesAsync();

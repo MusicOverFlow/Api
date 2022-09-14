@@ -1,4 +1,6 @@
-﻿namespace Api.Tests.HandlersTests.CommentaryHandlersTests;
+﻿using Api.Handlers.Containers;
+
+namespace Api.Tests.HandlersTests.CommentaryHandlersTests;
 
 public class CreateCommentaryCommandTests : TestBase
 {
@@ -10,14 +12,14 @@ public class CreateCommentaryCommandTests : TestBase
         await this.RegisterNewAccount("gt@myges.fr");
         Post post = await this.RegisterNewPost("gt@myges.fr");
 
-        Post postWithCommentary = await new CreateCommentaryCommand(this.context).Handle(new CreateCommentaryDto()
+        Post postWithCommentary = await new CreateCommentaryCommand(this.context, this.container).Handle(new CreateCommentaryDto()
         {
             CreatorMailAddress = "gt@myges.fr",
             Content = "Commentary content",
             PostId = post.Id,
         });
 
-        postWithCommentary.Commentaries.Count().Should().Be(1);
+        postWithCommentary.Commentaries.Should().HaveCount(1);
     }
 
     [Fact(DisplayName =
@@ -28,7 +30,7 @@ public class CreateCommentaryCommandTests : TestBase
         Account account = await this.RegisterNewAccount("gt@myges.fr");
         Post post = await this.RegisterNewPost("gt@myges.fr");
 
-        Post postWithCommentary = await new CreateCommentaryCommand(this.context).Handle(new CreateCommentaryDto()
+        Post postWithCommentary = await new CreateCommentaryCommand(this.context, this.container).Handle(new CreateCommentaryDto()
         {
             CreatorMailAddress = account.MailAddress,
             Content = "Commentary content",
@@ -46,7 +48,7 @@ public class CreateCommentaryCommandTests : TestBase
         await this.RegisterNewAccount("gt@myges.fr");
         Post post = await this.RegisterNewPost("gt@myges.fr");
 
-        Post postWithCommentary = await new CreateCommentaryCommand(this.context).Handle(new CreateCommentaryDto()
+        Post postWithCommentary = await new CreateCommentaryCommand(this.context, this.container).Handle(new CreateCommentaryDto()
         {
             CreatorMailAddress = "gt@myges.fr",
             Content = "Commentary content",
@@ -59,7 +61,7 @@ public class CreateCommentaryCommandTests : TestBase
         commentary.ScriptLanguage.Should().Be(Language.Python.ToString());
         commentary.ScriptUrl.Should().Be($"https://post-scripts.s3.eu-west-3.amazonaws.com/{commentary.Id}");
 
-        await Blob.DeletePostScript(commentary.Id);
+        await this.container.DeletePostScript(commentary.Id);
     }
 
     [Fact(DisplayName =
@@ -70,7 +72,7 @@ public class CreateCommentaryCommandTests : TestBase
         await this.RegisterNewAccount("gt@myges.fr");
         Post post = await this.RegisterNewPost("gt@myges.fr");
 
-        Post postWithCommentary = await new CreateCommentaryCommand(this.context).Handle(new CreateCommentaryDto()
+        Post postWithCommentary = await new CreateCommentaryCommand(this.context, this.container).Handle(new CreateCommentaryDto()
         {
             CreatorMailAddress = "gt@myges.fr",
             Content = "Commentary content",
@@ -90,7 +92,7 @@ public class CreateCommentaryCommandTests : TestBase
         await this.RegisterNewAccount("gt@myges.fr");
 
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
-            () => new CreateCommentaryCommand(this.context).Handle(new CreateCommentaryDto()
+            () => new CreateCommentaryCommand(this.context, this.container).Handle(new CreateCommentaryDto()
             {
                 CreatorMailAddress = "gt@myges.fr",
                 Content = "Commentary content",
@@ -110,7 +112,7 @@ public class CreateCommentaryCommandTests : TestBase
         Post post = await this.RegisterNewPost("gt@myges.fr");
 
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
-            () => new CreateCommentaryCommand(this.context).Handle(new CreateCommentaryDto()
+            () => new CreateCommentaryCommand(this.context, this.container).Handle(new CreateCommentaryDto()
             {
                 CreatorMailAddress = "newGuy@myges.fr",
                 Content = "Commentary content",
@@ -130,7 +132,7 @@ public class CreateCommentaryCommandTests : TestBase
         Post post = await this.RegisterNewPost("gt@myges.fr");
 
         HandlerException request = await Assert.ThrowsAsync<HandlerException>(
-            () => new CreateCommentaryCommand(this.context).Handle(new CreateCommentaryDto()
+            () => new CreateCommentaryCommand(this.context, this.container).Handle(new CreateCommentaryDto()
             {
                 CreatorMailAddress = "gt@myges.fr",
                 Content = string.Empty,

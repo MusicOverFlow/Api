@@ -1,28 +1,26 @@
 ﻿using Amazon;
 using Amazon.S3;
 using Amazon.S3.Model;
+using Microsoft.Extensions.Configuration;
 using System.Text;
 
-namespace Api.Handlers.Utilitaries;
+namespace Api.Handlers.Containers;
 
-public abstract class Blob
+public class AwsContainer : ContainerNames, IContainer
 {
-    private const string PROFIL_PICS = "profil-pics";
-    private const string GROUP_PICS = "group-pics";
-    private const string POST_SOUNDS = "post-sounds";
-    private const string PIPELINE_IMAGES = "pipeline-images-mo";
-    private const string PIPELINE_SOUNDS = "pipeline-sounds";
-    private const string POST_SCRIPTS = "post-scripts";
-    private const string CONVERTED_SOUNDS = "converted-sounds-mo";
+    private readonly IAmazonS3 s3Client;
 
-    private readonly static IAmazonS3 s3Client = new AmazonS3Client(
-                "AKIA2MFDW34EK2KXP55V", //builder.Configuration.GetSection("AWSClientCredentials:awsAccessKeyId").Value,
-                "UMoDXGbIZ615GwF6UeIcERDze+8YC4/8Iczo+tEE", //builder.Configuration.GetSection("AWSClientCredentials:awsSecretAccessKey").Value,
-                RegionEndpoint.EUWest3);
-
-    public async static Task<string> GetProfilPicUrl(byte[] profilPic, string mailAddress)
+    public AwsContainer(IConfiguration configuration)
     {
-        if (profilPic == null)
+        this.s3Client = new AmazonS3Client(
+                awsAccessKeyId: configuration.GetSection("AWSClientCredentials:awsAccessKeyId").Value,
+                awsSecretAccessKey: configuration.GetSection("AWSClientCredentials:awsSecretAccessKey").Value,
+                region: RegionEndpoint.EUWest3);
+    }
+
+    public async Task<string> GetProfilPicUrl(byte[] profilPic, string mailAddress)
+    {
+        if (profilPic == null || profilPic.Length == 0)
         {
             return $"https://{PROFIL_PICS}.s3.eu-west-3.amazonaws.com/profil.placeholder.png";
         }
@@ -37,9 +35,9 @@ public abstract class Blob
         return $"https://{PROFIL_PICS}.s3.eu-west-3.amazonaws.com/{mailAddress}.png";
     }
 
-    public async static Task<string> GetGroupPicUrl(byte[] groupPic, Guid groupId)
+    public async Task<string> GetGroupPicUrl(byte[] groupPic, Guid groupId)
     {
-        if (groupPic == null)
+        if (groupPic == null || groupPic.Length == 0)
         {
             return $"https://{GROUP_PICS}.s3.eu-west-3.amazonaws.com/group.placeholder.png";
         }
@@ -54,7 +52,7 @@ public abstract class Blob
         return $"https://{GROUP_PICS}.s3.eu-west-3.amazonaws.com/{groupId}.png";
     }
 
-    public async static Task<string> GetMusicUrl(byte[] sound, Guid postId, string filename)
+    public async Task<string> GetMusicUrl(byte[] sound, Guid postId, string filename)
     {
         var request = new PutObjectRequest()
         {
@@ -66,20 +64,7 @@ public abstract class Blob
         return $"https://{POST_SOUNDS}.s3.eu-west-3.amazonaws.com/{postId}.{filename}";
     }
 
-    // Unused atm, maybe usefull later
-    public async static Task<string> GetPipelineImageUrl(byte[] image, string filename)
-    {
-        var request = new PutObjectRequest()
-        {
-            BucketName = PIPELINE_IMAGES,
-            Key = $"{filename}",
-            InputStream = new MemoryStream(image),
-        };
-        await s3Client.PutObjectAsync(request);
-        return $"https://{PIPELINE_IMAGES}.s3.eu-west-3.amazonaws.com/{filename}";
-    }
-
-    public async static Task<string> GetPipelineSoundUrl(byte[] sound, string filename)
+    public async Task<string> GetPipelineSoundUrl(byte[] sound, string filename)
     {
         var request = new PutObjectRequest()
         {
@@ -91,7 +76,7 @@ public abstract class Blob
         return $"https://{PIPELINE_SOUNDS}.s3.eu-west-3.amazonaws.com/{filename}";
     }
 
-    public async static Task<string> GetPostScriptUrl(string script, Guid postId)
+    public async Task<string> GetPostScriptUrl(string script, Guid postId)
     {
         var request = new PutObjectRequest()
         {
@@ -103,7 +88,7 @@ public abstract class Blob
         return $"https://{POST_SCRIPTS}.s3.eu-west-3.amazonaws.com/{postId}";
     }
 
-    public async static Task<string> GetConvertedSoundUrl(byte[] sound, string filename)
+    public async Task<string> GetConvertedSoundUrl(byte[] sound, string filename)
     {
         var request = new PutObjectRequest()
         {
@@ -115,25 +100,35 @@ public abstract class Blob
         return $"https://{CONVERTED_SOUNDS}.s3.eu-west-3.amazonaws.com/{filename}";
     }
 
-    /*
-     * Used to clean AWS containers after testing
-     */
-    public async static Task DeletePostScript(Guid postId)
+    // Unused atm, maybe usefull later
+    public async Task<string> GetPipelineImageUrl(byte[] image, string filename)
+    {
+        var request = new PutObjectRequest()
+        {
+            BucketName = PIPELINE_IMAGES,
+            Key = $"{filename}",
+            InputStream = new MemoryStream(image),
+        };
+        await s3Client.PutObjectAsync(request);
+        return $"https://{PIPELINE_IMAGES}.s3.eu-west-3.amazonaws.com/{filename}";
+    }
+
+    public async Task DeletePostScript(Guid postId)
     {
         await s3Client.DeleteObjectAsync(POST_SCRIPTS, postId.ToString());
     }
 
-    public async static Task DeletePostSound(string file)
+    public async Task DeletePostSound(string file)
     {
         await s3Client.DeleteObjectAsync(POST_SOUNDS, file);
     }
 
-    public async static Task DeleteAccountPic(string mailAddress)
+    public async Task DeleteAccountPic(string mailAddress)
     {
         await s3Client.DeleteObjectAsync(PROFIL_PICS, $"{mailAddress}.png");
     }
 
-    public async static Task DeleteGroupPic(Guid groupId)
+    public async Task DeleteGroupPic(Guid groupId)
     {
         await s3Client.DeleteObjectAsync(GROUP_PICS, $"{groupId}.png");
     }
