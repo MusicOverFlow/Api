@@ -1,29 +1,25 @@
-﻿namespace Api.Controllers.AccountControllers;
+﻿using Api.Handlers.Commands.AccountCommands;
+
+namespace Api.Controllers.AccountControllers;
 
 public partial class AccountController
 {
     [HttpPut("role"), AuthorizeEnum(Role.Admin)]
     public async Task<ActionResult> UpdateRole(string mailAddress, string role)
     {
-        Account account = await this.context.Accounts
-            .FirstOrDefaultAsync(a => a.MailAddress.Equals(mailAddress));
-
-        if (account == null)
+        try
         {
-            return NotFound(this.exceptionHandler.GetError(ErrorType.AccountNotFound));
+            Account account = await this.handlers.Get<UpdateAccountRoleCommand>().Handle(new UpdateAccountRoleDto()
+            {
+                MailAddress = mailAddress,
+                Role = role,
+            });
+
+            return Ok(Mapper.AccountToResource(account));
         }
-
-        string newRole = RoleParser.Handle(role);
-
-        if (string.IsNullOrWhiteSpace(newRole))
+        catch (HandlerException exception)
         {
-            return BadRequest(this.exceptionHandler.GetError(ErrorType.InvalidRole));
+            return exception.Content;
         }
-
-        account.Role = newRole;
-
-        await this.context.SaveChangesAsync();
-
-        return Ok();
     }
 }

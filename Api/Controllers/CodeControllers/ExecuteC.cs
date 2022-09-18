@@ -6,7 +6,7 @@ namespace Api.Controllers.CodeControllers;
 public partial class CodeController
 {
     [HttpPost("c")]
-    public async Task<ActionResult<string>> HandleC()
+    public async Task<ActionResult> HandleC()
     {
         string script = string.Empty;
         using (StreamReader reader = new StreamReader(Request.Body, Encoding.UTF8))
@@ -14,7 +14,6 @@ public partial class CodeController
             script = await reader.ReadToEndAsync();
         }
         
-        // TODO: replace by a path in azure when deployed
         Guid guid = Guid.NewGuid();
         string scriptFilepath = new DirectoryInfo(Directory.GetCurrentDirectory()) + $@"/Files";
         await System.IO.File.WriteAllTextAsync(scriptFilepath + $@"/codeSample_{guid}.c", script);

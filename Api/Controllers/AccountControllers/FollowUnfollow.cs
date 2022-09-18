@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using Api.Handlers.Commands.AccountCommands;
+using System.Security.Claims;
 
 namespace Api.Controllers.AccountControllers;
 
@@ -7,31 +8,21 @@ public partial class AccountController
     [HttpPut("follow"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
     public async Task<ActionResult> FollowUnfollow(string mailAddress)
     {
-        string callerMailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
+        string callerMail = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
-        Account account = await this.context.Accounts
-            .FirstOrDefaultAsync(a => a.MailAddress.Equals(mailAddress));
-
-        if (account == null)
+        try
         {
-            return NotFound(this.exceptionHandler.GetError(ErrorType.AccountNotFound));
+            await this.handlers.Get<FollowUnfollowAccountCommand>().Handle(new FollowDto()
+            {
+                CallerMail = callerMail,
+                TargetMail = mailAddress,
+            });
+
+            return Ok();
         }
-
-        Account callerAccount = await this.context.Accounts
-            .FirstOrDefaultAsync(a => a.MailAddress.Equals(callerMailAddress));
-
-        if (callerAccount.Equals(account))
+        catch (HandlerException exception)
         {
-            return BadRequest(this.exceptionHandler.GetError(ErrorType.SelfFollow));
+            return exception.Content;
         }
-
-        if (!callerAccount.Follows.Remove(account))
-        {
-            callerAccount.Follows.Add(account);
-        }
-
-        await this.context.SaveChangesAsync();
-
-        return Ok();
     }
 }

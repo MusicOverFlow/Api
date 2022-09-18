@@ -1,4 +1,5 @@
-﻿using NAudio.Wave;
+﻿using Api.Handlers.Containers;
+using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 using System.Globalization;
 using System.Reflection;
@@ -61,7 +62,7 @@ public partial class CodeController
             scriptCount += 1;
         }
 
-        return Ok(new { Output = this.blob.GetPipelineSoundUrl(sound: this.ReadBytes(fileStream), file.FileName.Replace(".mp3", ".wav")).Result });
+        return Ok(new { Output = this.container.GetPipelineSoundUrl(sound: this.ReadBytes(fileStream), file.FileName.Replace(".mp3", ".wav")).Result });
     }
     
     private void Pitch(Stream fileStream, float rate, string filepath)

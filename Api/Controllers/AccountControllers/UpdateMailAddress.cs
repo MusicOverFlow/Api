@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using Api.Handlers.Commands.AccountCommands;
+using System.Security.Claims;
 
 namespace Api.Controllers.AccountControllers;
 
@@ -9,30 +10,19 @@ public partial class AccountController
     {
         string actualMailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
-        Account account = await this.context.Accounts
-            .FirstOrDefaultAsync(a => a.MailAddress.Equals(actualMailAddress));
-
-        if (account == null)
+        try
         {
-            return NotFound(this.exceptionHandler.GetError(ErrorType.AccountNotFound));
-        }
+            Account account = await this.handlers.Get<UpdateAccountMailAddressCommand>().Handle(new UpdateMailDto()
+            {
+                MailAddress = actualMailAddress,
+                NewMailAddress = mailAddress,
+            });
 
-        if (!this.dataValidator.IsMailAddressValid(mailAddress))
+            return Ok(Mapper.AccountToResource(account));
+        }
+        catch (HandlerException exception)
         {
-            return BadRequest(this.exceptionHandler.GetError(ErrorType.InvalidMail));
+            return exception.Content;
         }
-
-        bool isMailAlreadyInUse = await this.context.Accounts
-            .AnyAsync(a => a.MailAddress.Equals(mailAddress));
-
-        if (isMailAlreadyInUse)
-        {
-            return BadRequest(this.exceptionHandler.GetError(ErrorType.MailAlreadyInUse));
-        }
-
-        account.MailAddress = mailAddress;
-        await this.context.SaveChangesAsync();
-
-        return Ok();
     }
 }

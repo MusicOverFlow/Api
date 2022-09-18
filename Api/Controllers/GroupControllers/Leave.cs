@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using Api.Handlers.Commands.GroupCommands;
+using System.Security.Claims;
 
 namespace Api.Controllers.GroupControllers;
 
@@ -9,32 +10,19 @@ public partial class GroupController
     {
         string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
-        Account account = await this.context.Accounts
-            .FirstOrDefaultAsync(a => a.MailAddress.Equals(mailAddress));
-
-        if (account == null)
+        try
         {
-            return BadRequest(this.exceptionHandler.GetError(ErrorType.AccountNotFound));
+            await this.handlers.Get<LeaveGroupCommand>().Handle(new LeaveGroupDto()
+            {
+                MailAddress = mailAddress,
+                GroupId = groupId
+            });
+
+            return Ok();
         }
-
-        Group group = await this.context.Groups
-            .FirstOrDefaultAsync(g => g.Id.Equals(groupId));
-
-        if (group == null)
+        catch (HandlerException exception)
         {
-            return BadRequest(this.exceptionHandler.GetError(ErrorType.GroupNotFound));
+            return exception.Content;
         }
-
-        if (group.Owner.Equals(account))
-        {
-            return BadRequest(this.exceptionHandler.GetError(ErrorType.LeaveWhileOwner));
-        }
-
-        group.Members.Remove(account);
-        account.Groups.Remove(group);
-
-        await this.context.SaveChangesAsync();
-
-        return Ok();
     }
 }

@@ -1,39 +1,25 @@
-﻿namespace Api.Controllers.PostControllers;
+﻿using Api.Handlers.Commands.PostCommands;
+
+namespace Api.Controllers.PostControllers;
 
 public partial class PostController
 {
     [HttpPut("addMusic"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
-    public async Task<ActionResult<PostResource>> AddMusic(Guid? id)
+    public async Task<ActionResult> AddMusic(Guid? id)
     {
-        Post post = await this.context.Posts
-            .FirstOrDefaultAsync(p => p.Id.Equals(id));
-
-        if (post == null)
+        try
         {
-            return NotFound(this.exceptionHandler.GetError(ErrorType.PostNotFound));
-        }
+            Post post = await this.handlers.Get<AddMusicPostCommand>().Handle(new AddMusicDto()
+            {
+                PostId = id.Value,
+                File = Request.Form.Files[0],
+            });
 
-        if (!Request.Form.Files.Any() || Request.Form.Files[0] == null || Request.Form.Files[0].Length == 0)
+            return Ok(Mapper.PostToResource(post));
+        }
+        catch (HandlerException exception)
         {
-            return BadRequest();
+            return exception.Content;
         }
-
-        IFormFile file = Request.Form.Files[0];
-        if (!this.dataValidator.IsSoundFormatSupported(file.FileName))
-        {
-            return BadRequest(this.exceptionHandler.GetError(ErrorType.WrongFormatFile));
-        }
-
-        using (var ms = new MemoryStream())
-        {
-            file.CopyTo(ms);
-            byte[] fileBytes = ms.ToArray();
-
-            post.MusicUrl = this.blob.GetMusicUrl(fileBytes, post.Id, file.FileName).Result;
-        }
-
-        await this.context.SaveChangesAsync();
-
-        return Ok(this.mapper.Post_ToResource(post));
     }
 }

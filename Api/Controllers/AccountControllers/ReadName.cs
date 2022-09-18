@@ -1,43 +1,27 @@
-﻿namespace Api.Controllers.AccountControllers;
+﻿using Api.Handlers.Queries.AccountQueries;
+
+namespace Api.Controllers.AccountControllers;
 
 public partial class AccountController
 {
     [HttpGet("name"), AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
-    public async Task<ActionResult<List<AccountResource>>> ReadName(ReadByNames request)
+    public async Task<ActionResult> ReadName(ReadByNamesRequest request)
     {
-        if (string.IsNullOrWhiteSpace(request.Firstname) && string.IsNullOrWhiteSpace(request.Lastname))
+        try
         {
-            return BadRequest(this.exceptionHandler.GetError(ErrorType.InvalidName));
-        }
-
-        List<AccountResource> accounts = new List<AccountResource>();
-
-        await this.context.Accounts
-            .Include(a => a.Follows)
-            .ForEachAsync(a =>
+            List<Account> accounts = await this.handlers.Get<ReadAccountsByNameQuery>().Handle(new ReadByNamesDto()
             {
-                if (accounts.Count >= this.MAX_ACCOUNTS_IN_SEARCHES)
-                {
-                    return;
-                }
-
-                double lastnameScore = this.stringComparer.Compare(request.Lastname, a.Lastname);
-
-                if (lastnameScore >= 0.6)
-                {
-                    accounts.Add(this.mapper.Account_ToResource(a));
-                }
-                else if (!string.IsNullOrWhiteSpace(request.Firstname))
-                {
-                    double firstnameScore = this.stringComparer.Compare(request.Firstname, a.Firstname);
-
-                    if ((lastnameScore + firstnameScore) >= 1.1)
-                    {
-                        accounts.Add(this.mapper.Account_ToResource(a));
-                    }
-                }
+                Firstname = request.Firstname,
+                Lastname = request.Lastname,
             });
 
-        return Ok(accounts);
+            return Ok(accounts
+                .Select(a => Mapper.AccountToResource(a))
+                .ToList());
+        }
+        catch (HandlerException exception)
+        {
+            return exception.Content;
+        }
     }
 }

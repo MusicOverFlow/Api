@@ -1,19 +1,4 @@
-global using Api.ExpositionModels;
-global using Api.Models;
-global using Api.Models.Entities;
-global using Api.Models.Enums;
-global using Api.Utilitaries;
-global using Microsoft.AspNetCore.Mvc;
-global using Microsoft.EntityFrameworkCore;
-global using static Api.Utilitaries.AuthorizeRolesAttribute;
-global using Amazon.S3;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Http.Features;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using System.Text;
-using System.Text.Json.Serialization;
-using Amazon;
+using Api.Handlers.Containers;
 
 bool dev = true;
 
@@ -21,36 +6,18 @@ bool dev = true;
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
-builder.Services.AddAWSService<IAmazonS3>();
 builder.Services.Configure<FormOptions>(o => {
     o.ValueLengthLimit = int.MaxValue;
     o.MultipartBodyLengthLimit = int.MaxValue;
     o.MemoryBufferThreshold = int.MaxValue;
 });
 
-// Singletons
-try
-{
-    builder.Services.AddSingleton(new DataValidator());
-    builder.Services.AddSingleton(new Mapper());
-    builder.Services.AddSingleton(new LevenshteinDistance());
-    builder.Services.AddSingleton(new ExceptionHandler(new DirectoryInfo(Directory.GetCurrentDirectory()) + "/exceptions.json"));
-    builder.Services.AddSingleton(new Blob(
-        new AmazonS3Client(
-            builder.Configuration.GetSection("AWSClientCredentials:awsAccessKeyId").Value,
-            builder.Configuration.GetSection("AWSClientCredentials:awsSecretAccessKey").Value,
-            RegionEndpoint.EUWest3)));
-}
-catch (Exception e)
-{
-    Console.WriteLine(e.Message);
-    return;
-}
-
 builder.Services.AddControllers()
     .AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
-// Swagger configs
+/**
+ * Swagger configuration
+ */
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -63,7 +30,7 @@ builder.Services.AddSwaggerGen(options =>
         Type = SecuritySchemeType.Http,
         Description = "JWT Bearer :",
 
-        Reference = new OpenApiReference
+        Reference = new OpenApiReference()
         {
             Id = JwtBearerDefaults.AuthenticationScheme,
             Type = ReferenceType.SecurityScheme
@@ -81,6 +48,9 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+/**
+ * JWT configuration
+ */
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -94,27 +64,42 @@ builder.Services
         };
     });
 
-builder.Services.AddDbContext<ModelsContext>(options =>
-{
-    if (dev)
-    {
-        options.UseLazyLoadingProxies();
-        options.UseNpgsql(
-            builder.Configuration.GetConnectionString("MusicOverflowHeroku"),
-            optionBuilder =>
-            {
-                optionBuilder.MigrationsAssembly("Api");
-                optionBuilder.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
-            });
-    }
-    else
-    {
-        options.UseSqlServer(
-        builder.Configuration.GetConnectionString("MusicOverflowAzure"),
-        optionBuilder => optionBuilder.MigrationsAssembly("Api"));
-    }
-});
+/**
+ * DbContext singleton
+ */
+builder.Services.AddDbContext<ModelsContext>(options => options
+    .UseLazyLoadingProxies()
+    .UseNpgsql(builder.Configuration.GetConnectionString("MusicOverflowHeroku"),
+        optionBuilder =>
+        {
+            optionBuilder.MigrationsAssembly("Api");
+            optionBuilder.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
+        }),
+        contextLifetime: ServiceLifetime.Transient);
 
+/*
+ * Containers
+ */
+builder.Services.AddSingleton<IContainer>(new AwsContainer(builder.Configuration));
+// TODO: voir si chaine de connexion est secure dans appsettings avant de balancer les identifiants FMM
+//builder.Services.AddSingleton<IContainer>(new AzureContainer(builder.Configuration));
+
+/**
+ * Handlers container singleton
+ */
+try
+{
+    builder.Services.AddSingleton<HandlersContainer>();
+}
+catch (HandlerRegistrationException exception)
+{
+    Console.WriteLine(exception.Message);
+    return;
+}
+
+/**
+ * Launch app
+ */
 builder.Services.AddCors();
 
 WebApplication app = builder.Build();
@@ -130,7 +115,6 @@ app.UseCors(policy => policy
     .AllowAnyMethod()
 );
 
-// Swagger configs
 app.UseSwagger();
 app.UseSwaggerUI();
 

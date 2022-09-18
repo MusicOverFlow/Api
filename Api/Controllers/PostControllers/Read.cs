@@ -1,26 +1,23 @@
-﻿namespace Api.Controllers.PostControllers;
+﻿using Api.Handlers.Queries.PostQueries;
+
+namespace Api.Controllers.PostControllers;
 
 public partial class PostController
 {
     [HttpGet, AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
-    public async Task<ActionResult<List<PostResource>>> Read(Guid? id = null)
+    public async Task<ActionResult> Read(Guid? id = null)
     {
-        IQueryable<Post> query = this.context.Posts;
-        
-        if (id != null)
+        try
         {
-            query = query.Where(p => p.Id.Equals(id));
+            List<Post> posts = await this.handlers.Get<ReadPostByIdQuery>().Handle(id);
+
+            return Ok(posts
+                .Select(p => Mapper.PostToResource(p))
+                .ToList());
         }
-
-        List<PostResource> posts = await query
-            .Select(p => this.mapper.Post_ToResource(p))
-            .ToListAsync();
-
-        if (id != null && posts.Count == 0)
+        catch (HandlerException exception)
         {
-            return NotFound(this.exceptionHandler.GetError(ErrorType.PostNotFound));
+            return exception.Content;
         }
-
-        return Ok(posts);
     }
 }

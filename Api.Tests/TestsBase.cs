@@ -1,56 +1,86 @@
-﻿global using FluentAssertions;
-global using Xunit;
-global using Api.ExpositionModels;
-global using Microsoft.AspNetCore.Mvc;
-global using System.Collections.Generic;
-global using System.Net;
-global using System;
-global using System.Threading.Tasks;
-global using System.Linq;
-using Api.Models;
-using Api.Utilitaries;
-using Microsoft.EntityFrameworkCore;
-using Api.Controllers.AccountControllers;
-using Api.Controllers.PostControllers;
-using Api.Controllers.CommentaryControllers;
-using Api.Controllers.GroupControllers;
-using Api.Controllers.AuthenticationControllers;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Moq;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
-using System.IO;
+using Api.Handlers.Containers;
 
 public class TestBase
 {
-    // TODO: try to use lazy loading context in tests
-    private readonly ModelsContext dbContext = new ModelsContext(
-        new DbContextOptionsBuilder<ModelsContext>()
-            .UseLazyLoadingProxies()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
-            .Options);
-    protected readonly Mapper mapper = new Mapper();
-    private readonly DataValidator dataValidator = new DataValidator();
-    private readonly LevenshteinDistance stringComparer = new LevenshteinDistance();
-    private readonly IConfiguration configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
-    private readonly ExceptionHandler exceptionHandler = new ExceptionHandler(new DirectoryInfo(Directory.GetCurrentDirectory()) + "/exceptions.json");
+    private readonly IConfiguration configuration;
+    private readonly IServiceCollection services;
+    
+    protected readonly ModelsContext context;
+    protected readonly IContainer container;
+    protected readonly HandlersContainer handlers;
 
     protected readonly AccountController accountsController;
     protected readonly PostController postController;
     protected readonly CommentaryController commentaryController;
     protected readonly GroupController groupController;
     protected readonly AuthenticationController authenticationController;
+    
+    protected readonly string fakeAccountForAwsTesting = "ffe2eff4-c1e2-44e5-9b7e-d1c8a014d295_fake_account_for_testing@test.fr";
+    protected readonly string fakeGroupForAwsTesting = "12d77557-b1af-4c5d-b912-f8e684f1068d_fake_group_for_testing";
 
     protected TestBase()
     {
-        this.accountsController = new AccountController(dbContext, mapper, dataValidator, configuration, stringComparer, exceptionHandler, null);
-        this.postController = new PostController(dbContext, dataValidator, mapper, configuration, exceptionHandler, null);
-        this.commentaryController = new CommentaryController(dbContext, mapper, exceptionHandler, null);
-        this.groupController = new GroupController(dbContext, mapper, configuration, stringComparer, exceptionHandler, null);
-        this.authenticationController = new AuthenticationController(dbContext, configuration, exceptionHandler);
+        this.configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
+        
+        this.services = new ServiceCollection()
+            .AddDbContext<ModelsContext>(options => options.UseInMemoryDatabase(Guid.NewGuid().ToString()))
+            .AddSingleton<IContainer>(new AwsContainer(this.configuration));
+
+        this.container = this.services.BuildServiceProvider().GetService<IContainer>();
+        this.context = this.services.BuildServiceProvider().GetRequiredService<ModelsContext>();
+
+        this.InitializeContextLoading();
+
+        this.handlers = new HandlersContainer(this.services.BuildServiceProvider());
+        
+        this.accountsController = new AccountController(this.handlers);
+        this.postController = new PostController(this.handlers);
+        this.commentaryController = new CommentaryController(this.handlers);
+        this.groupController = new GroupController(this.handlers);
+        this.authenticationController = new AuthenticationController(this.handlers, this.configuration);
+    }
+
+    // How to use lazy loading in tests : DIY.
+    private void InitializeContextLoading()
+    {
+        this.context.Accounts.Include(a => a.Follows).Load();
+        this.context.Accounts.Include(a => a.Groups).Load();
+        this.context.Posts.Include(p => p.Likes).Load();
     }
     
-    protected void MockJwtAuthentication(AccountResource account)
+    protected async Task<Account> RegisterNewAccount(string mailAddress)
+    {
+        return await new CreateAccountCommand(this.context, this.container).Handle(new CreateAccountDto()
+        {
+            MailAddress = mailAddress,
+            Password = "123Password!",
+        });
+    }
+
+    protected async Task<Post> RegisterNewPost(string creatorMailAddress)
+    {
+        return await new CreatePostCommand(this.context, this.container).Handle(new CreatePostDto()
+        {
+            CreatorMailAddress = creatorMailAddress,
+            Content = "Post content",
+        });
+    }
+
+    protected async Task<Group> RegisterNewGroup(string creatorMailAddress)
+    {
+        return await new CreateGroupCommand(this.context, this.container).Handle(new CreateGroupDto()
+        {
+            CreatorMailAddress = creatorMailAddress,
+            Name = "Group name",
+        });
+    }
+
+    protected void MockJwtAuthentication(Account account)
     {
         Mock<HttpContext> mock = new Mock<HttpContext>();
         
@@ -67,7 +97,7 @@ public class TestBase
         this.commentaryController.ControllerContext.HttpContext = mock.Object;
     }
 
-    /* useful for later testing
+    /* useful for later testing maybe idk
     protected async Task<ActionResult<string>> Authenticate(string mailAddress, string password)
     {
         return await this.authenticationController.Authenticate(new Authentication()

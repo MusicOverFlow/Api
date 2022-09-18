@@ -1,26 +1,23 @@
-﻿namespace Api.Controllers.GroupControllers;
+﻿using Api.Handlers.Queries.GroupQueries;
+
+namespace Api.Controllers.GroupControllers;
 
 public partial class GroupController
 {
     [HttpGet, AuthorizeEnum(Role.User, Role.Moderator, Role.Admin)]
-    public async Task<ActionResult<List<GroupResource>>> Read(Guid? id = null)
+    public async Task<ActionResult> Read(Guid? id = null)
     {
-        IQueryable<Group> query = this.context.Groups;
-
-        if (id != null)
+        try
         {
-            query = query.Where(g => g.Id.Equals(id));
-        }
-        
-        List<GroupResource_WithMembers_AndPosts> groups = await query
-            .Select(g => this.mapper.Group_ToResource_WithMembers_AndPosts(g))
-            .ToListAsync();
+            List<Group> groups = await this.handlers.Get<ReadGroupByIdQuery>().Handle(id);
 
-        if (id != null && groups.Count == 0)
+            return Ok(groups
+                .Select(a => Mapper.GroupToResource(a))
+                .ToList());
+        }
+        catch (HandlerException exception)
         {
-            return NotFound(this.exceptionHandler.GetError(ErrorType.GroupNotFound));
+            return exception.Content;
         }
-
-        return Ok(groups);
     }
 }

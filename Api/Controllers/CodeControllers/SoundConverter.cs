@@ -7,11 +7,11 @@ namespace Api.Controllers.CodeControllers;
 #pragma warning disable CS1998
 public class Converter : ControllerBase
 {
-    private readonly Blob blob;
-
-    public Converter(Blob blob)
+    private readonly IContainer container;
+    
+    public Converter(IContainer container)
     {
-        this.blob = blob;
+        this.container = container;
     }
 
     [HttpPost]
@@ -69,7 +69,7 @@ public class Converter : ControllerBase
                 break;
         }
 
-        return Ok(new { Output = this.blob.GetConvertedSoundUrl(
+        return Ok(new { Output = this.container.GetConvertedSoundUrl(
             sound: this.ReadBytes(fileStream),
             filename: Path.GetFileNameWithoutExtension(file.FileName) + format).Result });
     }

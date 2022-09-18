@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using Api.Handlers.Commands.AccountCommands;
+using System.Security.Claims;
 
 namespace Api.Controllers.AccountControllers;
 
@@ -9,25 +10,19 @@ public partial class AccountController
     {
         string mailAddress = this.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value;
 
-        Account account = await this.context.Accounts
-            .FirstOrDefaultAsync(a => a.MailAddress.Equals(mailAddress));
-
-        if (account == null)
+        try
         {
-            return NotFound(this.exceptionHandler.GetError(ErrorType.AccountNotFound));
-        }
+            Account account = await this.handlers.Get<UpdateAccountPasswordCommand>().Handle(new UpdatePasswordDto()
+            {
+                MailAddress = mailAddress,
+                NewPassword = password,
+            });
 
-        if (!this.dataValidator.IsPasswordValid(password))
+            return Ok(Mapper.AccountToResource(account));
+        }
+        catch (HandlerException exception)
         {
-            return BadRequest(this.exceptionHandler.GetError(ErrorType.InvalidPassword));
+            return exception.Content;
         }
-
-        this.EncryptPassword(password, out byte[] hash, out byte[] salt);
-
-        account.PasswordHash = hash;
-        account.PasswordSalt = salt;
-        await this.context.SaveChangesAsync();
-
-        return Ok();
     }
 }
