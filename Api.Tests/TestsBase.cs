@@ -4,6 +4,9 @@ using Moq;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using Api.Handlers.Containers;
+using Api.Controllers.CodeControllers;
+using System.IO;
+using System.Text;
 
 public class TestBase
 {
@@ -19,6 +22,7 @@ public class TestBase
     protected readonly CommentaryController commentaryController;
     protected readonly GroupController groupController;
     protected readonly AuthenticationController authenticationController;
+    protected readonly CodeController codeController;
     
     protected readonly string fakeAccountForAwsTesting = "ffe2eff4-c1e2-44e5-9b7e-d1c8a014d295_fake_account_for_testing@test.fr";
     protected readonly string fakeGroupForAwsTesting = "12d77557-b1af-4c5d-b912-f8e684f1068d_fake_group_for_testing";
@@ -33,9 +37,7 @@ public class TestBase
 
         this.container = this.services.BuildServiceProvider().GetService<IContainer>();
         this.context = this.services.BuildServiceProvider().GetRequiredService<ModelsContext>();
-
         this.InitializeContextLoading();
-
         this.handlers = new HandlersContainer(this.services.BuildServiceProvider());
         
         this.accountsController = new AccountController(this.handlers);
@@ -43,6 +45,7 @@ public class TestBase
         this.commentaryController = new CommentaryController(this.handlers);
         this.groupController = new GroupController(this.handlers);
         this.authenticationController = new AuthenticationController(this.handlers, this.configuration);
+        this.codeController = new CodeController(this.container);
     }
 
     // How to use lazy loading in tests : DIY.
@@ -95,6 +98,21 @@ public class TestBase
         this.postController.ControllerContext.HttpContext = mock.Object;
         this.groupController.ControllerContext.HttpContext = mock.Object;
         this.commentaryController.ControllerContext.HttpContext = mock.Object;
+    }
+
+    protected void MockRequestBodyContent(string content)
+    {
+        Mock<HttpContext> mock = new Mock<HttpContext>();
+        
+        mock.Setup(m => m.Request).Returns(new DefaultHttpContext()
+        {
+            Request =
+            {
+                Body = new MemoryStream(Encoding.UTF8.GetBytes(content)),
+            },
+        }.Request);
+
+        this.codeController.ControllerContext.HttpContext = mock.Object;
     }
 
     /* useful for later testing maybe idk
