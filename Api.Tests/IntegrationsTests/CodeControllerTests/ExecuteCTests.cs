@@ -11,9 +11,8 @@ public class ExecuteCTests : TestBase
         
         this.MockRequestBodyContent(script);
         var result = await this.codeController.HandleC();
-
-        var okResult = result as OkObjectResult;
-        okResult.Value.Should().Be("Bonjour\n");
+        
+        result.As<OkObjectResult>().Value.Should().Be("Bonjour\n");
     }
 
     [Fact(DisplayName = "Executing a for loop should send the result to the client")]
@@ -26,9 +25,8 @@ public class ExecuteCTests : TestBase
             }";
         this.MockRequestBodyContent(script);
         var result = await this.codeController.HandleC();
-
-        var okResult = result as OkObjectResult;
-        okResult.Value.Should().Be("0\n1\n2\n\n");
+        
+        result.As<OkObjectResult>().Value.Should().Be("0\n1\n2\n\n");
     }
 
     [Fact(DisplayName = "Executing an infinite loop should send an error to the client")]
@@ -42,8 +40,7 @@ public class ExecuteCTests : TestBase
         this.MockRequestBodyContent(script);
         var result = await this.codeController.HandleC();
 
-        var okResult = result as OkObjectResult;
-        okResult.Value.Should().Be("Error: infinite loop detected\n");
+        result.As<OkObjectResult>().Value.Should().Be("Error: infinite loop detected\n");
     }
 
     [Fact(DisplayName = "Executing a script with a missing ';' should display the error")]
@@ -53,8 +50,7 @@ public class ExecuteCTests : TestBase
 
         this.MockRequestBodyContent(script);
         var result = await this.codeController.HandleC();
-
-        var okResult = result as OkObjectResult;
-        okResult.Value.Should().NotBe("Bonjour\n");
+        
+        result.As<OkObjectResult>().Value.Should().NotBe("Bonjour\n");
     }
 }

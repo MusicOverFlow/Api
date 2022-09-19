@@ -10,7 +10,7 @@ using System.Text;
 
 public class TestBase
 {
-    private readonly IConfiguration configuration;
+    protected readonly IConfiguration configuration;
     private readonly IServiceCollection services;
     
     protected readonly ModelsContext context;
@@ -83,7 +83,7 @@ public class TestBase
         });
     }
 
-    protected void MockJwtAuthentication(Account account)
+    protected void MockJwtAuthentication(Account account, string role)
     {
         Mock<HttpContext> mock = new Mock<HttpContext>();
         
@@ -92,6 +92,7 @@ public class TestBase
                 new Claim[]
                 {
                     new Claim(ClaimTypes.Email, account.MailAddress),
+                    new Claim(ClaimTypes.Role, role),
                 })));
 
         this.accountsController.ControllerContext.HttpContext = mock.Object;
