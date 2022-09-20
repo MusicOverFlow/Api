@@ -1,3 +1,5 @@
+using Api.SignalR;
+
 bool dev = true;
 
 
@@ -12,6 +14,8 @@ builder.Services.Configure<FormOptions>(o => {
 
 builder.Services.AddControllers()
     .AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+
+builder.Services.AddSignalR();
 
 /**
  * Swagger configuration
@@ -115,6 +119,9 @@ app.UseCors(policy => policy
 
 app.UseSwagger();
 app.UseSwaggerUI();
+
+app.UseFileServer();
+app.MapHub<IdeHub>("/livecoding");
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
