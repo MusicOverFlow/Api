@@ -7,6 +7,8 @@ using Api.Handlers.Containers;
 using Api.Controllers.CodeControllers;
 using System.IO;
 using System.Text;
+using System.Net.Http;
+using Microsoft.Extensions.Primitives;
 
 public class TestBase
 {
@@ -86,7 +88,6 @@ public class TestBase
     protected void MockJwtAuthentication(Account account, string role)
     {
         Mock<HttpContext> mock = new Mock<HttpContext>();
-        
         mock.Setup(m => m.User).Returns(new ClaimsPrincipal(
             new ClaimsIdentity(
                 new Claim[]
@@ -101,10 +102,9 @@ public class TestBase
         this.commentaryController.ControllerContext.HttpContext = mock.Object;
     }
 
-    protected void MockRequestBodyContent(string content)
+    protected void MockHttpRequestWithStringBody(string content)
     {
         Mock<HttpContext> mock = new Mock<HttpContext>();
-        
         mock.Setup(m => m.Request).Returns(new DefaultHttpContext()
         {
             Request =

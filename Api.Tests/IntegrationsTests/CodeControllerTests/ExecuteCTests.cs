@@ -9,7 +9,7 @@ public class ExecuteCTests : TestBase
     {
         string script = "printf(\"Bonjour\");";
         
-        this.MockRequestBodyContent(script);
+        this.MockHttpRequestWithStringBody(script);
         var result = await this.codeController.HandleC();
         
         result.As<OkObjectResult>().Value.Should().Be("Bonjour\n");
@@ -23,7 +23,7 @@ public class ExecuteCTests : TestBase
             {
                 printf(""%d\n"", i);
             }";
-        this.MockRequestBodyContent(script);
+        this.MockHttpRequestWithStringBody(script);
         var result = await this.codeController.HandleC();
         
         result.As<OkObjectResult>().Value.Should().Be("0\n1\n2\n\n");
@@ -37,7 +37,7 @@ public class ExecuteCTests : TestBase
             {
                 printf(""kill me."");
             }";
-        this.MockRequestBodyContent(script);
+        this.MockHttpRequestWithStringBody(script);
         var result = await this.codeController.HandleC();
 
         result.As<OkObjectResult>().Value.Should().Be("Error: infinite loop detected\n");
@@ -48,7 +48,7 @@ public class ExecuteCTests : TestBase
     {
         string script = "printf(\"Bonjour\")"; // missing ';'
 
-        this.MockRequestBodyContent(script);
+        this.MockHttpRequestWithStringBody(script);
         var result = await this.codeController.HandleC();
         
         result.As<OkObjectResult>().Value.Should().NotBe("Bonjour\n");
