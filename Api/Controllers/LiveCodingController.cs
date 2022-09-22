@@ -1,6 +1,4 @@
 ﻿using Api.SignalR;
-using Microsoft.AspNetCore.SignalR;
-using Microsoft.AspNetCore.SignalR.Client;
 
 namespace Api.Controllers;
 
@@ -8,15 +6,11 @@ namespace Api.Controllers;
 [Route("api/ide")]
 public class LiveCodingController : ControllerBase
 {
-    private readonly IHubContext<IdeHub> hubContext;
-    private readonly HubConnection hubConnection;
+    private readonly IdeHub hub;
 
-    public LiveCodingController(IHubContext<IdeHub> hubContext)
+    public LiveCodingController(IdeHub hub)
     {
-        this.hubContext = hubContext;
-        this.hubConnection = new HubConnectionBuilder()
-            .WithUrl("http://localhost:7143/livecoding")
-            .Build();
+        this.hub = hub;
     }
 
     [HttpPost("createroom")]
@@ -24,11 +18,7 @@ public class LiveCodingController : ControllerBase
     {
         try
         {
-            await this.hubConnection.StartAsync();
-            Console.WriteLine(hubConnection.ConnectionId);
-            
-            string groupId = Guid.NewGuid().ToString();
-            await this.hubContext.Groups.AddToGroupAsync(this.hubConnection.ConnectionId, groupId);
+            string groupId = await this.hub.JoinGroup();
             
             return Ok(new
             {
@@ -46,35 +36,8 @@ public class LiveCodingController : ControllerBase
     {
         try
         {
-            await this.hubConnection.StartAsync();
-            Console.WriteLine(hubConnection.ConnectionId);
-            
-            await this.hubContext.Groups.AddToGroupAsync(this.hubConnection.ConnectionId, id);
-            
-            return Ok();
-        }
-        catch (Exception exception)
-        {
-            return BadRequest(exception.Message);
-        }
-    }
+            await this.hub.JoinGroup(id);
 
-    [HttpPut("updateroom")]
-    public async Task<ActionResult> Update(string id)
-    {
-        try
-        {
-            string script = string.Empty;
-            using (StreamReader reader = new StreamReader(Request.Body, Encoding.UTF8))
-            {
-                script = await reader.ReadToEndAsync();
-            }
-
-            await this.hubConnection.StartAsync();
-            Console.WriteLine(hubConnection.ConnectionId);
-            
-            await this.hubContext.Clients.GroupExcept(id, this.hubConnection.ConnectionId).SendAsync("UpdateContent", script);
-            
             return Ok();
         }
         catch (Exception exception)

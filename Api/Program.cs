@@ -17,6 +17,7 @@ builder.Services.AddControllers()
     .AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 builder.Services.AddSignalR();
+builder.Services.AddSingleton<IdeHub>();
 
 /**
  * Swagger configuration
@@ -122,7 +123,7 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseFileServer();
-app.MapHub<IdeHub>("/livecoding");
+app.MapHub<IdeHub>("livecoding");
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
