@@ -12,37 +12,4 @@ public class LiveCodingController : ControllerBase
     {
         this.hub = hub;
     }
-
-    [HttpPost("createroom")]
-    public async Task<ActionResult> Create()
-    {
-        try
-        {
-            string groupId = await this.hub.JoinGroup();
-            
-            return Ok(new
-            {
-                groupId = groupId,
-            });
-        }
-        catch (Exception exception)
-        {
-            return BadRequest(exception.Message);
-        }
-    }
-
-    [HttpPost("joinroom")]
-    public async Task<ActionResult> Join(string id)
-    {
-        try
-        {
-            await this.hub.JoinGroup(id);
-
-            return Ok();
-        }
-        catch (Exception exception)
-        {
-            return BadRequest(exception.Message);
-        }
-    }
 }

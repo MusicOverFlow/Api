@@ -11,8 +11,6 @@ public class CreateAccountTests : TestBase
         "Should return CreatedResult with status code 201")]
     public async void CreateAccountTest_1()
     {
-        HttpRequest request = new HttpRequest();
-        ActionResult response = await this.accountsController.Create("gtouchet@myges.fr", "123Pass!", null, null, null);
-        response.Should().BeOfType<CreatedResult>();
+        
     }
 }
