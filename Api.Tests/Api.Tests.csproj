@@ -29,7 +29,6 @@
     <ProjectReference Include="..\Api.Handlers\Api.Handlers.csproj" />
     <ProjectReference Include="..\Api.Models\Api.Models.csproj" />
     <ProjectReference Include="..\Api\Api.csproj" />
-    <ProjectReference Include="..\PipelineScripts\PipelineScripts.pyproj" />
   </ItemGroup>
 
 </Project>
