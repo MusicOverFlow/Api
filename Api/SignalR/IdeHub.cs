@@ -4,32 +4,30 @@ namespace Api.SignalR;
 
 public class IdeHub : Hub
 {
-    public async override Task OnConnectedAsync()
-    {
-        await base.OnConnectedAsync();
-    }
+    private readonly Dictionary<string, string> groupsContents = new Dictionary<string, string>();
     
-    public async override Task OnDisconnectedAsync(Exception? exception)
-    {
-        await base.OnConnectedAsync();
-    }
-
     public async Task<string> JoinGroup(string groupId = null)
     {
         if (string.IsNullOrWhiteSpace(groupId))
         {
             string newGroupId = Guid.NewGuid().ToString();
             await this.Groups.AddToGroupAsync(this.Context.ConnectionId, newGroupId);
+            this.groupsContents.Add(newGroupId, string.Empty);
             return newGroupId;
         }
+
+        if (this.groupsContents.TryGetValue(groupId, out string content))
+        {
+            await this.Groups.AddToGroupAsync(this.Context.ConnectionId, groupId);
+            return content;
+        }
         
-        await this.Groups.AddToGroupAsync(this.Context.ConnectionId, groupId);
-        return "JOINED";
+        return $"Error : group {groupId} does not exists";
     }
 
-    public async Task<string> UpdateContent(string groupId, string content)
+    public async Task UpdateContent(string groupId, string content)
     {
         await this.Clients.GroupExcept(groupId, this.Context.ConnectionId).SendAsync("ReceiveContent", content);
-        return "UPDATED";
+        this.groupsContents[groupId] = content;
     }
 }
