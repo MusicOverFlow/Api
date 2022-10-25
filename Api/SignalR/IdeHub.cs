@@ -30,4 +30,9 @@ public class IdeHub : Hub
         await this.Clients.GroupExcept(groupId, this.Context.ConnectionId).SendAsync("ReceiveContent", content);
         this.groupsContents[groupId] = content;
     }
+
+    public async Task RunCode(string groupId)
+    {
+        await this.Clients.GroupExcept(groupId, this.Context.ConnectionId).SendAsync("Execute");
+    }
 }

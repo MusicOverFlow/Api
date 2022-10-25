@@ -6,7 +6,7 @@ public class PostResource
     public string Title { get; set; }
     public string Content { get; set; }
     public string MusicUrl { get; set; }
-    public string ScriptUrl { get; set; }
+    public string Script { get; set; }
     public string ScriptLanguage { get; set; }
 
     public AccountResource Owner { get; set; }

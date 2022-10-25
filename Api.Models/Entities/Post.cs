@@ -9,7 +9,7 @@ public class Post
     [Required] public string Content { get; set; }
     public int LikesCount { get; set; }
     public string MusicUrl { get; set; }
-    public string ScriptUrl { get; set; }
+    public string Script { get; set; }
     public string ScriptLanguage { get; set; }
 
     public virtual Account Owner { get; set; }

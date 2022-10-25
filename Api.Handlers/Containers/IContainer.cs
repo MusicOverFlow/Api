@@ -7,6 +7,7 @@ public interface IContainer
     public Task<string> GetMusicUrl(byte[] sound, Guid postId, string filename);
     public Task<string> GetPipelineSoundUrl(byte[] sound, string filename);
     public Task<string> GetPostScriptUrl(string script, Guid postId);
+    public Task<string> GetScriptContent(Guid scriptId);
     public Task<string> GetConvertedSoundUrl(byte[] sound, string filename);
 
     /// <summary>

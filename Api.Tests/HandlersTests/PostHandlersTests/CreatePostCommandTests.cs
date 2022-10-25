@@ -67,7 +67,7 @@ public class CreatePostCommandTests : TestBase
         });
 
         post.ScriptLanguage.Should().Be(Language.C.ToString());
-        post.ScriptUrl.Should().Be($"https://post-scripts.s3.eu-west-3.amazonaws.com/{post.Id}");
+        post.Script.Should().Be($"https://post-scripts.s3.eu-west-3.amazonaws.com/{post.Id}");
 
         await this.container.DeletePostScript(post.Id);
     }
@@ -84,7 +84,7 @@ public class CreatePostCommandTests : TestBase
             Script = "printf(\"Hello, testing world\");",
         });
 
-        post.ScriptUrl.Should().Be(null);
+        post.Script.Should().Be(null);
     }
 
     [Fact(DisplayName =

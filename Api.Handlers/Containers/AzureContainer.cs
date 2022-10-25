@@ -97,4 +97,9 @@ public class AzureContainer : ContainerNames, IContainer
     {
         throw new NotImplementedException();
     }
+
+    public Task<string> GetScriptContent(Guid scriptId)
+    {
+        throw new NotImplementedException();
+    }
 }

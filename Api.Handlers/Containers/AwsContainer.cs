@@ -88,6 +88,18 @@ public class AwsContainer : ContainerNames, IContainer
         return $"https://{POST_SCRIPTS}.s3.eu-west-3.amazonaws.com/{postId}";
     }
 
+    public async Task<string> GetScriptContent(Guid scriptId)
+    {
+        var request = new GetObjectRequest()
+        {
+            BucketName = POST_SCRIPTS,
+            Key = $"{scriptId}",
+        };
+        GetObjectResponse response = await s3Client.GetObjectAsync(request);
+        using StreamReader reader = new StreamReader(response.ResponseStream);
+        return await reader.ReadToEndAsync();
+    }
+
     public async Task<string> GetConvertedSoundUrl(byte[] sound, string filename)
     {
         var request = new PutObjectRequest()

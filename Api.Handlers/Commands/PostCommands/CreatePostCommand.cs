@@ -60,9 +60,11 @@ public class CreatePostCommand : HandlerBase, Command<Task<Post>, CreatePostDto>
         };
 
         this.context.Posts.Add(post);
-        post.ScriptUrl = message.Script != null ? await this.container.GetPostScriptUrl(message.Script, post.Id) : null;
         await this.context.SaveChangesAsync();
 
+        string scriptUrl = message.Script != null ? await this.container.GetPostScriptUrl(message.Script, post.Id) : null;
+        post.Script = await this.container.GetScriptContent(post.Id);
+        
         return post;
     }
 
