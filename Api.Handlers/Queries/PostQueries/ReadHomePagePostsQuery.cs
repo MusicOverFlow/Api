@@ -2,9 +2,11 @@
 
 public class ReadHomePagePostsQuery : HandlerBase, Query<Task<List<Post>>, string>
 {
-    public ReadHomePagePostsQuery(ModelsContext context) : base(context)
+    private readonly IContainer container;
+
+    public ReadHomePagePostsQuery(ModelsContext context, IContainer container) : base(context)
     {
-        
+        this.container = container;
     }
 
     public async Task<List<Post>> Handle(string message)
@@ -37,6 +39,11 @@ public class ReadHomePagePostsQuery : HandlerBase, Query<Task<List<Post>>, strin
             {
                 if (!this.Contains(posts, c.Post.Id)) posts.Add(c.Post);
             });
+        });
+
+        posts.ForEach(async p =>
+        {
+            if (p.Script != null) p.Script = await this.container.GetScriptContent(p.Id);
         });
 
         return posts;

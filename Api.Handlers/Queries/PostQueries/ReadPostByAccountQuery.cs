@@ -2,9 +2,11 @@
 
 public class ReadPostByAccountQuery : HandlerBase, Query<Task<List<Post>>, string>
 {
-    public ReadPostByAccountQuery(ModelsContext context) : base(context)
+    private readonly IContainer container;
+
+    public ReadPostByAccountQuery(ModelsContext context, IContainer container) : base(context)
     {
-        
+        this.container = container;
     }
     
     public async Task<List<Post>> Handle(string message)
@@ -26,6 +28,11 @@ public class ReadPostByAccountQuery : HandlerBase, Query<Task<List<Post>>, strin
         account.OwnedCommentaries.ToList().ForEach(c =>
         {
             if (!this.Contains(posts, c.Post.Id)) posts.Add(c.Post);
+        });
+
+        posts.ForEach(async p =>
+        {
+            if (p.Script != null) p.Script = await this.container.GetScriptContent(p.Id);
         });
 
         return posts;
