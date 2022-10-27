@@ -32,7 +32,7 @@ public class ReadPostByAccountQuery : HandlerBase, Query<Task<List<Post>>, strin
 
         posts.ForEach(async p =>
         {
-            if (p.Script != null) p.Script = await this.container.GetScriptContent(p.Id);
+            if (p.ScriptLanguage != null) p.Script = await this.container.GetScriptContent(p.Id);
         });
 
         return posts;
