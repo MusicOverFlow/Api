@@ -24,14 +24,12 @@ public class CreatePostCommand : HandlerBase, Command<Task<Post>, CreatePostDto>
             throw new HandlerException(ErrorType.PostTitleOrContentEmpty);
         }
 
-        if (!string.IsNullOrWhiteSpace(message.ScriptLanguage) && !string.IsNullOrWhiteSpace(message.Script))
+        if (!string.IsNullOrWhiteSpace(message.ScriptLanguage) && !this.IsScriptLanguageSupported(message.ScriptLanguage.ToLower()))
         {
-            if (!this.IsScriptLanguageSupported(message.ScriptLanguage.ToLower()))
-            {
-                throw new HandlerException(ErrorType.WrongFormatFile);
-            }
+            throw new HandlerException(ErrorType.WrongFormatFile);
         }
-        else
+
+        if (string.IsNullOrWhiteSpace(message.ScriptLanguage) || string.IsNullOrWhiteSpace(message.Script))
         {
             message.ScriptLanguage = null;
             message.Script = null;
@@ -62,14 +60,10 @@ public class CreatePostCommand : HandlerBase, Command<Task<Post>, CreatePostDto>
         this.context.Posts.Add(post);
         await this.context.SaveChangesAsync();
 
-        if (message.ScriptLanguage != null && message.Script != null)
+        if (post.ScriptLanguage != null)
         {
             await this.container.GetPostScriptUrl(message.Script, post.Id);
             post.Script = await this.container.GetScriptContent(post.Id);
-        }
-        else
-        {
-            post.Script = null;
         }
 
         return post;
