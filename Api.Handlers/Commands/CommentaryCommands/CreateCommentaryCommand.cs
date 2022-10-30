@@ -54,10 +54,10 @@ public class CreateCommentaryCommand : HandlerBase, Command<Task<Post>, CreateCo
         this.context.Commentaries.Add(commentary);
         await this.context.SaveChangesAsync();
 
-        if (post.ScriptLanguage != null)
+        if (commentary.ScriptLanguage != null)
         {
-            await this.container.GetPostScriptUrl(message.Script, post.Id);
-            post.Script = await this.container.GetScriptContent(post.Id);
+            await this.container.GetPostScriptUrl(message.Script, commentary.Id);
+            commentary.Script = await this.container.GetScriptContent(commentary.Id);
         }
 
         return post;
