@@ -32,14 +32,12 @@ public class CreateCommentaryCommand : HandlerBase, Command<Task<Post>, CreateCo
             throw new HandlerException(ErrorType.PostOrCommentaryNotFound);
         }
 
-        if (!string.IsNullOrWhiteSpace(message.ScriptLanguage) && !string.IsNullOrWhiteSpace(message.Script))
+        if (!string.IsNullOrWhiteSpace(message.ScriptLanguage) && !this.IsScriptLanguageSupported(message.ScriptLanguage.ToLower()))
         {
-            if (!this.IsScriptLanguageSupported(message.ScriptLanguage.ToLower()))
-            {
-                throw new HandlerException(ErrorType.WrongFormatFile);
-            }
+            throw new HandlerException(ErrorType.WrongFormatFile);
         }
-        else
+
+        if (string.IsNullOrWhiteSpace(message.ScriptLanguage) || string.IsNullOrWhiteSpace(message.Script))
         {
             message.ScriptLanguage = null;
             message.Script = null;
@@ -48,15 +46,19 @@ public class CreateCommentaryCommand : HandlerBase, Command<Task<Post>, CreateCo
         Commentary commentary = new Commentary
         {
             Content = message.Content,
-            ScriptLanguage = message.ScriptLanguage,
+            ScriptLanguage = message.ScriptLanguage != null ? message.ScriptLanguage.ToLower() : null,
             Owner = account,
             Post = post,
         };
 
         this.context.Commentaries.Add(commentary);
-        commentary.ScriptUrl = message.Script != null ? await this.container.GetPostScriptUrl(message.Script, commentary.Id) : null;
-
         await this.context.SaveChangesAsync();
+
+        if (post.ScriptLanguage != null)
+        {
+            await this.container.GetPostScriptUrl(message.Script, post.Id);
+            post.Script = await this.container.GetScriptContent(post.Id);
+        }
 
         return post;
     }
