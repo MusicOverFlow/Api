@@ -1,6 +1,7 @@
 ﻿using Amazon;
 using Amazon.S3;
 using Amazon.S3.Model;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System.Text;
 
@@ -96,8 +97,10 @@ public class AwsContainer : ContainerNames, IContainer
             Key = $"{scriptId}",
         };
         GetObjectResponse response = await s3Client.GetObjectAsync(request);
-        using StreamReader reader = new StreamReader(response.ResponseStream);
-        return await reader.ReadToEndAsync();
+        using (StreamReader reader = new StreamReader(response.ResponseStream))
+        {
+            return await reader.ReadToEndAsync();
+        }
     }
 
     public async Task<string> GetConvertedSoundUrl(byte[] sound, string filename)

@@ -1,4 +1,6 @@
-﻿namespace Api.Handlers.Commands.CommentaryCommands;
+﻿using Api.Models.Entities;
+
+namespace Api.Handlers.Commands.CommentaryCommands;
 
 public class CreateCommentaryCommand : HandlerBase, Command<Task<Post>, CreateCommentaryDto>
 {
@@ -59,6 +61,18 @@ public class CreateCommentaryCommand : HandlerBase, Command<Task<Post>, CreateCo
             await this.container.GetPostScriptUrl(message.Script, commentary.Id);
             commentary.Script = await this.container.GetScriptContent(commentary.Id);
         }
+
+        if (post.ScriptLanguage != null)
+        {
+            post.Script = await this.container.GetScriptContent(post.Id);
+        }
+        post.Commentaries.ToList().ForEach(async c =>
+        {
+            if (c.ScriptLanguage != null)
+            {
+                c.Script = await this.container.GetScriptContent(c.Id);
+            }
+        });
 
         return post;
     }
