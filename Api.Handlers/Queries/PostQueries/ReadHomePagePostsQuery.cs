@@ -48,6 +48,16 @@ public class ReadHomePagePostsQuery : HandlerBase, Query<Task<List<Post>>, strin
                 p.Script = await this.container.GetScriptContent(p.Id);
             }
         });
+        posts.ForEach(p =>
+        {
+            p.Commentaries.ToList().ForEach(async c =>
+            {
+                if (c.ScriptLanguage != null)
+                {
+                    c.Script = await this.container.GetScriptContent(c.Id);
+                }
+            });
+        });
 
         return posts;
     }

@@ -7,7 +7,7 @@ public class Commentary
 
     [Required] public string Content { get; set; }
 
-    public string ScriptUrl { get; set; }
+    public string Script { get; set; }
     public string ScriptLanguage { get; set; }
     public int LikesCount { get; set; }
 

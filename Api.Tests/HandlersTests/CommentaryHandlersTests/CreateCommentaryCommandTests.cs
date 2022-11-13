@@ -57,7 +57,7 @@ public class CreateCommentaryCommandTests : TestBase
 
         Commentary commentary = postWithCommentary.Commentaries.First();
         commentary.ScriptLanguage.Should().Be(Language.Python.ToString());
-        commentary.ScriptUrl.Should().Be($"https://post-scripts.s3.eu-west-3.amazonaws.com/{commentary.Id}");
+        commentary.Script.Should().Be($"https://post-scripts.s3.eu-west-3.amazonaws.com/{commentary.Id}");
 
         await this.container.DeletePostScript(commentary.Id);
     }
@@ -75,7 +75,7 @@ public class CreateCommentaryCommandTests : TestBase
             Script = "print('Hello, testing world')",
         });
 
-        postWithCommentary.Commentaries.First().ScriptUrl.Should().Be(null);
+        postWithCommentary.Commentaries.First().Script.Should().Be(null);
     }
 
     [Fact(DisplayName =
