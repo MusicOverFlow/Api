@@ -41,8 +41,8 @@ namespace Api.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: false),
                     PicUrl = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: true),
                     OwnerId = table.Column<Guid>(type: "uuid", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -89,7 +89,7 @@ namespace Api.Migrations
                     Content = table.Column<string>(type: "text", nullable: false),
                     LikesCount = table.Column<int>(type: "integer", nullable: false),
                     MusicUrl = table.Column<string>(type: "text", nullable: true),
-                    ScriptUrl = table.Column<string>(type: "text", nullable: true),
+                    Script = table.Column<string>(type: "text", nullable: true),
                     ScriptLanguage = table.Column<string>(type: "text", nullable: true),
                     OwnerId = table.Column<Guid>(type: "uuid", nullable: true),
                     GroupId = table.Column<Guid>(type: "uuid", nullable: true),
@@ -141,7 +141,7 @@ namespace Api.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Content = table.Column<string>(type: "text", nullable: false),
-                    ScriptUrl = table.Column<string>(type: "text", nullable: true),
+                    Script = table.Column<string>(type: "text", nullable: true),
                     ScriptLanguage = table.Column<string>(type: "text", nullable: true),
                     LikesCount = table.Column<int>(type: "integer", nullable: false),
                     OwnerId = table.Column<Guid>(type: "uuid", nullable: true),

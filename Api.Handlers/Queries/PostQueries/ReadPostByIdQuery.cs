@@ -18,7 +18,6 @@ public class ReadPostByIdQuery : HandlerBase, Query<Task<List<Post>>, Guid?>
         if (message != null)
         {
             query = query.Where(p => p.Id.Equals(message));
-            Console.WriteLine("\n\nid ? " + message + "\n\n");
         }
 
         List<Post> posts = await query.ToListAsync();
@@ -27,24 +26,6 @@ public class ReadPostByIdQuery : HandlerBase, Query<Task<List<Post>>, Guid?>
         {
             throw new HandlerException(ErrorType.PostNotFound);
         }
-
-        posts.ForEach(async p =>
-        {
-            if (p.ScriptLanguage != null)
-            {
-                p.Script = await this.container.GetScriptContent(p.Id);
-            }
-        });
-        posts.ForEach(p =>
-        {
-            p.Commentaries.ToList().ForEach(async c =>
-            {
-                if (c.ScriptLanguage != null)
-                {
-                    c.Script = await this.container.GetScriptContent(c.Id);
-                }
-            });
-        });
 
         return posts;
     }

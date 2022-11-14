@@ -52,6 +52,7 @@ public class CreatePostCommand : HandlerBase, Command<Task<Post>, CreatePostDto>
             Title = !string.IsNullOrWhiteSpace(message.Title) ? message.Title : "No title",
             Content = message.Content,
             ScriptLanguage = message.ScriptLanguage != null ? message.ScriptLanguage.ToLower() : null,
+            Script = message.Script,
             Owner = account,
             Group = group,
             MusicUrl = null,
@@ -59,12 +60,6 @@ public class CreatePostCommand : HandlerBase, Command<Task<Post>, CreatePostDto>
 
         this.context.Posts.Add(post);
         await this.context.SaveChangesAsync();
-
-        if (post.ScriptLanguage != null)
-        {
-            await this.container.GetPostScriptUrl(message.Script, post.Id);
-            post.Script = await this.container.GetScriptContent(post.Id);
-        }
 
         return post;
     }
