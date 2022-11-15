@@ -1,5 +1,4 @@
 ﻿using Api.Handlers.Commands.CommentaryCommands;
-using Api.Models.ExpositionModels.Resources;
 using System.Security.Claims;
 
 namespace Api.Controllers.CommentaryControllers;

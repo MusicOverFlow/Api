@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Api.Migrations
 {
     [DbContext(typeof(ModelsContext))]
-    [Migration("20221114202358_reset")]
+    [Migration("20221115085635_reset")]
     partial class reset
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
