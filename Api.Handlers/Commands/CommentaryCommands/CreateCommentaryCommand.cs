@@ -55,6 +55,7 @@ public class CreateCommentaryCommand : HandlerBase, Command<Task<Post>, CreateCo
         };
 
         this.context.Commentaries.Add(commentary);
+        await this.context.SaveChangesAsync();
 
         return post;
     }
