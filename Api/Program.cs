@@ -108,8 +108,6 @@ builder.Services.AddCors();
 
 WebApplication app = builder.Build();
 
-app.UseWebSockets();
-
 if (dev)
 {
     AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
